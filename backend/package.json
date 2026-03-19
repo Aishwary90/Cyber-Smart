@@ -6,7 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "ml:export": "node scripts/exportTrainingData.js",
+    "ml:train": "node scripts/trainModel.js",
+    "ml:train:custom": "node scripts/trainModel.js backend/data/training_samples.jsonl"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.99.3",

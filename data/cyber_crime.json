@@ -336,6 +336,28 @@
             "No - Hacker changed both email and phone number ❌",
             "Not sure - need to check recovery options"
           ]
+        },
+        {
+          "question_id": "Q_CT003_04",
+          "priority": "high",
+          "question": "Did the hacker send messages/posts from your account or ask your contacts for money?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "messages sent", "DM sent", "posted", "story posted", "post uploaded",
+            "friends got message", "contacts ko message", "money maanga", "payment asked",
+            "UPI maanga", "fraud link sent", "spam sent"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already mentioned misuse of hacked account",
+            "auto_extract_answer": "Extract if account misuse happened and what type"
+          },
+          "options": [
+            "Yes - Hacker sent money requests to my contacts",
+            "Yes - Hacker posted/scammed from my account",
+            "No - No visible misuse yet",
+            "Not sure - need to verify with contacts"
+          ]
         }
       ],
       

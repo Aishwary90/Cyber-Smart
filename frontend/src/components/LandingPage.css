@@ -9,6 +9,18 @@
   color: #1a1a2e;
 }
 
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
 .cursor-light {
   position: absolute;
   width: 400px;
@@ -58,6 +70,11 @@
   color: #000;
   margin-bottom: 24px;
   letter-spacing: -1px;
+  background: linear-gradient(90deg, #0f172a, #1d4ed8, #7c3aed, #0f172a);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroShimmer 6s linear infinite;
 }
 
 .hero-sub-4d {
@@ -261,6 +278,15 @@
 @keyframes blink-caret {
   from, to { border-color: transparent }
   50% { border-color: #555 }
+}
+
+@keyframes heroShimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .card-analysis {

@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-03-19T22:26:03.040Z",
+  "modelVersion": "nb-2026-03-19T22:26:03.037Z",
+  "trainMetrics": {
+    "accuracy": 0.9602,
+    "macroF1": 0.9697,
+    "support": 176
+  },
+  "testMetrics": {
+    "accuracy": 0.8966,
+    "macroF1": 0.8517,
+    "support": 29
+  },
+  "datasetPath": "C:\\Users\\aishw\\OneDrive\\Desktop\\CYBER-SMART-AI\\backend\\data\\training_samples.jsonl"
+}

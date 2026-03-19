@@ -5,14 +5,20 @@ import { PhishingContainer } from "./components/PhishingAnalyzer/PhishingContain
 import { demoScenarios } from "./mockData";
 import {
   classifyIncident,
+  clearStoredSession,
   createCase,
   getCase,
   getCurrentUser,
+  getNextQuestion,
+  getVerdict,
   getStoredSession,
   listCases,
+  refreshAuthSession,
   signInAccount,
   signOutAccount,
   signUpAccount,
+  transformQuestion,
+  transformVerdict,
   updateCase,
 } from "./api";
 
@@ -404,14 +410,16 @@ export default function App() {
   const [authMode, setAuthMode] = useState("signin");
   const [theme, setTheme] = useState("light");
   const [scenarioId, setScenarioId] = useState(initialScenario.id);
-  const [incidentDraft, setIncidentDraft] = useState(initialScenario.incident);
-  const [submittedIncident, setSubmittedIncident] = useState(initialScenario.incident);
-  const [analysisStarted, setAnalysisStarted] = useState(true);
+  const [incidentDraft, setIncidentDraft] = useState("");
+  const [submittedIncident, setSubmittedIncident] = useState("");
+  const [analysisStarted, setAnalysisStarted] = useState(false);
   const [answers, setAnswers] = useState({});
   const [activeFeature, setActiveFeature] = useState("chat");
   const [topProfileOpen, setTopProfileOpen] = useState(false);
   const [casePanelCollapsed, setCasePanelCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdvancingFlow, setIsAdvancingFlow] = useState(false);
   const [apiError, setApiError] = useState(null);
   const [liveScenario, setLiveScenario] = useState(null);
   const [authForm, setAuthForm] = useState({ email: "", password: "", fullName: "" });
@@ -429,7 +437,7 @@ export default function App() {
   const activeQuestion =
     activeScenario.questions.find((question) => !answers[question.id]) ?? null;
   const answersCount = Object.keys(answers).length;
-  const verdictReady = analysisStarted && activeQuestion === null && answersCount > 0;
+  const verdictReady = analysisStarted && activeQuestion === null && answersCount > 0 && !isAdvancingFlow;
   const confidence = getPrimaryConfidence(activeScenario, answersCount, verdictReady);
   const statusMeta = getStatusMeta(
     analysisStarted,
@@ -490,11 +498,13 @@ export default function App() {
     setApiError(null);
     setCurrentCaseId(null);
     closeMenus();
+    setMobileSidebarOpen(false);
   }
 
   async function loadSavedCase(caseId) {
     setApiError(null);
     closeMenus();
+    setMobileSidebarOpen(false);
 
     try {
       const response = await getCase(caseId);
@@ -529,7 +539,23 @@ export default function App() {
       try {
         const response = await getCurrentUser();
         setCurrentUser(response.user);
+        setScreen("workspace");
       } catch (_error) {
+        if (session?.refresh_token) {
+          try {
+            const refreshResponse = await refreshAuthSession(session.refresh_token);
+            if (refreshResponse?.session?.access_token) {
+              const userResponse = await getCurrentUser();
+              setCurrentUser(userResponse.user);
+              setScreen("workspace");
+              return;
+            }
+          } catch (_refreshError) {
+            // Fall through to clear invalid local session
+          }
+        }
+
+        clearStoredSession();
         setCurrentUser(null);
       }
     }
@@ -625,10 +651,12 @@ export default function App() {
     setApiError(null);
     setCurrentCaseId(null);
     closeMenus();
+    setMobileSidebarOpen(false);
   }
 
   async function handleAuthContinue() {
     if (currentUser) {
+      handleNewCase();
       setScreen("workspace");
       return;
     }
@@ -665,6 +693,7 @@ export default function App() {
         return;
       }
 
+      handleNewCase();
       setScreen("workspace");
     } catch (error) {
       setAuthError(error.message || "Unable to continue.");
@@ -719,17 +748,7 @@ export default function App() {
               score: crime.score,
             })),
             questions: response.first_question
-              ? [
-                  {
-                    id: response.first_question.question_id,
-                    prompt: response.first_question.question,
-                    options: response.first_question.options,
-                    note: `Step ${(response.first_question.step || 0) + 1} of ${
-                      response.total_questions || 3
-                    }`,
-                    rationale: "We ask this to confirm the incident pattern.",
-                  },
-                ]
+              ? [transformQuestion(response.first_question)]
               : [],
             primaryCrimeId: primaryCrime.id,
             verdict: {
@@ -822,11 +841,81 @@ export default function App() {
     }
   }
 
-  function handleAnswer(questionId, answerValue) {
-    setAnswers((currentAnswers) => ({
-      ...currentAnswers,
+  async function handleAnswer(questionId, answerValue) {
+    const nextAnswers = {
+      ...answers,
       [questionId]: answerValue,
-    }));
+    };
+    setAnswers(nextAnswers);
+
+    if (!useLiveApi || !liveScenario?.primaryCrimeId) {
+      return;
+    }
+
+    const currentQuestionIndex = liveScenario.questions.findIndex((question) => question.id === questionId);
+    if (currentQuestionIndex === -1) {
+      return;
+    }
+
+    setApiError(null);
+    setIsAdvancingFlow(true);
+
+    try {
+      const nextQuestionResponse = await getNextQuestion(
+        liveScenario.primaryCrimeId,
+        currentQuestionIndex + 1,
+        submittedIncident,
+        answerValue,
+      );
+
+      if (!nextQuestionResponse.done && nextQuestionResponse.question_id) {
+        const nextQuestion = transformQuestion(nextQuestionResponse);
+        setLiveScenario((currentScenario) => {
+          if (!currentScenario) {
+            return currentScenario;
+          }
+
+          const alreadyExists = currentScenario.questions.some(
+            (question) => question.id === nextQuestion.id,
+          );
+
+          if (alreadyExists) {
+            return currentScenario;
+          }
+
+          return {
+            ...currentScenario,
+            questions: [...currentScenario.questions, nextQuestion],
+          };
+        });
+        return;
+      }
+
+      const verdictResponse = await getVerdict(
+        liveScenario.primaryCrimeId,
+        submittedIncident,
+        nextAnswers,
+        currentCaseId,
+      );
+      const mappedVerdict = transformVerdict(verdictResponse);
+
+      if (mappedVerdict) {
+        setLiveScenario((currentScenario) => {
+          if (!currentScenario) {
+            return currentScenario;
+          }
+
+          return {
+            ...currentScenario,
+            verdict: mappedVerdict,
+          };
+        });
+      }
+    } catch (error) {
+      setApiError(error.message || "Unable to continue question flow.");
+    } finally {
+      setIsAdvancingFlow(false);
+    }
   }
 
   function handleChangeAnswer(questionId) {
@@ -906,6 +995,15 @@ export default function App() {
         </div>
 
         <div className="top-bar-actions">
+          <button
+            className="mobile-sidebar-toggle"
+            type="button"
+            onClick={() => setMobileSidebarOpen((open) => !open)}
+            aria-label="Toggle case panel"
+          >
+            ☰
+          </button>
+
           <HeaderStatus
             currentStep={statusMeta.currentStep}
             verdictReady={verdictReady}
@@ -940,10 +1038,19 @@ export default function App() {
           casePanelCollapsed ? "depth-frame-collapsed" : ""
         }`}
       >
+        {mobileSidebarOpen ? (
+          <button
+            className="sidebar-backdrop"
+            type="button"
+            aria-label="Close case panel"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        ) : null}
+
         <aside
           className={`sidebar floating-sidebar case-panel ${
             casePanelCollapsed ? "case-panel-collapsed" : ""
-          }`}
+          } ${mobileSidebarOpen ? "case-panel-mobile-open" : ""}`}
         >
           <div className="case-panel-header">
             <div className="case-panel-heading">

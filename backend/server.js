@@ -12,6 +12,7 @@ const verdictRoute = require("./routes/verdict");
 const phishingRoute = require("./routes/phishing");
 const authRoute = require("./routes/auth");
 const casesRoute = require("./routes/cases");
+const feedbackRoute = require("./routes/feedback");
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use("/api/verdict", verdictRoute);
 app.use("/api/phishing", phishingRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/cases", casesRoute);
+app.use("/api/feedback", feedbackRoute);
 
 app.use((_req, res) => {
   res.status(404).json({ error: "Route not found" });

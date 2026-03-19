@@ -3,7 +3,7 @@ import "./LandingPage.css";
 
 export function LandingPage({ onStart }) {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [simState, setSimState] = useState("idle");
+  const simState = "idle";
   const containerRef = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -15,19 +15,7 @@ export function LandingPage({ onStart }) {
   };
 
   const handleStartInteraction = () => {
-    if (simState !== "idle") {
-      // If simulation is done, we can allow clicking again to proceed to login or reset.
-      // Let's just proceed to actual login / workspace
-      if (simState === "verdict") {
-        onStart();
-      }
-      return;
-    }
-    setSimState("input");
-
-    setTimeout(() => setSimState("analyzing"), 1500);
-    setTimeout(() => setSimState("question"), 3000);
-    setTimeout(() => setSimState("verdict"), 4500);
+    onStart();
   };
 
   const getTransform = (depth) => {
@@ -38,6 +26,7 @@ export function LandingPage({ onStart }) {
 
   return (
     <div className="landing-shell-4d" onMouseMove={handleMouseMove} ref={containerRef}>
+      <div className="bg-grid" />
       <div
         className="cursor-light"
         style={{
@@ -56,7 +45,7 @@ export function LandingPage({ onStart }) {
         </div>
         <div className="landing-top-actions">
           <button className="landing-secondary" type="button" onClick={onStart}>
-            Skip to Login
+            Login / Signup
           </button>
         </div>
       </header>
@@ -71,8 +60,7 @@ export function LandingPage({ onStart }) {
               We don’t give more data. We give the right understanding.
             </p>
             <button className="hero-cta-4d" onClick={handleStartInteraction}>
-              {simState === "idle" ? "Start Investigation" : 
-               simState === "verdict" ? "Enter Platform" : "Analyzing Incident..."}
+              Start Investigation
             </button>
           </div>
 

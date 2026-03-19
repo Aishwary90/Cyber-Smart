@@ -45,6 +45,18 @@ function AiBubble({ icon, label, children }) {
 
 /* ─── Welcome / empty state ─── */
 function WelcomeState({ onQuickFill }) {
+  const currentHour = new Date().getHours();
+  const greeting =
+    currentHour < 5
+      ? "Late-night cyber watch"
+      : currentHour < 12
+        ? "Morning cyber check"
+        : currentHour < 17
+          ? "Afternoon cyber check"
+          : currentHour < 21
+            ? "Evening cyber watch"
+            : "Night cyber watch";
+
   const prompts = [
     "Money deducted automatically",
     "Sent money to someone I don't know",
@@ -55,10 +67,17 @@ function WelcomeState({ onQuickFill }) {
   return (
     <div className="claude-welcome">
       <div className="claude-welcome-icon">🛡️</div>
-      <h2 className="claude-welcome-title">CyberSmart AI</h2>
+      <h2 className="claude-welcome-title">{greeting}</h2>
       <p className="claude-welcome-sub">
         Describe your cybercrime or suspicious situation. I'll guide you step by step.
       </p>
+      <div className="claude-pipeline">
+        <span>Input</span>
+        <span>Classification</span>
+        <span>Questions</span>
+        <span>Confidence</span>
+        <span>Verdict + Action</span>
+      </div>
       <div className="claude-quick-prompts">
         {prompts.map((p) => (
           <button
@@ -89,6 +108,9 @@ function IncidentBubble({ text }) {
 function FindingsBubble({ scenario, confidence }) {
   return (
     <AiBubble icon="🔍" label="System Analysis">
+      <p className="claude-findings-note">
+        Pipeline: Input parsed from JSON rules, ML classification done, now verification questions are running.
+      </p>
       <div className="claude-findings-row">
         {scenario.suspects.slice(0, 2).map((s, i) => (
           <div key={s.label} className="claude-finding-chip">

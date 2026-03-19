@@ -115,6 +115,36 @@ router.post("/signout", async (_req, res) => {
   return res.json({ success: true });
 });
 
+router.post("/refresh", async (req, res) => {
+  try {
+    const { refreshToken } = req.body || {};
+    if (!refreshToken) {
+      return res.status(400).json({ error: "refreshToken is required." });
+    }
+
+    const { data, error } = await supabase.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    if (error || !data?.session) {
+      return res.status(401).json({ error: error?.message || "Unable to refresh session." });
+    }
+
+    return res.json({
+      session: data.session,
+      user: data.user
+        ? {
+            id: data.user.id,
+            email: data.user.email,
+            fullName: data.user.user_metadata?.full_name || "",
+          }
+        : null,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Unable to refresh session." });
+  }
+});
+
 router.get("/me", async (req, res) => {
   try {
     const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "").trim();

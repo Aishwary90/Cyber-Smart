@@ -11,21 +11,30 @@ export function QuestionCard({
 }) {
   const [otherValue, setOtherValue] = useState("");
   const [showOther, setShowOther] = useState(false);
+  const optionList = Array.isArray(question.options) && question.options.length
+    ? question.options
+    : ["Yes", "No", "Not sure"];
 
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
-      if (event.key === "1") onAnswer(question.id, "Yes, I clicked link");
-      if (event.key === "2") onAnswer(question.id, "No");
-      if (event.key === "3") onAnswer(question.id, "Not sure");
+
+      const numericKey = Number(event.key);
+      if (!Number.isInteger(numericKey) || numericKey < 1 || numericKey > optionList.length) {
+        return;
+      }
+
+      const selectedOption = optionList[numericKey - 1];
+      if (selectedOption) {
+        onAnswer(question.id, selectedOption);
+      }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onAnswer, question.id]);
+  }, [onAnswer, optionList, question.id]);
 
   return (
     <section className="stacked-question-card">
@@ -39,16 +48,17 @@ export function QuestionCard({
       </div>
 
       <div className="stacked-options-list">
-        <button className="stacked-btn" type="button" onClick={() => onAnswer(question.id, "Yes")}>
-          [ Yes, I clicked link ]
-        </button>
-        <button className="stacked-btn" type="button" onClick={() => onAnswer(question.id, "No")}>
-          [ No ]
-        </button>
-        <button className="stacked-btn" type="button" onClick={() => onAnswer(question.id, "Not sure")}>
-          [ Not sure ]
-        </button>
-        
+        {optionList.map((option) => (
+          <button
+            key={option}
+            className="stacked-btn"
+            type="button"
+            onClick={() => onAnswer(question.id, option)}
+          >
+            [ {option} ]
+          </button>
+        ))}
+
         {!showOther ? (
           <button className="stacked-btn" type="button" onClick={() => setShowOther(true)}>
             [ Something else ]

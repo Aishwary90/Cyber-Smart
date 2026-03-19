@@ -18,6 +18,7 @@ const path = require("path");
 const cyberCrimeData = require(path.join(__dirname, "../../data/cyber_crime.json"));
 const notACrimeData = require(path.join(__dirname, "../../data/not_a_crime.json"));
 const { preprocess, countKeywordHits } = require("./tfidf");
+const { predictWithModel } = require("./mlModel");
 
 /* ── Severity weighting ── */
 const SEVERITY_WEIGHT = { critical: 1.4, high: 1.2, medium: 1.0, low: 0.8, none: 0.3 };
@@ -94,12 +95,32 @@ function classifyIncident(text) {
     (a, b) => b.score - a.score
   );
 
+  const crimeById = {};
+  for (const c of CRIME_ENTRIES) {
+    crimeById[c.id] = c;
+  }
+
   const topCrime = allSuspects.find((s) => !s.is_not_crime);
   const topNotCrime = allSuspects.find((s) => s.is_not_crime);
 
+  const mlPrediction = predictWithModel(text);
+  const mlTop = mlPrediction?.ranked?.[0] || null;
+  const mlSecond = mlPrediction?.ranked?.[1] || null;
+  const mlMargin = mlTop && mlSecond ? mlTop.probability - mlSecond.probability : 1;
+  const mlReliable = Boolean(
+    mlTop &&
+      mlTop.probability >= (mlPrediction?.threshold ?? 0.55) &&
+      mlMargin >= 0.08
+  );
+
   /* Determine classification */
   let classificationType = "UNCLEAR";
-  if (topCrime && (!topNotCrime || topCrime.score >= topNotCrime.score * 0.8)) {
+  if (
+    mlReliable &&
+    (mlTop.label.startsWith("CT") || mlTop.label.startsWith("NAC"))
+  ) {
+    classificationType = mlTop.label.startsWith("CT") ? "CRIME" : "NOT_CRIME";
+  } else if (topCrime && (!topNotCrime || topCrime.score >= topNotCrime.score * 0.8)) {
     classificationType = "CRIME";
   } else if (topNotCrime && (!topCrime || topNotCrime.score > topCrime.score * 0.8)) {
     classificationType = "NOT_CRIME";
@@ -109,13 +130,22 @@ function classifyIncident(text) {
 
   /* Confidence (0-100) */
   const topScore = allSuspects[0]?.score ?? 0;
-  const confidence = Math.round(Math.min(topScore * 100, 97));
+  const confidence = mlReliable
+    ? Math.round(Math.min((mlTop?.probability || 0) * 100, 99))
+    : Math.round(Math.min(topScore * 100, 97));
+
+  const selectedCrimeId =
+    classificationType === "CRIME"
+      ? mlReliable && mlTop?.label?.startsWith("CT")
+        ? mlTop.label
+        : topCrime?.id ?? null
+      : null;
 
   /* First question from top crime */
   let firstQuestion = null;
   let totalQuestions = 0;
-  if (topCrime) {
-    const questions = topCrime.cross_questions || [];
+  if (selectedCrimeId && crimeById[selectedCrimeId]) {
+    const questions = crimeById[selectedCrimeId].cross_questions || [];
     totalQuestions = questions.length;
     if (questions.length > 0) {
       const q = questions[0];
@@ -136,14 +166,21 @@ function classifyIncident(text) {
     .slice(0, 5)
     .map(({ id, name, score, severity }) => ({ id, name, score, severity }));
 
+  const inferredTopNotCrimeId =
+    mlReliable && mlTop?.label?.startsWith("NAC") ? mlTop.label : topNotCrime?.id;
+  const inferredNotCrimeData =
+    classificationType === "NOT_CRIME" ? notACrimeData[inferredTopNotCrimeId] || null : null;
+
   return {
     classification_type: classificationType,
     suspected_crimes: cleanSuspects,
-    top_crime_id: topCrime?.id ?? null,
+    top_crime_id: selectedCrimeId,
     confidence,
     first_question: firstQuestion,
     total_questions: totalQuestions,
-    not_crime_data: classificationType === "NOT_CRIME" ? (topNotCrime?.data ?? null) : null,
+    not_crime_data: inferredNotCrimeData,
+    model_source: mlReliable ? "ml+rules" : "rules",
+    model_version: mlPrediction?.modelVersion || null,
     note: allSuspects.length
       ? `Classified against ${CRIME_ENTRIES.length} crime patterns.`
       : "No strong keyword match. Please describe in more detail.",

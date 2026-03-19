@@ -2885,6 +2885,22 @@ body {
   line-height: 1.6;
 }
 
+.claude-pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.claude-pipeline span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--surface-line);
+  background: var(--glass);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 .claude-quick-prompts {
   display: flex;
   flex-wrap: wrap;
@@ -3184,5 +3200,82 @@ body {
   .claude-flow-strip {
     padding: 8px 12px;
     overflow-x: auto;
+  }
+}
+
+/* Compact header + responsive case panel drawer */
+.floating-top-bar {
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+}
+
+.brand-group h1 {
+  font-size: 1.2rem;
+}
+
+.brand-eyebrow {
+  font-size: 0.62rem;
+}
+
+.header-status {
+  padding: 6px 12px;
+}
+
+.mobile-sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-sidebar-toggle {
+    display: inline-flex;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: rgba(8, 12, 24, 0.38);
+    z-index: 15;
+  }
+
+  .case-panel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: min(86vw, 330px);
+    height: 100vh;
+    z-index: 16;
+    transform: translateX(-105%);
+    transition: transform 220ms ease;
+    border-radius: 0 18px 18px 0;
+  }
+
+  .case-panel.case-panel-mobile-open {
+    transform: translateX(0);
+  }
+
+  .main-workspace {
+    min-height: calc(100vh - 90px);
   }
 }

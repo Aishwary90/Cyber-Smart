@@ -113,8 +113,32 @@ export async function signOutAccount() {
   }
 }
 
+export async function refreshAuthSession(refreshToken) {
+  const response = await fetchApi("/api/auth/refresh", {
+    method: "POST",
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (response.session) {
+    setStoredSession(response.session);
+  }
+
+  return response;
+}
+
 export async function getCurrentUser() {
   return fetchApi("/api/auth/me", { method: "GET" });
+}
+
+export async function submitCaseFeedback(payload) {
+  return fetchApi("/api/feedback", {
+    method: "POST",
+    body: JSON.stringify(payload || {}),
+  });
+}
+
+export async function listCaseFeedback(limit = 100) {
+  return fetchApi(`/api/feedback?limit=${encodeURIComponent(limit)}`, { method: "GET" });
 }
 
 export async function listCases() {
@@ -208,12 +232,18 @@ export function transformVerdict(backendVerdict) {
 
   const legalSections = [];
   if (verdict.legal_sections?.it_act) {
-    verdict.legal_sections.it_act.forEach((section) =>
-      legalSections.push(`IT Act ${section.section}`),
-    );
+    verdict.legal_sections.it_act.forEach((section) => {
+      const label = section?.title
+        ? `IT Act ${section.section}: ${section.title}`
+        : `IT Act ${section.section}`;
+      legalSections.push(label);
+    });
   }
   if (verdict.legal_sections?.ipc) {
-    verdict.legal_sections.ipc.forEach((section) => legalSections.push(`IPC ${section.section}`));
+    verdict.legal_sections.ipc.forEach((section) => {
+      const label = section?.title ? `IPC ${section.section}: ${section.title}` : `IPC ${section.section}`;
+      legalSections.push(label);
+    });
   }
 
   return {
@@ -259,8 +289,11 @@ export default {
   signInAccount,
   signOutAccount,
   signUpAccount,
+  refreshAuthSession,
   transformQuestion,
   transformSuspects,
   transformVerdict,
+  submitCaseFeedback,
+  listCaseFeedback,
   updateCase,
 };
