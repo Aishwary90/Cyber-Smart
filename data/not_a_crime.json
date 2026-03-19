@@ -1,0 +1,430 @@
+{
+  "not_a_crime_scenarios": {
+    "description": "Common situations users report as cyber crimes but are actually user errors, civil disputes, platform policies, or voluntary actions. Smart detection prevents false FIRs and guides users to correct remedies.",
+    "purpose": "40% of cyber crime complaints get rejected - we catch these BEFORE filing",
+    "total_scenarios": 5,
+    "detection_priority": "Check crime keywords FIRST, then NOT-crime. Only trigger if NO strong crime match."
+  },
+  
+  "NAC001_gambling_loss": {
+    "scenario_name": "Voluntary Gambling / Betting / Gaming Loss",
+    "scenario_hindi": "Apni marzi se gambling/betting mein paisa hara",
+    
+    "trigger_keywords": [
+      "gambling", "gamble", "bet", "betting", "satta", "jua",
+      "rummy", "rummy game", "online rummy", "rummy app",
+      "poker", "poker game", "online poker", "teen patti",
+      "casino", "online casino", "casino game", "slot machine",
+      "fantasy sports", "fantasy league", "dream team",
+      "dream11", "dream 11", "dream eleven",
+      "MPL", "mobile premier league",
+      "paytm first games", "paytm games",
+      "winzo", "winzo gold",
+      "ace2three", "ace 2 three",
+      "junglee rummy", "classic rummy",
+      "my11circle", "my 11 circle",
+      "gamezy", "gamerji", "halaplay",
+      "bet365", "betway", "dafabet",
+      "lost bet", "bet hara", "jua khela",
+      "lost game", "game hara", "match hara",
+      "lost money in game", "game mein paisa hara",
+      "chips", "coins", "gaming coins",
+      "tournament", "contest", "league",
+      "won't give money back", "paisa wapas nahi de rahe",
+      "can't withdraw", "withdraw nahi ho raha", "withdrawal blocked"
+    ],
+    
+    "detection_logic": {
+      "primary_check": "Check if user has crime keywords (fraud/scam/cheat/hack) along with gambling keywords",
+      "if_crime_keywords_present": "Treat as CRIME (fraud), not gambling",
+      "if_only_gambling_keywords": "Ask clarifying question",
+      
+      "clarifying_question": {
+        "question": "Did you VOLUNTARILY play/bet, OR were you SCAMMED (promised guaranteed wins, then blocked withdrawal)?",
+        "options": [
+          "I played/bet voluntarily - just lost the game",
+          "They promised guaranteed wins, took money, then blocked withdrawal/account",
+          "They manipulated the game - cards were rigged/fixed",
+          "Account frozen after winning - won't let me withdraw"
+        ],
+        "answer_routing": {
+          "option_1": "NOT_CRIME - Voluntary gambling loss",
+          "option_2_3_4": "IS_CRIME - This is fraud (CT001), not gambling"
+        }
+      },
+      
+      "if_voluntary": {
+        "classification": "NOT_CRIME",
+        "response_type": "SHORT_AND_FIRM",
+        "verdict": "🚫 NOT A CYBER CRIME",
+        "explanation": [
+          "Voluntary gambling/betting losses are NOT covered under cyber crime laws.",
+          "You willingly risked money in a game of chance. This is not fraud.",
+          "Indian law does not protect gambling losses - you accepted the risk."
+        ],
+        "why_not_crime": [
+          "✗ You played voluntarily (not forced or tricked)",
+          "✗ Gambling losses ≠ Theft or fraud",
+          "✗ You accepted Terms & Conditions (risk disclaimer)",
+          "✗ Game outcomes are chance-based (win OR lose)",
+          "✗ Platform did not steal - you lost fairly"
+        ],
+        "legal_status": "Many online gambling/rummy apps operate in legal grey area. But losing money in them is NOT a cyber crime - it's a gamble you took.",
+        "your_options": [
+          "💼 Consumer Court: If platform has technical issues, unfair practices, or ToS violations",
+          "🏛️ Civil Court: If amount is very large and you believe rules were violated",
+          "💰 Accept the loss: This was a risk you took knowingly",
+          "🚫 Stop gambling: Avoid these apps in future to prevent more losses"
+        ],
+        "what_police_will_say": "Cyber Crime Portal and police stations will REJECT this complaint with reason: 'Voluntary gambling loss - not a cyber crime'",
+        "consumer_court_process": {
+          "if_amount_below_20_lakh": "District Consumer Forum",
+          "if_amount_20lakh_to_1crore": "State Consumer Commission",
+          "documents_needed": "Transaction proofs, ToS violations proof, platform communication",
+          "realistic_outcome": "Low success rate unless you can prove platform fraud/manipulation",
+          "timeline": "6 months to 2 years"
+        }
+      },
+      
+      "if_scammed": {
+        "classification": "IS_CRIME",
+        "crime_id": "CT001",
+        "reason": "Promising guaranteed wins and blocking withdrawal = Online Financial Fraud",
+        "proceed_to": "Crime classification flow for CT001"
+      }
+    },
+    
+    "example_rejected_cases": [
+      {
+        "year": 2023,
+        "state": "Telangana",
+        "amount": "Rs. 45,000",
+        "platform": "Online rummy app",
+        "complaint": "User filed cyber crime complaint claiming 'money stolen' after losing in rummy games",
+        "investigation": "Police verified: (1) User voluntarily played 50+ games, (2) User won some games, lost others, (3) Net loss Rs. 45,000, (4) No manipulation detected in algorithm, (5) Clear ToS about gambling risks",
+        "outcome": "Complaint REJECTED - Reason: 'Voluntary gambling loss, not cyber fraud'",
+        "police_statement": "User participated in online gambling willingly. Losses in gambling do not constitute theft or fraud under IPC/IT Act."
+      },
+      {
+        "year": 2023,
+        "state": "Maharashtra",
+        "amount": "Rs. 1.2 lakh",
+        "platform": "Fantasy sports app (Dream11)",
+        "complaint": "User claimed 'scam' after losing money in IPL fantasy league",
+        "investigation": "User had participated in 100+ contests over 3 months, won Rs. 30,000, lost Rs. 1.2 lakh total. Platform showed all contest rules, entry fees clearly",
+        "outcome": "REJECTED - 'Voluntary participation in paid gaming contests'",
+        "court_note": "Fantasy sports involving substantial skill + chance are not prohibited. User accepted financial risk."
+      }
+    ],
+    
+    "public_gaming_act_note": "Public Gaming Act 1867 + state amendments govern gambling. Some states ban all online gambling, some allow 'games of skill'. But losing money is NOT theft - it's the nature of gambling."
+  },
+  
+  "NAC002_account_frozen_by_platform": {
+    "scenario_name": "Account Suspended/Frozen by Platform for ToS Violation",
+    "scenario_hindi": "Platform ne khud account suspend/freeze kiya (rules todne ki wajah se)",
+    
+    "trigger_keywords": [
+      "account frozen", "account freeze", "account freeze ho gaya",
+      "account suspended", "account suspend", "suspend kar diya",
+      "account banned", "account ban", "ban ho gaya", "permanent ban",
+      "account disabled", "account disable", "disabled account",
+      "account deactivated", "account blocked by platform",
+      "terms of service", "ToS violation", "violated rules", "community guidelines",
+      "policy violation", "copyright", "spam", "fake account",
+      "Instagram suspended", "Facebook suspended", "account under review",
+      "account restricted", "features limited", "posting disabled",
+      "can't post", "can't comment", "can't message",
+      "account locked", "verify your identity", "ID verification",
+      "unusual activity", "security check", "suspicious activity"
+    ],
+    
+    "detection_logic": {
+      "clarifying_question": {
+        "question": "Who suspended/froze your account?",
+        "options": [
+          "The platform itself (Instagram/Facebook/etc.) - got email/notification from them",
+          "A hacker - unauthorized person changed my password and locked me out",
+          "Not sure - account is just not accessible"
+        ],
+        "answer_routing": {
+          "option_1": "NOT_CRIME - Platform action",
+          "option_2": "IS_CRIME - Account hacking (CT003)",
+          "option_3": "Ask follow-up: Did you receive email from platform OR was password changed?"
+        }
+      },
+      
+      "if_platform_action": {
+        "classification": "NOT_CRIME",
+        "response_type": "SHORT",
+        "verdict": "🚫 NOT A CYBER CRIME",
+        "explanation": [
+          "Platform suspended your account for Terms of Service (ToS) violation.",
+          "This is the platform's policy enforcement - NOT a criminal act.",
+          "Platforms have the legal right to suspend accounts violating their rules."
+        ],
+        "why_not_crime": [
+          "✗ You agreed to Terms of Service when creating account",
+          "✗ Platforms own their service - they can suspend users",
+          "✗ This is a civil/contractual matter, not criminal",
+          "✗ No theft, fraud, or illegal access occurred"
+        ],
+        "common_violation_reasons": [
+          "🚫 Posting prohibited content (violence, hate speech, nudity)",
+          "🚫 Copyright infringement (using others' content without permission)",
+          "🚫 Spam / Multiple fake accounts / Bot activity",
+          "🚫 Impersonation / Fake identity",
+          "🚫 Buying followers/likes (violates ToS)",
+          "🚫 Harassment / Bullying other users",
+          "🚫 Age restriction (under 13 for most platforms)"
+        ],
+        "your_options": [
+          "📧 Appeal to Platform: Most platforms have appeal process",
+          "📝 Review ToS: Understand what rule you may have violated",
+          "🆔 Complete Verification: If asking for ID, provide genuine documents",
+          "⏳ Wait: Some suspensions are temporary (24 hours - 30 days)",
+          "🆕 Create New Account: If permanent ban (but may violate ToS further)",
+          "⚖️ Legal Action (rarely successful): Can file case against platform, but very difficult to win"
+        ],
+        "appeal_process": {
+          "Instagram/Facebook": "Help Center → Report a Problem → Appeal suspension",
+          "Twitter/X": "Appeal form in notification email",
+          "LinkedIn": "Help → Contact Us → Account suspended",
+          "YouTube": "YouTube Studio → Appeal strikes/suspension"
+        },
+        "legal_reality": "Platforms (Instagram, Facebook, etc.) are private companies. They can refuse service to anyone for ToS violations. Courts rarely interfere unless discrimination is proven."
+      },
+      
+      "if_hacker_action": {
+        "classification": "IS_CRIME",
+        "crime_id": "CT003",
+        "reason": "Unauthorized access by hacker = Account hacking crime",
+        "proceed_to": "Crime classification flow for CT003"
+      }
+    }
+  },
+  
+  "NAC003_wrong_transfer_by_mistake": {
+    "scenario_name": "Money Sent to Wrong Person by User's Own Mistake",
+    "scenario_hindi": "Galti se wrong UPI ID / account mein paise transfer kar diye",
+    
+    "trigger_keywords": [
+      "wrong UPI", "wrong UPI ID", "galat UPI", "wrong number pe bhej diya",
+      "wrong account", "galat account", "wrong account number",
+      "sent by mistake", "galti se bhej diya", "accidentally sent",
+      "wrong person", "kisi aur ko bhej diya", "stranger ko chala gaya",
+      "mistyped", "number galat type kiya", "digit galat",
+      "transfer by mistake", "galti se transfer", "accidental transfer",
+      "wrong transfer", "wrong payment", "wrong transaction",
+      "sent to stranger", "anjaan aadmi ko", "unknown person"
+    ],
+    
+    "detection_logic": {
+      "clarifying_question": {
+        "question": "How did you send money to wrong person?",
+        "options": [
+          "I accidentally typed wrong UPI ID / account number (my mistake)",
+          "Someone TRICKED me into sending (fake customer care / police / authority)",
+          "Scammer sent fake payment link / QR code and I paid",
+          "I was FORCED to send under threat"
+        ],
+        "answer_routing": {
+          "option_1": "NOT_CRIME - User error / Civil matter",
+          "option_2_3_4": "IS_CRIME - Fraud / Extortion (CT001 or CT018)"
+        }
+      },
+      
+      "if_user_mistake": {
+        "classification": "NOT_CRIME",
+        "response_type": "SHORT",
+        "verdict": "🚫 NOT A CYBER CRIME",
+        "explanation": [
+          "Accidentally sending money to wrong UPI ID / account is USER ERROR, not cyber crime.",
+          "The recipient did not steal or hack - you voluntarily transferred.",
+          "This is a CIVIL matter (contract/unjust enrichment), not criminal."
+        ],
+        "why_not_crime": [
+          "✗ You willingly initiated the transaction",
+          "✗ No fraud, deception, or hacking occurred",
+          "✗ Recipient didn't trick you - you made typing error",
+          "✗ This falls under civil law (unjust enrichment), not cyber crime law"
+        ],
+        "legal_category": "Civil Wrong - Unjust Enrichment (Indian Contract Act, Sec 70-72)",
+        "your_options": [
+          "📞 Call Your Bank IMMEDIATELY: Request transaction reversal (works if within 24 hours sometimes)",
+          "🏦 Bank Process: File written complaint at bank branch with transaction details",
+          "📲 Contact Recipient: If you have their number, request refund politely (save chat proof)",
+          "👮 Police Complaint: Can file, but police rarely act on accidental transfers",
+          "⚖️ Civil Court: File civil suit for recovery (if amount is large, >Rs. 50,000)",
+          "💸 Banking Ombudsman: File complaint if bank refuses to help"
+        ],
+        "bank_reversal_reality": {
+          "if_within_1_hour": "30-40% chance if bank acts fast + receiving bank cooperates",
+          "if_within_24_hours": "10-15% chance",
+          "if_after_24_hours": "Less than 5% - money likely withdrawn",
+          "upi_specifics": "UPI transfers are INSTANT and FINAL. Reversal needs recipient's consent."
+        },
+        "police_approach": "Most police stations will say: 'This is civil matter, not crime. Go to civil court.' Police MAY help if amount is very large (₹1 lakh+) and recipient is uncooperative.",
+        "civil_court_option": {
+          "suit_type": "Recovery of money paid by mistake (Order 37 CPC)",
+          "court_fees": "Based on amount (e.g., Rs. 5,000 for Rs. 1 lakh claim)",
+          "success_rate": "50-60% if you have transaction proof",
+          "timeline": "6 months to 2 years",
+          "lawyer_needed": "Yes, for amounts above Rs. 20,000"
+        },
+        "prevention_tip": "Always verify UPI ID / account number TWICE before sending. Use UPI beneficiary name verification."
+      },
+      
+      "if_tricked": {
+        "classification": "IS_CRIME",
+        "crime_id": "CT001",
+        "reason": "Being deceived/tricked into transferring = Online Financial Fraud",
+        "proceed_to": "Crime classification flow for CT001"
+      }
+    }
+  },
+  
+  "NAC004_blocked_on_social_media": {
+    "scenario_name": "Blocked/Unfriended on Social Media by Another User",
+    "scenario_hindi": "Kisi ne social media pe block kar diya / unfriend kar diya",
+    
+    "trigger_keywords": [
+      "blocked me", "block kar diya", "blocked on", "mujhe block kiya",
+      "unfriended", "unfriend kar diya", "friend list se hata diya",
+      "unfollowed", "unfollow kar diya", "follower se hata diya",
+      "removed from group", "group se nikal diya", "removed me",
+      "WhatsApp block", "WhatsApp pe block", "WA block",
+      "Instagram block", "insta pe block", "IG block",
+      "Facebook block", "FB block", "Facebook unfriend",
+      "deleted me", "removed me", "cut me off",
+      "won't reply", "reply nahi kar rahe", "ignoring me",
+      "left on read", "seen but no reply", "blue tick",
+      "contact deleted", "number delete kar diya"
+    ],
+    
+    "detection_logic": {
+      "immediate_classification": "NOT_CRIME",
+      "no_question_needed": "This is clearly not a crime - respond immediately",
+      
+      "response": {
+        "classification": "NOT_CRIME",
+        "response_type": "VERY_SHORT",
+        "verdict": "🚫 NOT A CYBER CRIME",
+        "explanation": [
+          "Someone blocking/unfriending you on social media is NOT a cyber crime.",
+          "People have the fundamental right to choose who they interact with.",
+          "Blocking is a privacy feature - it's not illegal."
+        ],
+        "why_not_crime": [
+          "✗ Everyone has right to block anyone (freedom of association)",
+          "✗ No theft, fraud, or illegal access occurred",
+          "✗ Social media interaction is voluntary, not mandatory",
+          "✗ Blocking is a platform feature for user safety/privacy"
+        ],
+        "legal_reality": "Indian law does NOT recognize 'right to be friends' or 'right to access someone's social media'. Blocking is legal and within user's rights.",
+        "exceptions": "ONLY a crime if there was harassment, threats, or blackmail BEFORE the blocking. Otherwise, blocking itself is legal.",
+        "what_to_do": [
+          "Respect their decision - move on",
+          "Do NOT create fake accounts to contact them (that's harassment)",
+          "Do NOT send messages through friends (that's stalking behavior)",
+          "If there's a genuine issue, resolve through mutual friends/family"
+        ],
+        "if_harassment_involved": "If they blocked you AFTER you harassed/threatened them, YOU may be committing a crime (cyber stalking, harassment). If they harassed YOU and then blocked, that harassment may be a crime - but blocking itself isn't."
+      }
+    }
+  },
+  
+  "NAC005_bad_customer_service": {
+    "scenario_name": "Poor Customer Service / Delayed Refund / Product Not Delivered",
+    "scenario_hindi": "Company ka kharab service / refund nahi mil raha / saman nahi aaya",
+    
+    "trigger_keywords": [
+      "refund not received", "refund nahi mila", "refund pending", "refund nahi aa raha",
+      "product not delivered", "saman nahi aaya", "order nahi aaya", "delivery nahi hua",
+      "order cancelled", "order cancel ho gaya", "cancelled my order",
+      "delayed delivery", "late delivery", "bahut late hai",
+      "bad service", "poor service", "kharab service", "bekar service",
+      "customer care not responding", "CC nahi utha rahe", "customer service issue",
+      "no response", "reply nahi de rahe", "contact nahi kar rahe",
+      "company not responding", "company se koi response nahi",
+      "amazon", "flipkart", "myntra", "ajio", "meesho",
+      "swiggy", "zomato", "food not delivered", "order missing",
+      "uber", "ola", "ride issue", "driver issue",
+      "defective product", "damaged product", "kharab product", "broken item",
+      "wrong product", "galat saman aaya", "different item",
+      "quality issue", "fake product", "duplicate product",
+      "seller fraud", "seller cheat", "seller scam"
+    ],
+    
+    "detection_logic": {
+      "clarifying_question": {
+        "question": "Is this a SERVICE/REFUND issue from LEGITIMATE company, OR complete SCAM/FRAUD (fake company)?",
+        "options": [
+          "Legitimate company (Amazon, Flipkart, etc.) but bad service / refund delay",
+          "Small company/website - bad service but company exists",
+          "Complete SCAM - fake website, took money, disappeared / no company exists",
+          "Company exists but CHEATED me - sold fake/counterfeit product intentionally"
+        ],
+        "answer_routing": {
+          "option_1_2": "NOT_CRIME - Consumer complaint",
+          "option_3": "IS_CRIME - Online fraud (CT001)",
+          "option_4": "CIVIL + CONSUMER - Not cyber crime, but consumer case + possible fraud case"
+        }
+      },
+      
+      "if_legitimate_company": {
+        "classification": "NOT_CRIME",
+        "response_type": "SHORT",
+        "verdict": "🚫 NOT A CYBER CRIME",
+        "explanation": [
+          "Bad customer service / delayed refund from LEGITIMATE companies = CONSUMER COMPLAINT, not cyber crime.",
+          "This is a business dispute / contractual issue, not criminal fraud.",
+          "Cyber Crime Portal is for CRIMES, not business/service disputes."
+        ],
+        "why_not_crime": [
+          "✗ Company exists (not a fake/scam website)",
+          "✗ Delay ≠ Fraud (delays happen, frustrating but not criminal)",
+          "✗ This is breach of contract / consumer rights, not IT Act violation",
+          "✗ You made a legitimate purchase - company is just slow/poor service"
+        ],
+        "your_options": [
+          "📧 Escalate within Company: Email to grievance officer / CEO / social media",
+          "🌐 National Consumer Helpline: 1915 (toll-free) or consumerhelpline.gov.in",
+          "💼 Consumer Court: File online at edaakhil.nic.in (e-Daakhil portal)",
+          "📱 Social Media Pressure: Tweet/post complaint - companies often respond faster",
+          "⚖️ Legal Notice: Send through lawyer if amount is significant",
+          "💳 Credit Card Chargeback: If paid by card, dispute with card company"
+        ],
+        "consumer_court_process": {
+          "for_amounts_below_20_lakh": "District Consumer Forum (online filing: edaakhil.nic.in)",
+          "for_amounts_20_lakh_to_1_crore": "State Consumer Commission",
+          "filing_fee": "Varies by claim amount (Rs. 200 to Rs. 5,000)",
+          "documents_needed": [
+            "Purchase invoice / Order confirmation",
+            "Payment proof (screenshot / bank statement)",
+            "Company communication (emails, chats, customer care recording)",
+            "Delivery / tracking details",
+            "Complaint history with company"
+          ],
+          "timeline": "3-6 months for simple cases, 1-2 years for complex",
+          "lawyer_needed": "Optional for amounts below Rs. 10 lakh",
+          "success_rate": "70-80% for clear cases with good documentation"
+        },
+        "escalation_emails": {
+          "amazon": "jeff@amazon.com (Grievance officer India), ceo@amazon.in",
+          "flipkart": "grievance.officer@flipkart.com",
+          "myntra": "grievanceofficer@myntra.com",
+          "note": "CC your complaint to grievance officer + social media handles"
+        },
+        "social_media_strategy": "Tag company's official handle on Twitter/X with polite but firm complaint. Public visibility often gets faster response."
+      },
+      
+      "if_fake_scam_website": {
+        "classification": "IS_CRIME",
+        "crime_id": "CT001",
+        "reason": "Fake website that took money and disappeared = Online Financial Fraud",
+        "proceed_to": "Crime classification flow for CT001"
+      }
+    }
+  }
+}

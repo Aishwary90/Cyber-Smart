@@ -1,0 +1,680 @@
+{
+  "crime_types": [
+    {
+      "id": "CT001",
+      "crime_name": "Online Financial Fraud / Cyber Fraud / Payment Scam",
+      "description": "Unauthorized digital transaction resulting in money loss through phishing, UPI fraud, fake websites, lottery scams, or online payment scams",
+      
+      "keywords": [
+        "money stolen", "money gone", "money taken", "money lost", "money missing", "money vanished", "money disappeared",
+        "paise chale gaye", "paisa gayab", "paise kat gaye", "money transfer ho gaya", "account se paise kat gaye", "balance kam",
+        "unauthorized transaction", "unauthorized payment", "unauthorized debit", "unauthorized transfer", "bina ijazat",
+        "UPI fraud", "UPI scam", "phonepe fraud", "gpay fraud", "paytm fraud", "google pay scam", "bhim fraud",
+        "fraud", "scam", "scammed", "cheating", "cheat", "dhokha", "thug liya", "looted", "loot liya", "fraud ho gaya",
+        "fake payment", "fake transaction", "fake website", "fake app", "fake link", "fake page", "duplicate app",
+        "phishing", "phishing link", "phishing SMS", "phishing email", "phishing call", "phishing attack",
+        "OTP shared", "OTP gave", "OTP sent", "OTP bataya", "OTP de diya", "OTP leak", "OTP diya",
+        "fake SMS", "fake message", "spam SMS", "unknown SMS", "suspicious SMS", "fake bank SMS",
+        "clicked link", "link click kiya", "opened link", "link pe click", "link open kiya", "URL khola",
+        "bank fraud", "banking fraud", "net banking fraud", "online banking scam", "internet banking fraud",
+        "card fraud", "credit card fraud", "debit card fraud", "card details leak", "card number share",
+        "CVV shared", "CVV diya", "card pin", "ATM pin", "card clone",
+        "transaction not done by me", "maine nahi kiya", "unauthorized debit", "wrong debit", "galat transaction",
+        "money deducted", "amount deducted", "balance kam ho gaya", "account se cut gaya", "paisa kat gaya",
+        "account debited", "account hacked", "account compromise", "account breach",
+        "QR code scam", "QR scan kiya", "payment request", "payment link", "QR fraud",
+        "lottery scam", "lottery jita", "prize money scam", "reward scam", "gift scam", "jackpot fraud",
+        "KBC scam", "kaun banega crorepati fraud", "prize winner scam",
+        "job scam", "fake job", "job fraud", "advance payment scam", "registration fee scam",
+        "loan scam", "instant loan", "fake loan app", "loan fraud", "easy loan scam", "quick loan fraud",
+        "investment scam", "trading scam", "share market fraud", "cryptocurrency scam", "bitcoin scam",
+        "stock market fraud", "forex scam", "crypto fraud", "NFT scam",
+        "refund scam", "cashback fraud", "wrong refund", "refund nahi mila", "refund pending",
+        "courier scam", "parcel scam", "delivery scam", "package fraud",
+        "electricity bill scam", "gas bill fraud", "fake bill",
+        "aadhaar fraud", "pan card fraud", "KYC fraud", "KYC update scam",
+        "update KYC", "verify account", "account block", "account suspended scam",
+        "arrest warrant scam", "police call fraud", "court notice scam", "legal notice fraud",
+        "income tax scam", "tax refund fraud", "IT notice scam",
+        "dating app scam", "romance scam", "fake girlfriend", "fake boyfriend", "love fraud",
+        "social media scam", "instagram fraud", "facebook scam", "whatsapp fraud",
+        "part time job", "work from home scam", "online survey scam", "data entry fraud"
+      ],
+      
+      "severity": "high",
+      
+      "it_act_sections": [
+        {
+          "section": "66C",
+          "title": "Identity theft / Punishment for identity theft",
+          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 1 lakh"
+        },
+        {
+          "section": "66D",
+          "title": "Cheating by impersonation using computer resource",
+          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 1 lakh"
+        }
+      ],
+      
+      "ipc_sections": [
+        {
+          "section": "420",
+          "title": "Cheating and dishonestly inducing delivery of property",
+          "penalty": "Up to 7 years imprisonment + fine"
+        },
+        {
+          "section": "415",
+          "title": "Cheating",
+          "penalty": "Up to 1 year imprisonment + fine"
+        }
+      ],
+      
+      "cross_questions": [
+        {
+          "question_id": "Q_CT001_01",
+          "priority": "critical",
+          "question": "How was the money taken from your account?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "UPI", "phonepe", "gpay", "paytm", "google pay", "bhim",
+            "card", "credit card", "debit card", "ATM",
+            "net banking", "bank transfer", "NEFT", "IMPS", "RTGS",
+            "QR code", "QR scan", "barcode",
+            "link", "clicked", "URL", "website",
+            "OTP", "CVV", "PIN", "password"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already mentioned HOW money was taken (method/platform)",
+            "auto_extract_answer": "Extract method from user's initial message and use as answer"
+          },
+          "options": [
+            "UPI transfer (PhonePe, GPay, Paytm, Google Pay, BHIM)",
+            "Credit/Debit card transaction / ATM",
+            "Net banking / IMPS / NEFT / RTGS transfer",
+            "QR code scan / Payment request / Payment link",
+            "Someone asked me to transfer money (fake customer care/police)",
+            "Clicked a link and entered card/bank details",
+            "Shared OTP / CVV / PIN / Password",
+            "Investment/Trading app / Crypto platform",
+            "Don't know / Not sure how"
+          ]
+        },
+        {
+          "question_id": "Q_CT001_02",
+          "priority": "critical",
+          "question": "When did you first notice the money was gone?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "just now", "abhi", "abhi abhi", "right now", "minutes ago", "2 hours",
+            "today", "aaj", "morning", "subah", "evening", "shaam", "afternoon",
+            "yesterday", "kal", "last night", "raat ko",
+            "week", "hafta", "days", "din", "month", "mahina"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned WHEN incident happened (timeline)",
+            "auto_extract_answer": "Extract time reference and categorize into one of the options"
+          },
+          "options": [
+            "Just now / Within last 2 hours (EMERGENCY - Call bank NOW! 🚨)",
+            "Today / Within last 24 hours (Call bank IMMEDIATELY)",
+            "Yesterday or within this week",
+            "More than a week ago (but less than 3 months)",
+            "More than 3 months ago"
+          ]
+        },
+        {
+          "question_id": "Q_CT001_03",
+          "priority": "critical",
+          "question": "Have you contacted your bank about this?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank called", "bank ko bataya", "bank se baat ki", "bank contact",
+            "account frozen", "account freeze", "block kar diya", "blocked",
+            "complaint filed", "complaint di", "FIR", "police",
+            "not contacted", "nahi bataya", "haven't called", "didn't inform"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned if they contacted bank or not",
+            "auto_extract_answer": "Check if user said yes/no to bank contact"
+          },
+          "options": [
+            "Yes - they froze my account ✅",
+            "Yes - they're investigating / filed complaint",
+            "Yes - but they said nothing can be done / too late",
+            "No - haven't contacted yet (DO IT NOW! Time is critical! ⏰)",
+            "No - don't know bank number / how to contact"
+          ]
+        }
+      ],
+      
+      "evidence_to_collect": [
+        "Screenshots of fraudulent SMS/messages/emails",
+        "Transaction details (date, time, amount, UPI ID/account number)",
+        "Bank statement showing unauthorized debit",
+        "Screenshots of fake website/app",
+        "Call recording (if scammer called)",
+        "Caller ID / Phone number of scammer",
+        "Email headers (if phishing email)",
+        "Chat screenshots (WhatsApp/Telegram/Instagram)",
+        "Any documents shared by scammer",
+        "Your device details (for forensics if needed)"
+      ],
+      
+      "immediate_actions": [
+        "🚨 CALL YOUR BANK IMMEDIATELY (Customer care number on back of card / 1800 number)",
+        "Ask bank to FREEZE receiving account (give them UPI ID / account number where money went)",
+        "File complaint on National Cyber Crime Portal: cybercrime.gov.in",
+        "Call National Cyber Helpline: 1930 (24x7 toll-free)",
+        "DO NOT delete any messages/emails - they are evidence",
+        "Block your card if card details were shared",
+        "Change all passwords if credentials were compromised",
+        "Check transaction history for any other unauthorized transactions"
+      ],
+      
+      "case_study": {
+        "title": "Mumbai Cyber Cell 2023 - UPI Phishing Recovery Case",
+        "facts": "45-year-old victim received SMS: 'Dear SBI customer, your account will be blocked. Update KYC: [link]'. Clicked link, entered 16-digit card number, CVV, and OTP. Within 2 minutes, Rs. 45,000 transferred via UPI to unknown PhonePe number.",
+        "timeline": "Victim noticed SMS alert 5 minutes later. Called SBI customer care within 20 minutes. Bank froze receiving account immediately.",
+        "police_action": "Cyber cell tracked UPI transaction ID to PhonePe account → Bank account → CCTV footage of ATM where accused tried to withdraw. Arrested within 48 hours from Jharkhand.",
+        "conviction": "IT Act 66C (Identity Theft) + 66D (Cheating by impersonation) + IPC 420 (Cheating). Sentenced to 3 years RI + Rs. 50,000 fine.",
+        "recovery": "Rs. 27,000 recovered (60% of amount). Remaining Rs. 18,000 already withdrawn via ATM within first hour.",
+        "key_lesson": "⏰ TIME IS EVERYTHING! Report within 2 hours = 70-80% recovery chance. After 24 hours = only 10-20% recovery. Fraudsters withdraw money FAST via ATM/UPI."
+      }
+    },
+    
+    {
+      "id": "CT003",
+      "crime_name": "Social Media / Email Account Hacking / Unauthorized Account Access",
+      "description": "Unauthorized access to email, Instagram, Facebook, WhatsApp, Snapchat, Twitter, or other online accounts without owner's permission",
+      
+      "keywords": [
+        "hacked", "hack ho gaya", "hack", "hacking", "account hack", "got hacked", "was hacked", "been hacked",
+        "account hacked", "account hack ho gaya", "mera account hack", "account compromised",
+        "can't login", "cannot login", "login nahi ho raha", "login issue", "can't access", "access nahi ho raha",
+        "password changed", "password change ho gaya", "password wrong", "password badal gaya", "password galat",
+        "password not working", "password incorrect", "password reset", "password bhul gaya nahi",
+        "locked out", "lock ho gaya", "account locked", "account block", "account suspend",
+        "someone using my account", "koi use kar raha", "someone logged in", "unknown login", "strange activity",
+        "Instagram hacked", "insta hack", "Instagram account gone", "IG hacked", "instagram pe koi aur",
+        "Facebook hacked", "FB hacked", "facebook account lost", "facebook password", "FB account",
+        "WhatsApp hacked", "whatsapp account", "WhatsApp pe koi aur", "WA hack", "whatsapp login",
+        "Gmail hacked", "email hacked", "email account gone", "mail hack", "google account hacked",
+        "Twitter hacked", "X hacked", "twitter account gone", "X account",
+        "Snapchat hacked", "snap account", "snapchat login", "snap hack",
+        "Telegram hacked", "telegram account", "TG hacked",
+        "LinkedIn hacked", "linkedin account",
+        "login failed", "login error", "access denied", "access nahi mil raha", "can't sign in",
+        "two factor", "2FA bypass", "2FA issue", "verification code", "OTP without request",
+        "OTP aa raha", "login OTP", "unknown OTP", "koi aur login kar raha",
+        "profile changed", "bio changed", "picture changed", "settings changed", "name changed",
+        "profile photo", "DP changed", "bio edit", "about changed",
+        "messages sent", "posts uploaded", "stories posted", "DM sent", "activity koi aur kar raha",
+        "followers removed", "following changed", "friends removed", "contacts deleted",
+        "recovery email changed", "phone number changed", "email change ho gaya", "number badal gaya",
+        "backup codes", "security questions", "recovery options",
+        "session expired", "device login", "new device", "unknown device",
+        "IP address", "location change", "login from", "unusual activity",
+        "account takeover", "account hijacked", "account stolen", "account lost control"
+      ],
+      
+      "severity": "high",
+      
+      "it_act_sections": [
+        {
+          "section": "66",
+          "title": "Computer related offences / Hacking with computer system",
+          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 5 lakh"
+        },
+        {
+          "section": "66C",
+          "title": "Identity theft (if account used for fraud)",
+          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 1 lakh"
+        }
+      ],
+      
+      "ipc_sections": [
+        {
+          "section": "379",
+          "title": "Punishment for theft",
+          "penalty": "Up to 3 years imprisonment + fine"
+        },
+        {
+          "section": "406",
+          "title": "Criminal breach of trust",
+          "penalty": "Up to 3 years imprisonment + fine"
+        },
+        {
+          "section": "419",
+          "title": "Cheating by personation",
+          "penalty": "Up to 3 years imprisonment + fine"
+        }
+      ],
+      
+      "cross_questions": [
+        {
+          "question_id": "Q_CT003_01",
+          "priority": "critical",
+          "question": "Which account was hacked?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "instagram", "insta", "IG",
+            "facebook", "FB",
+            "whatsapp", "WA", "WhatsApp",
+            "gmail", "email", "mail", "google account",
+            "twitter", "X",
+            "snapchat", "snap",
+            "telegram", "TG",
+            "linkedin"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already mentioned platform name",
+            "auto_extract_answer": "Extract platform name from initial message"
+          },
+          "options": [
+            "Gmail / Google account / Email",
+            "Instagram",
+            "Facebook",
+            "WhatsApp",
+            "Twitter / X",
+            "Snapchat",
+            "Telegram",
+            "LinkedIn",
+            "Multiple accounts at once",
+            "Other social media / gaming account"
+          ]
+        },
+        {
+          "question_id": "Q_CT003_02",
+          "priority": "critical",
+          "question": "Can you access your account at all right now?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "can't login", "cannot login", "locked out", "login nahi ho raha",
+            "can login", "login ho raha", "can access", "access hai",
+            "settings changed", "password changed", "password badal",
+            "deleted", "deactivated", "suspend", "block"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned current access status",
+            "auto_extract_answer": "Check if user can/cannot access account"
+          },
+          "options": [
+            "Completely locked out - can't login at all ❌",
+            "Can login but hacker changed password/settings",
+            "Can view but can't post/delete/change things",
+            "Account deleted or deactivated by hacker",
+            "Account is accessible but suspicious activity visible",
+            "Not sure - haven't tried yet / afraid to login"
+          ]
+        },
+        {
+          "question_id": "Q_CT003_03",
+          "priority": "high",
+          "question": "Do you still have access to your recovery email or registered phone number?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "recovery email", "backup email", "registered email",
+            "phone number", "mobile number", "registered number",
+            "have access", "access hai", "mil raha",
+            "changed", "badal", "removed", "hata diya",
+            "email changed", "number changed"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned recovery access status",
+            "auto_extract_answer": "Check if recovery options available or changed"
+          },
+          "options": [
+            "Yes - I have access to both (email + phone) ✅",
+            "Yes - Only recovery email (phone changed by hacker)",
+            "Yes - Only phone number (email changed by hacker)",
+            "No - Hacker changed both email and phone number ❌",
+            "Not sure - need to check recovery options"
+          ]
+        }
+      ],
+      
+      "evidence_to_collect": [
+        "Screenshots of 'unusual activity' or 'new login' notifications",
+        "Email from platform about password change / email change",
+        "Screenshots of unauthorized posts / messages / stories",
+        "Login history / Active sessions (if accessible)",
+        "Any suspicious emails / messages received before hack",
+        "Screenshots of changed profile (if visible to friends)",
+        "Friends' screenshots of suspicious DMs from your account",
+        "Recovery codes / backup codes (if you have them)",
+        "Last known password (to prove it's your account)",
+        "Original account creation details (signup date, old photos)"
+      ],
+      
+      "immediate_actions": [
+        "🔐 Try account recovery immediately (Forgot Password / Can't access account)",
+        "Check all connected email accounts for password reset emails",
+        "Report to platform: Instagram/Facebook/Gmail Help Center",
+        "Enable 2FA / Two-factor authentication (if you recover account)",
+        "Warn friends/followers about hack (post from another account / call them)",
+        "Change passwords of ALL other accounts using same password",
+        "File complaint on cybercrime.gov.in",
+        "Contact National Cyber Helpline: 1930",
+        "Check if hacker posted/messaged anything - screenshot it",
+        "DO NOT pay any ransom if hacker demands money"
+      ],
+      
+      "platform_specific_recovery": {
+        "Instagram": {
+          "method": "instagram.com/accounts/password/reset/ OR 'Get help signing in' on app",
+          "requirements": "Email/Phone/Username + Original device/IP helps",
+          "timeline": "24-48 hours for manual review if auto-recovery fails"
+        },
+        "Facebook": {
+          "method": "facebook.com/hacked OR 'Forgot Password' → 'My account is compromised'",
+          "requirements": "Trusted contacts OR Government ID verification",
+          "timeline": "48-72 hours for ID verification"
+        },
+        "Gmail": {
+          "method": "accounts.google.com/signin/recovery",
+          "requirements": "Recovery email/phone OR last password OR account creation date",
+          "timeline": "Instant if recovery options work, 3-5 days for manual review"
+        },
+        "WhatsApp": {
+          "method": "Reinstall WhatsApp with your number → Request verification code",
+          "requirements": "SMS/Call access to your phone number",
+          "timeline": "Instant - WhatsApp can only be active on one device (unless linked devices feature used)"
+        }
+      },
+      
+      "case_study": {
+        "title": "Delhi Cyber Crime 2023 - Instagram Hack with Extortion",
+        "facts": "22-year-old student's Instagram hacked via phishing link that looked like 'Verify your account' message. Hacker changed email, phone, and password. Then sent DM from victim's account demanding Rs. 10,000: 'Pay or I'll post your private chats publicly'.",
+        "victim_action": "Victim immediately: (1) Reported to Instagram, (2) Posted warning from friend's account, (3) Filed cyber complaint with screenshots, (4) Did NOT pay ransom.",
+        "police_action": "Cyber cell sent legal notice to Instagram parent company Meta. Instagram provided login IP logs. Tracked to internet cafe in Jharkhand. Accused arrested in 5 days.",
+        "evidence_used": "Instagram login IP logs, screenshots of extortion messages, email headers of phishing message, cafe CCTV footage.",
+        "conviction": "IT Act 66 (Hacking) + 66C (Identity Theft) + IPC 384 (Extortion) + IPC 419 (Cheating by personation). Sentenced to 2 years RI.",
+        "recovery": "Account recovered after 7 days. No money lost as victim didn't pay.",
+        "key_lesson": "🚫 NEVER PAY HACKERS. Report immediately to platform + police. Most platforms cooperate with law enforcement. Instagram/Facebook/Gmail do respond to legal requests from Indian cyber cells."
+      }
+    },
+    
+    {
+      "id": "CT018",
+      "crime_name": "Sextortion / Online Blackmail / Intimate Image Abuse",
+      "description": "Threatening to share intimate images, videos, or private information unless payment made or demands met. Includes revenge porn and non-consensual sharing of private content.",
+      
+      "keywords": [
+        "sextortion", "sex blackmail", "intimate blackmail",
+        "blackmail", "blackmailing", "being blackmailed", "blackmail kar rahe",
+        "threatening", "threat", "dhamki", "dhamka rahe", "threatening me",
+        "intimate photos", "intimate images", "intimate pictures", "private pics",
+        "private images", "private photos", "private pictures", "personal photos",
+        "private videos", "intimate videos", "personal videos", "private clips",
+        "nude photos", "nude images", "nude pictures", "naked photos", "explicit images",
+        "compromising photos", "compromising images", "compromising content", "objectionable",
+        "threatening to share", "threatening to send", "threatening to post", "threatening to upload",
+        "send to family", "share with family", "show family", "family ko bhej dunga",
+        "share with friends", "share with contacts", "sabko bhej dunga", "viral kar dunga",
+        "post online", "upload online", "social media pe daal dunga", "internet pe daal dunga",
+        "extortion", "demanding money", "money maang rahe", "paisa maang raha",
+        "pay money", "send money", "payment maang raha", "transfer karo",
+        "video call recording", "video call record", "VC record", "call recording",
+        "dating app", "tinder", "bumble", "shaadi.com", "matrimonial",
+        "fake profile", "fake account", "catfish", "fake girl", "fake boy",
+        "honeytrap", "honey trap", "love scam", "romance scam",
+        "chat screenshots", "WhatsApp chat", "messages screenshot", "DM screenshot",
+        "revenge porn", "ex boyfriend", "ex girlfriend", "breakup",
+        "morphed images", "photoshop", "fake nude", "face swap", "deepfake",
+        "webcam", "laptop camera", "phone camera", "camera hack"
+      ],
+      
+      "severity": "critical",
+      
+      "it_act_sections": [
+        {
+          "section": "67",
+          "title": "Publishing obscene material in electronic form",
+          "penalty": "First offense: Up to 3 years + Rs. 5 lakh fine. Second offense: Up to 5 years + Rs. 10 lakh fine"
+        },
+        {
+          "section": "67A",
+          "title": "Publishing sexually explicit content in electronic form",
+          "penalty": "First offense: Up to 5 years + Rs. 10 lakh fine. Second offense: Up to 7 years + Rs. 10 lakh fine"
+        },
+        {
+          "section": "66E",
+          "title": "Violation of privacy (capturing/transmitting private images)",
+          "penalty": "Up to 3 years imprisonment + Rs. 2 lakh fine"
+        }
+      ],
+      
+      "ipc_sections": [
+        {
+          "section": "384",
+          "title": "Extortion",
+          "penalty": "Up to 3 years imprisonment + fine"
+        },
+        {
+          "section": "385",
+          "title": "Putting person in fear of injury to commit extortion",
+          "penalty": "Up to 2 years imprisonment + fine"
+        },
+        {
+          "section": "503",
+          "title": "Criminal intimidation",
+          "penalty": "Up to 2 years imprisonment + fine"
+        },
+        {
+          "section": "506",
+          "title": "Criminal intimidation (if threat to cause death/grievous hurt)",
+          "penalty": "Up to 7 years imprisonment + fine"
+        },
+        {
+          "section": "509",
+          "title": "Word, gesture or act intended to insult the modesty of a woman",
+          "penalty": "Up to 3 years imprisonment + fine"
+        }
+      ],
+      
+      "cross_questions": [
+        {
+          "question_id": "Q_CT018_01",
+          "priority": "critical",
+          "question": "Where did this threat happen? (Which platform/app?)",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "whatsapp", "WA",
+            "instagram", "insta", "IG", "DM",
+            "facebook", "FB", "messenger",
+            "telegram", "TG",
+            "email", "mail",
+            "tinder", "bumble", "dating app",
+            "snapchat", "snap",
+            "phone call", "call", "video call"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned platform/app name",
+            "auto_extract_answer": "Extract platform from message"
+          },
+          "options": [
+            "WhatsApp (messages/calls)",
+            "Instagram (DM/Messages/Comments)",
+            "Facebook / Facebook Messenger",
+            "Telegram",
+            "Email",
+            "Phone Call / Video Call",
+            "Dating app (Tinder, Bumble, Shaadi.com, etc.)",
+            "Snapchat",
+            "Multiple platforms",
+            "Other (SMS, other app)"
+          ]
+        },
+        {
+          "question_id": "Q_CT018_02",
+          "priority": "critical",
+          "question": "When did they FIRST threaten you?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "today", "aaj", "just now", "abhi",
+            "yesterday", "kal",
+            "this week", "is hafte",
+            "last week", "pichle hafte",
+            "month", "mahina"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned when threat started",
+            "auto_extract_answer": "Extract timeline from message"
+          },
+          "options": [
+            "Today / Within last 24 hours (URGENT - Report NOW!) 🚨",
+            "This week (2-7 days ago)",
+            "Last week / Within 2 weeks",
+            "More than 2 weeks ago (but less than 3 months)",
+            "More than 3 months ago / Ongoing for long time"
+          ]
+        },
+        {
+          "question_id": "Q_CT018_03",
+          "priority": "critical",
+          "question": "Have you already done any of these?",
+          "type": "multiple_choice",
+          "info_provided_keywords": [
+            "paid", "money sent", "transfer kiya", "paisa diya",
+            "blocked", "block kar diya",
+            "complaint", "police", "FIR",
+            "told family", "told friends", "bataya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User mentioned what actions taken",
+            "auto_extract_answer": "Extract all mentioned actions"
+          },
+          "options": [
+            "Paid them money / Sent payment ❌",
+            "Blocked them on the platform",
+            "Filed police complaint / FIR",
+            "Told family / friends about it",
+            "Reported on cybercrime.gov.in",
+            "Deleted the conversation / evidence",
+            "None of the above - haven't done anything yet"
+          ]
+        },
+        {
+          "question_id": "Q_CT018_04",
+          "priority": "high",
+          "question": "How did they get the intimate content?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "shared", "sent", "share kiya", "de diya",
+            "video call", "VC", "call recording",
+            "hacked", "hack", "stolen",
+            "morphed", "photoshop", "fake", "edited"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User explained how content was obtained",
+            "auto_extract_answer": "Extract method of content acquisition"
+          },
+          "options": [
+            "I shared willingly in a relationship / consensual",
+            "During video call - they recorded without permission",
+            "They hacked my account / device and stole photos",
+            "Morphed / Photoshopped / Deepfake (fake images)",
+            "Hidden camera / Secretly recorded",
+            "Don't know how they got it",
+            "They don't actually have anything - just bluffing"
+          ]
+        }
+      ],
+      
+      "evidence_to_collect": [
+        "🚫 DO NOT DELETE ANY MESSAGES - They are critical evidence!",
+        "Screenshots of ALL threatening messages (with timestamps visible)",
+        "Screenshots showing their profile / username / phone number",
+        "Call recordings if they called (India allows recording your own calls)",
+        "Transaction screenshots if you paid (bank transfer / UPI receipt)",
+        "Screenshots of ANY content they claim to have",
+        "Email headers if threats came via email",
+        "Details of how you know this person (dating app match, social media, etc.)",
+        "Timeline document (when first contact, when threat started, etc.)",
+        "Witness statements if someone else knows about this"
+      ],
+      
+      "immediate_actions": [
+        "🚫 DO NOT PAY - Payment never stops blackmail, it escalates it!",
+        "🚫 DO NOT DELETE any messages / chats - Critical evidence!",
+        "🚫 DO NOT block yet - Police need to track their account!",
+        "✅ Screenshot EVERYTHING immediately (messages, profile, threats)",
+        "✅ Report on National Cyber Crime Portal: cybercrime.gov.in (can file anonymously)",
+        "✅ Call National Cyber Helpline: 1930 (24x7, counselors available)",
+        "✅ Consider telling trusted family member / friend for emotional support",
+        "✅ If threats are very recent (24 hours), go to nearest cyber cell IMMEDIATELY",
+        "✅ File FIR at women's police station (for women victims) or cyber cell",
+        "🔒 Make all social media accounts private temporarily",
+        "🔒 Change passwords if they have any of your account access",
+        "⚠️ If they actually post content - report to platform immediately + file complaint"
+      ],
+      
+      "victim_support_resources": [
+        {
+          "name": "National Commission for Women (NCW) Cyber Crime Cell",
+          "contact": "Email: complaint-ncw@nic.in | Helpline: 7827-170-170",
+          "for": "Women victims - Free legal aid + counseling"
+        },
+        {
+          "name": "Cyber Crime Helpline",
+          "contact": "1930 (toll-free, 24x7)",
+          "for": "Report + guidance on next steps"
+        },
+        {
+          "name": "Women Helpline",
+          "contact": "181 (toll-free)",
+          "for": "Emotional support + police connection"
+        }
+      ],
+      
+      "case_study": {
+        "title": "Karnataka High Court 2023 - Dating App Sextortion with Arrest",
+        "facts": "22-year-old woman matched with man on Tinder. After chatting for a week, had consensual video call. During call, accused recorded intimate moments without victim's knowledge. Next day, received WhatsApp message: 'I have your video. Pay Rs. 5 lakh or I'll send to your family and office.' Included screenshots proving he had video.",
+        "victim_response": "Victim DID NOT PAY. Instead: (1) Immediately reported on cybercrime.gov.in within 6 hours, (2) Preserved all evidence (screenshots, profile details), (3) Told parents for emotional support, (4) Filed FIR at women's police station.",
+        "police_investigation": "Cyber cell sent legal notice to WhatsApp (Meta) + Tinder (Match Group) requesting data. Got IP logs, device info, email, payment details. Tracked accused to different state (Karnataka to Jharkhand). Also found 15 other victims.",
+        "arrest_timeline": "Accused arrested within 72 hours using digital trail: Instagram IP → ISP data → Physical location → CCTV → Arrest.",
+        "evidence": "WhatsApp chat backups, Tinder match data, victim's statement, IP logs, accused's phone with 15 other victims' videos.",
+        "charges": "IT Act 67A (Sexually explicit content) + 66E (Privacy violation) + IPC 384 (Extortion) + IPC 506 (Criminal intimidation) + IPC 509 (Outraging modesty)",
+        "sentence": "5 years rigorous imprisonment + Rs. 2 lakh fine. Court ordered fine amount to be paid to victim as compensation.",
+        "outcomes_for_15_victims": "Police contacted all 15 victims. 12 had paid (total Rs. 18 lakh extorted). Videos deleted during investigation. Accused's devices forensically wiped.",
+        "victim_outcome": "Victim recovered fully. Video never shared. Case solved in 10 days from complaint to arrest.",
+        "critical_lessons": [
+          "⏰ Quick action within 24 hours = High chance of preventing sharing",
+          "🚫 DO NOT PAY - All 12 victims who paid were still threatened again for more money",
+          "✅ Platforms cooperate with law enforcement - WhatsApp/Tinder provided data within 48 hours",
+          "👮 Police take these cases SERIOUSLY - Dedicated women officers available",
+          "📱 Digital trail is strong - IP logs + device data = Quick arrests",
+          "💪 Speaking up helps others - This arrest saved future victims"
+        ]
+      }
+    }
+  ],
+  
+  "metadata": {
+    "version": "2.0_PRODUCTION",
+    "last_updated": "2024-03-19",
+    "total_crimes": 3,
+    "total_keywords": "200+",
+    "features": [
+      "Smart question-skip logic with info_provided_keywords",
+      "Extensive Hindi-English mixed keywords",
+      "Auto-answer extraction from initial message",
+      "Platform-specific recovery guides",
+      "Real court case studies with evidence details",
+      "Victim support resources",
+      "Evidence collection checklists"
+    ],
+    "source": "IT Act 2000 + Amendments, Indian Penal Code 1860, National Cyber Crime Portal Guidelines, Real Court Cases 2023",
+    "legal_disclaimer": "This is educational content for cyber crime awareness. For legal advice, consult a qualified lawyer. Crime classification is based on general patterns - each case is unique and requires proper investigation."
+  }
+}

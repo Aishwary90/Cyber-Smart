@@ -1,0 +1,286 @@
+{
+  "version": "1.0",
+
+  "flows": [
+
+    {
+      "crime_id": "CT001",
+      "crime_name": "Online Financial Fraud",
+
+      "questions": [
+
+        {
+          "id": "Q1",
+          "priority": "critical",
+          "question": "Did money get deducted from your account without your permission?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "Q2",
+            "no": "NOT_CRIME_CHECK"
+          }
+        },
+
+        {
+          "id": "Q2",
+          "priority": "critical",
+          "question": "Did you share OTP, PIN, CVV, or click on any suspicious link before this happened?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "Q3"
+          }
+        },
+
+        {
+          "id": "Q3",
+          "priority": "high",
+          "question": "Was the transaction done through UPI, card, or net banking?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "AMBIGUOUS"
+          }
+        }
+
+      ],
+
+      "terminal": {
+        "CONFIRM_CRIME": {
+          "verdict": "cybercrime",
+          "confidence": 0.9
+        },
+        "NOT_CRIME_CHECK": {
+          "verdict": "possible_non_crime",
+          "redirect": "CT999"
+        },
+        "AMBIGUOUS": {
+          "verdict": "needs_more_info"
+        }
+      }
+    },
+
+    {
+      "crime_id": "CT003",
+      "crime_name": "Account Hacking",
+
+      "questions": [
+
+        {
+          "id": "Q1",
+          "priority": "critical",
+          "question": "Are you unable to access your account (login failed or password changed)?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "Q2",
+            "no": "Q3"
+          }
+        },
+
+        {
+          "id": "Q2",
+          "priority": "critical",
+          "question": "Did you receive any OTP or login alert that you did not request?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "Q4"
+          }
+        },
+
+        {
+          "id": "Q3",
+          "priority": "high",
+          "question": "Is someone else using your account or sending messages from it?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "NOT_CRIME_CHECK"
+          }
+        },
+
+        {
+          "id": "Q4",
+          "priority": "medium",
+          "question": "Have your recovery email or phone number been changed without your permission?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "AMBIGUOUS"
+          }
+        }
+
+      ],
+
+      "terminal": {
+        "CONFIRM_CRIME": {
+          "verdict": "cybercrime",
+          "confidence": 0.88
+        },
+        "NOT_CRIME_CHECK": {
+          "verdict": "possible_user_error",
+          "redirect": "CT999"
+        },
+        "AMBIGUOUS": {
+          "verdict": "needs_more_info"
+        }
+      }
+    },
+
+    {
+      "crime_id": "CT018",
+      "crime_name": "Sextortion / Blackmail",
+
+      "questions": [
+
+        {
+          "id": "Q1",
+          "priority": "critical",
+          "question": "Is someone threatening to share your private photos or videos?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "Q2",
+            "no": "NOT_CRIME_CHECK"
+          }
+        },
+
+        {
+          "id": "Q2",
+          "priority": "critical",
+          "question": "Are they demanding money or asking you to do something in return?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "Q3"
+          }
+        },
+
+        {
+          "id": "Q3",
+          "priority": "high",
+          "question": "Did this start after a video call, chat, or interaction on a dating/social media platform?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CRIME",
+            "no": "AMBIGUOUS"
+          }
+        }
+
+      ],
+
+      "terminal": {
+        "CONFIRM_CRIME": {
+          "verdict": "cybercrime",
+          "confidence": 0.95
+        },
+        "NOT_CRIME_CHECK": {
+          "verdict": "not_cybercrime"
+        },
+        "AMBIGUOUS": {
+          "verdict": "needs_more_info"
+        }
+      }
+    },
+
+    {
+      "crime_id": "CT010",
+      "crime_name": "Cyber Defamation",
+
+      "questions": [
+
+        {
+          "id": "Q1",
+          "priority": "critical",
+          "question": "Has someone posted false or harmful information about you online?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "Q2",
+            "no": "NOT_CRIME_CHECK"
+          }
+        },
+
+        {
+          "id": "Q2",
+          "priority": "high",
+          "question": "Is the content clearly false and damaging your reputation?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONFIRM_CASE",
+            "no": "CIVIL_CASE"
+          }
+        }
+
+      ],
+
+      "terminal": {
+        "CONFIRM_CASE": {
+          "verdict": "criminal_defamation"
+        },
+        "CIVIL_CASE": {
+          "verdict": "civil_dispute"
+        },
+        "NOT_CRIME_CHECK": {
+          "verdict": "not_cybercrime"
+        }
+      }
+    },
+
+    {
+      "crime_id": "CT999",
+      "crime_name": "Not a Cyber Crime",
+
+      "questions": [
+
+        {
+          "id": "Q1",
+          "priority": "critical",
+          "question": "Is your issue related to a refund, service delay, or customer support problem?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "CONSUMER_CASE",
+            "no": "Q2"
+          }
+        },
+
+        {
+          "id": "Q2",
+          "priority": "medium",
+          "question": "Is this a misunderstanding or mistake without any fraud or hacking?",
+          "type": "yes_no",
+
+          "decision": {
+            "yes": "NOT_CRIME",
+            "no": "AMBIGUOUS"
+          }
+        }
+
+      ],
+
+      "terminal": {
+        "CONSUMER_CASE": {
+          "verdict": "consumer_issue",
+          "redirect": "consumer_forum"
+        },
+        "NOT_CRIME": {
+          "verdict": "not_cybercrime"
+        },
+        "AMBIGUOUS": {
+          "verdict": "needs_manual_review"
+        }
+      }
+    }
+
+  ]
+}

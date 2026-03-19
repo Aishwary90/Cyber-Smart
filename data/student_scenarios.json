@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "scenarios": [
+    {
+      "id": "S001",
+      "title": "Phishing with financial loss",
+      "learning_goal": "Understand why impersonation plus deception maps to cyber law and cheating provisions."
+    },
+    {
+      "id": "S002",
+      "title": "Marketplace delivery dispute",
+      "learning_goal": "Learn how the system distinguishes a consumer grievance from a cyber offense."
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "version": "3.0_INTELLIGENT_ENGINE",
+  "description": "Hybrid Intent + Conflict Resolution + Rule Engine for CyberSmart AI",
+
+  "intents": {
+    "FRAUD": {
+      "keywords": [
+        "otp", "scam", "fraud", "cheat", "dhokha",
+        "paise kat gaye", "money stolen", "unauthorized",
+        "phishing", "fake link", "upi fraud"
+      ],
+      "threshold": 2
+    },
+
+    "USER_ERROR": {
+      "keywords": [
+        "wrong upi", "गलती", "galti", "mistake",
+        "accidentally", "wrong account", "wrong number"
+      ],
+      "threshold": 2
+    },
+
+    "GAMBLING": {
+      "keywords": [
+        "dream11", "rummy", "bet", "casino",
+        "poker", "teen patti", "lost game",
+        "withdraw nahi ho raha"
+      ],
+      "threshold": 2
+    },
+
+    "PLATFORM_ACTION": {
+      "keywords": [
+        "account suspended", "account banned",
+        "account disabled", "freeze",
+        "community guidelines", "policy violation"
+      ],
+      "threshold": 1
+    },
+
+    "SERVICE_ISSUE": {
+      "keywords": [
+        "refund", "delivery", "order",
+        "product not delivered", "bad service",
+        "customer care", "not responding"
+      ],
+      "threshold": 2
+    }
+  },
+
+  "conflict_rules": [
+    {
+      "intents": ["GAMBLING", "FRAUD"],
+      "question": "Did you play voluntarily OR were you scammed?",
+      "options": {
+        "voluntary": "NOT_CRIME",
+        "scammed": "FRAUD"
+      }
+    },
+    {
+      "intents": ["USER_ERROR", "FRAUD"],
+      "question": "Did you type wrong details OR someone tricked you?",
+      "options": {
+        "mistake": "NOT_CRIME",
+        "tricked": "FRAUD"
+      }
+    },
+    {
+      "intents": ["PLATFORM_ACTION", "FRAUD"],
+      "question": "Was it suspended by platform OR hacked by someone?",
+      "options": {
+        "platform": "NOT_CRIME",
+        "hacker": "HACKING"
+      }
+    },
+    {
+      "intents": ["SERVICE_ISSUE", "FRAUD"],
+      "question": "Was it a legitimate company OR fake website?",
+      "options": {
+        "legit": "NOT_CRIME",
+        "fake": "FRAUD"
+      }
+    }
+  ],
+
+  "decision_logic": {
+    "conflict_threshold": 1,
+    "direct_classification_threshold": 3,
+
+    "rules": [
+      "If top_intent_score >= direct_classification_threshold → classify directly",
+      "If difference between top 2 intents <= conflict_threshold → ask conflict question",
+      "If no strong intent → fallback to ML classifier",
+      "After conflict resolution → proceed to context questions"
+    ]
+  },
+
+  "context_questions": {
+    "FRAUD": [
+      {
+        "id": "Q1",
+        "question": "How did money go?",
+        "options": [
+          "UPI",
+          "Card",
+          "Net Banking",
+          "OTP Shared",
+          "Clicked Link"
+        ]
+      },
+      {
+        "id": "Q2",
+        "question": "When did it happen?",
+        "options": [
+          "Just now",
+          "Today",
+          "This week",
+          "Older"
+        ]
+      },
+      {
+        "id": "Q3",
+        "question": "Did you contact bank?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      }
+    ],
+
+    "HACKING": [
+      {
+        "id": "Q1",
+        "question": "Which account?",
+        "options": [
+          "Instagram",
+          "Facebook",
+          "Gmail",
+          "WhatsApp"
+        ]
+      },
+      {
+        "id": "Q2",
+        "question": "Can you login?",
+        "options": [
+          "Yes",
+          "No"
+        ]
+      }
+    ]
+  },
+
+  "verdicts": {
+    "FRAUD": {
+      "type": "CYBER_CRIME",
+      "severity": "HIGH",
+      "sections": {
+        "IT_ACT": ["66C", "66D"],
+        "IPC": ["420"]
+      },
+      "actions": [
+        "Call bank immediately",
+        "Dial 1930",
+        "File complaint on cybercrime.gov.in",
+        "Preserve evidence"
+      ]
+    },
+
+    "HACKING": {
+      "type": "CYBER_CRIME",
+      "severity": "HIGH",
+      "sections": {
+        "IT_ACT": ["66"],
+        "IPC": ["379", "419"]
+      },
+      "actions": [
+        "Recover account immediately",
+        "Enable 2FA",
+        "Report to platform",
+        "File cyber complaint"
+      ]
+    },
+
+    "NOT_CRIME": {
+      "type": "NON_CRIME",
+      "severity": "LOW",
+      "actions": [
+        "This is not a cyber crime",
+        "Consider consumer court or civil action",
+        "Follow correct platform support"
+      ]
+    }
+  },
+
+  "session_schema": {
+    "session_id": "string",
+    "intent": "string",
+    "confidence": "number",
+    "context": {
+      "method": "string",
+      "timeline": "string",
+      "bank_contacted": "boolean"
+    },
+    "answers": []
+  },
+
+  "fallback": {
+    "message": "Your issue is unclear. Please describe what happened in more detail.",
+    "trigger_condition": "No intent score above threshold"
+  }
+}

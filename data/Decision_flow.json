@@ -1,0 +1,77 @@
+{
+  "version": "FINAL_EXECUTION_LAYER",
+
+  "steps": [
+    {
+      "step": "INITIAL_ANALYSIS",
+      "action": "MATCH_KEYWORDS",
+      "outputs": ["crime_score", "not_crime_score"]
+    },
+
+    {
+      "step": "CLASSIFICATION_DECISION",
+      "conditions": [
+        {
+          "if": "crime_score >= 0.7",
+          "then": "GO_TO_CRIME_FLOW"
+        },
+        {
+          "if": "not_crime_score >= 0.7",
+          "then": "GO_TO_NOT_CRIME_FLOW"
+        },
+        {
+          "if": "abs(crime_score - not_crime_score) < 0.2",
+          "then": "ASK_CLARIFY_QUESTION"
+        },
+        {
+          "if": "both_scores_low",
+          "then": "FALLBACK"
+        }
+      ]
+    },
+
+    {
+      "step": "CRIME_FLOW",
+      "action": "LOAD_CRIME_OBJECT",
+      "next": "ASK_CROSS_QUESTIONS"
+    },
+
+    {
+      "step": "NOT_CRIME_FLOW",
+      "action": "LOAD_NOT_CRIME_OBJECT",
+      "next": "RUN_DETECTION_LOGIC"
+    },
+
+    {
+      "step": "QUESTION_ENGINE",
+      "rules": [
+        "If skip_logic satisfied → auto answer",
+        "Else ask question",
+        "Store answer",
+        "Recalculate confidence"
+      ]
+    },
+
+    {
+      "step": "VERDICT_CONTROL",
+      "conditions": [
+        {
+          "if": "confidence >= 0.75",
+          "then": "RETURN_FINAL_VERDICT"
+        },
+        {
+          "if": "confidence < 0.75",
+          "then": "ASK_NEXT_QUESTION"
+        }
+      ]
+    },
+
+    {
+      "step": "FALLBACK",
+      "response": {
+        "message": "Mujhe aapka case clearly samajh nahi aaya. Thoda aur detail batayein.",
+        "confidence": 0.01
+      }
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-20",
+
+  "crimes": [
+
+    {
+      "id": "CT001",
+      "crime_name": "Online Financial Fraud / Payment Scam",
+
+      "classification": {
+        "type": "cybercrime",
+        "severity": "high",
+        "risk_score": 9
+      },
+
+      "legal_mapping": {
+        "it_act": [
+          {
+            "section": "66C",
+            "title": "Identity Theft",
+            "punishment": "Up to 3 years imprisonment + ₹1 lakh fine"
+          },
+          {
+            "section": "66D",
+            "title": "Cheating by Impersonation",
+            "punishment": "Up to 3 years imprisonment + ₹1 lakh fine"
+          }
+        ],
+        "ipc": [
+          {
+            "section": "420",
+            "title": "Cheating",
+            "punishment": "Up to 7 years imprisonment + fine"
+          },
+          {
+            "section": "468",
+            "title": "Forgery for cheating",
+            "punishment": "Up to 7 years imprisonment + fine"
+          }
+        ]
+      },
+
+      "legal_summary": "Unauthorized digital transactions via phishing, OTP fraud, fake apps or impersonation constitute cheating and identity theft under Indian law.",
+
+      "immediate_actions": [
+        "Call bank immediately and freeze account",
+        "Call 1930 cyber helpline",
+        "File complaint at cybercrime.gov.in",
+        "Block card / UPI immediately",
+        "Change all passwords"
+      ],
+
+      "evidence_required": [
+        "Transaction ID",
+        "Bank statement",
+        "SMS/email screenshots",
+        "UPI ID / account details",
+        "Call logs / recording"
+      ],
+
+      "reporting": {
+        "primary": "cybercrime.gov.in",
+        "helpline": "1930",
+        "secondary": "nearest cyber police station"
+      },
+
+      "timeline_guidance": {
+        "0-2_hours": "High recovery chance (60–80%)",
+        "24_hours": "Medium recovery chance",
+        "after_24_hours": "Low recovery probability"
+      }
+    },
+
+    {
+      "id": "CT003",
+      "crime_name": "Account Hacking / Unauthorized Access",
+
+      "classification": {
+        "type": "cybercrime",
+        "severity": "high",
+        "risk_score": 8
+      },
+
+      "legal_mapping": {
+        "it_act": [
+          {
+            "section": "66",
+            "title": "Computer Related Offences",
+            "punishment": "Up to 3 years imprisonment + ₹5 lakh fine"
+          },
+          {
+            "section": "66C",
+            "title": "Identity Theft",
+            "punishment": "Up to 3 years imprisonment"
+          }
+        ],
+        "ipc": [
+          {
+            "section": "379",
+            "title": "Theft",
+            "punishment": "Up to 3 years imprisonment"
+          },
+          {
+            "section": "419",
+            "title": "Impersonation",
+            "punishment": "Up to 3 years imprisonment"
+          }
+        ]
+      },
+
+      "legal_summary": "Unauthorized access to digital accounts, password misuse, or impersonation is punishable under IT Act and IPC.",
+
+      "immediate_actions": [
+        "Recover account immediately",
+        "Reset password & enable 2FA",
+        "Logout from all devices",
+        "Inform contacts about hack",
+        "Report to platform (Instagram/Gmail)"
+      ],
+
+      "evidence_required": [
+        "Login alert emails",
+        "IP login logs",
+        "Screenshots of activity",
+        "Recovery emails"
+      ],
+
+      "reporting": {
+        "primary": "cybercrime.gov.in",
+        "helpline": "1930"
+      }
+    },
+
+    {
+      "id": "CT018",
+      "crime_name": "Sextortion / Online Blackmail",
+
+      "classification": {
+        "type": "cybercrime",
+        "severity": "critical",
+        "risk_score": 10
+      },
+
+      "legal_mapping": {
+        "it_act": [
+          {
+            "section": "67",
+            "title": "Publishing obscene content",
+            "punishment": "Up to 3 years + ₹5 lakh fine"
+          },
+          {
+            "section": "67A",
+            "title": "Sexually explicit content",
+            "punishment": "Up to 5 years + ₹10 lakh fine"
+          }
+        ],
+        "ipc": [
+          {
+            "section": "384",
+            "title": "Extortion",
+            "punishment": "Up to 3 years imprisonment"
+          },
+          {
+            "section": "506",
+            "title": "Criminal intimidation",
+            "punishment": "Up to 2 years imprisonment"
+          }
+        ]
+      },
+
+      "legal_summary": "Threatening to share intimate content for money is extortion and punishable under IT Act and IPC.",
+
+      "immediate_actions": [
+        "DO NOT PAY",
+        "Block offender",
+        "Save all evidence",
+        "Report immediately",
+        "Inform trusted person"
+      ],
+
+      "evidence_required": [
+        "Chat screenshots",
+        "Payment demand proof",
+        "Profile links",
+        "Call recordings"
+      ]
+    },
+
+    {
+      "id": "CT010",
+      "crime_name": "Cyber Defamation",
+
+      "classification": {
+        "type": "civil_or_criminal",
+        "severity": "medium",
+        "risk_score": 6
+      },
+
+      "legal_mapping": {
+        "it_act": [],
+        "ipc": [
+          {
+            "section": "499",
+            "title": "Defamation",
+            "punishment": "Up to 2 years imprisonment"
+          }
+        ]
+      },
+
+      "legal_summary": "Posting false statements harming reputation can be criminal defamation or civil case.",
+
+      "immediate_actions": [
+        "Collect proof",
+        "Send legal notice",
+        "Report platform",
+        "Consult lawyer"
+      ],
+
+      "note": "May be civil dispute depending on context"
+    },
+
+    {
+      "id": "CT999",
+      "crime_name": "Not a Cyber Crime / Misunderstanding",
+
+      "classification": {
+        "type": "not_a_crime",
+        "severity": "none",
+        "risk_score": 0
+      },
+
+      "legal_mapping": {},
+
+      "legal_summary": "The situation does not fall under cybercrime laws.",
+
+      "guidance": [
+        "Contact customer support",
+        "Check platform policy",
+        "Use consumer forum if needed"
+      ]
+    }
+  ]
+}
