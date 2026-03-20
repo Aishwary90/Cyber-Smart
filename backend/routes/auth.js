@@ -17,8 +17,10 @@ function normalizeDemoEmail(email) {
 function buildDemoUser(email, fullName = "") {
   const normalizedEmail = normalizeDemoEmail(email);
   const label = normalizedEmail.split("@")[0] || "demo-user";
-  const safeLabel = label.replace(/[^a-z0-9-_]/gi, "") || "demo-user";
-  const displayName = (fullName || "").trim() || label || "Demo User";
+  const sanitizedLabel = label.replace(/[^a-z0-9-_]/gi, "");
+  const safeLabel = sanitizedLabel.length ? sanitizedLabel : "demo-user";
+  const trimmedName = (fullName || "").trim();
+  const displayName = trimmedName || label || "Demo User";
 
   return {
     id: `demo-${safeLabel.toLowerCase()}`,
