@@ -9,6 +9,8 @@ const {
 const router = express.Router();
 
 const isDemoMode = () => !isSupabaseConfigured || !supabase;
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const DEMO_USER_HASH_LENGTH = 8;
 
 function sanitizeIdentifier(value, fallback) {
   const sanitized = (value || "").replace(/[^a-zA-Z0-9-_]/g, "");
@@ -19,7 +21,7 @@ function sanitizeIdentifier(value, fallback) {
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
   const cleaned = trimmed.replace(/[\r\n]/g, "");
-  const isValid = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(cleaned);
+  const isValid = EMAIL_REGEX.test(cleaned);
   return isValid ? cleaned : "demo@cybersmart.ai";
 }
 
@@ -36,7 +38,7 @@ function buildDemoUser(email, fullName = "") {
     .createHash("sha256")
     .update(normalizedEmail)
     .digest("hex")
-    .slice(0, 8);
+    .slice(0, DEMO_USER_HASH_LENGTH);
 
   return {
     id: `demo-user:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}-${hash}`,
