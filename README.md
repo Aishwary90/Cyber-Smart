@@ -155,7 +155,7 @@ curl -X POST http://localhost:5000/api/classify \
 
 ### 2. Auth Screen (UI Only)
 - Login/Signup interface
-- Currently for demo (no real auth backend)
+- Falls back to a demo profile if Supabase is not configured (session is not persisted)
 
 ### 3. Main Workspace
 - **Case Panel**: Demo cases + tools (Law Explorer, URL Detector)
@@ -193,12 +193,13 @@ curl -X POST http://localhost:5000/api/classify \
 ## ⚙️ Configuration
 
 ### Environment Variables (Optional)
-Create `.env` file in `backend-Working/Backend/`:
+Create `.env` file in `backend/`:
 ```bash
 PORT=5000
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_key
 ```
+For deployments (e.g., Vercel), add the same environment variables in the hosting provider dashboard.
 
 ### API Configuration
 Frontend automatically detects backend at `http://localhost:5000`.
@@ -238,7 +239,7 @@ VITE_API_URL=http://your-backend-host:5000
 ### Frontend API Errors
 1. Ensure backend is running on port 5000
 2. Check browser console for CORS errors
-3. System falls back to demo mode on API failure
+3. System falls back to demo mode on API failure (auth uses a demo profile if Supabase is missing)
 
 ### Phishing Analyzer Issues
 1. Network timeouts are normal for non-existent domains

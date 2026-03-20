@@ -7,6 +7,37 @@ const {
 
 const router = express.Router();
 
+const isDemoMode = !isSupabaseConfigured || !supabase;
+
+function normalizeDemoEmail(email) {
+  const trimmed = (email || "").trim();
+  return trimmed || "demo@cybersmart.ai";
+}
+
+function buildDemoUser(email, fullName = "") {
+  const normalizedEmail = normalizeDemoEmail(email);
+  const label = normalizedEmail.split("@")[0] || "demo-user";
+  const safeLabel = label.replace(/[^a-z0-9-_]/gi, "") || "demo-user";
+  const displayName = (fullName || "").trim() || label || "Demo User";
+
+  return {
+    id: `demo-${safeLabel.toLowerCase()}`,
+    email: normalizedEmail,
+    fullName: displayName,
+  };
+}
+
+function sendDemoAuthResponse(res, { email, fullName = "", needsEmailVerification = false } = {}) {
+  return res.json({
+    user: buildDemoUser(email, fullName),
+    session: null,
+    needsEmailVerification,
+    demo: true,
+    message:
+      "Supabase is not configured. Signed in with a demo profile (session is not persisted).",
+  });
+}
+
 async function ensureProfile(session, user, fallbackFullName = "") {
   if (!session?.access_token || !user?.id) {
     return;
@@ -34,22 +65,16 @@ async function ensureProfile(session, user, fallbackFullName = "") {
   }
 }
 
-router.use((_req, res, next) => {
-  if (!isSupabaseConfigured || !supabase) {
-    return res
-      .status(500)
-      .json({ error: "Supabase is not configured. Check backend/.env." });
-  }
-
-  return next();
-});
-
 router.post("/signup", async (req, res) => {
   try {
     const { email, password, fullName } = req.body || {};
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required." });
+    }
+
+    if (isDemoMode) {
+      return sendDemoAuthResponse(res, { email, fullName });
     }
 
     const { data, error } = await supabase.auth.signUp({
@@ -88,6 +113,10 @@ router.post("/signin", async (req, res) => {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
+    if (isDemoMode) {
+      return sendDemoAuthResponse(res, { email });
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -112,11 +141,21 @@ router.post("/signin", async (req, res) => {
 });
 
 router.post("/signout", async (_req, res) => {
+  if (isDemoMode) {
+    return res.json({ success: true, demo: true });
+  }
+
   return res.json({ success: true });
 });
 
 router.post("/refresh", async (req, res) => {
   try {
+    if (isDemoMode) {
+      return res
+        .status(400)
+        .json({ error: "Session refresh is unavailable in demo mode." });
+    }
+
     const { refreshToken } = req.body || {};
     if (!refreshToken) {
       return res.status(400).json({ error: "refreshToken is required." });
@@ -147,6 +186,10 @@ router.post("/refresh", async (req, res) => {
 
 router.get("/me", async (req, res) => {
   try {
+    if (isDemoMode) {
+      return res.status(401).json({ error: "Not authenticated." });
+    }
+
     const token = (req.headers.authorization || "").replace(/^Bearer\s+/i, "").trim();
     if (!token) {
       return res.status(401).json({ error: "Not authenticated." });

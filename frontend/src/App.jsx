@@ -741,6 +741,11 @@ export default function App() {
       return;
     }
 
+    if (!getStoredSession()?.access_token) {
+      setApiError("Saved case history is unavailable in demo mode.");
+      return;
+    }
+
     try {
       await deleteCase(caseId);
 
@@ -831,7 +836,7 @@ export default function App() {
 
   useEffect(() => {
     async function loadUserCases() {
-      if (!currentUser) {
+      if (!currentUser || !getStoredSession()?.access_token) {
         setSavedCases([]);
         return;
       }
@@ -1157,7 +1162,7 @@ export default function App() {
       modelMeta: scenarioForHistory.modelMeta,
     });
 
-    if (currentUser) {
+    if (currentUser && getStoredSession()?.access_token) {
       try {
         setIsSyncingCase(true);
         const response = await createCase(casePayload);
