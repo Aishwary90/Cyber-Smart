@@ -5,6 +5,17 @@ This project now supports a hybrid classifier:
 - `rules` (existing JSON keyword logic)
 - `ml+rules` (trained Naive Bayes model + rule fallback)
 
+## Production quality gate (enabled)
+
+Model will be used only when test quality is above thresholds. Otherwise system auto-falls back to rules.
+
+Environment variables:
+
+```env
+MODEL_MIN_ACCURACY=0.75
+MODEL_MIN_MACRO_F1=0.70
+```
+
 ## What has been implemented
 
 1. **Feedback API**
@@ -41,6 +52,9 @@ Add in `backend/.env`:
 SUPABASE_URL=...
 SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...   # needed for ml:export without user token
+FRONTEND_ORIGIN=https://yourdomain.com,https://www.yourdomain.com
+MODEL_MIN_ACCURACY=0.75
+MODEL_MIN_MACRO_F1=0.70
 ```
 
 ### 3) Provide labeled training data
@@ -85,3 +99,24 @@ npm run ml:train
 - Do not train on unlabeled production data.
 - Keep PII masked before training (`phone/email/account/OTP`).
 - Use corrected labels (`corrected_class`) wherever available.
+
+## Vercel deployment (single project)
+
+This repo now includes `vercel.json` and `api/index.js` for full-stack deployment on one Vercel project:
+
+- Static frontend served from `frontend/dist`
+- Backend API served via serverless function at `/api/*`
+
+### Steps
+
+1. Import GitHub repo in Vercel.
+2. Keep root as repository root (do not set frontend subfolder root).
+3. Add environment variables in Vercel Project Settings:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `FRONTEND_ORIGIN` (your final domain)
+   - `MODEL_MIN_ACCURACY`
+   - `MODEL_MIN_MACRO_F1`
+4. Deploy.
+5. Add custom domain in Vercel -> Project -> Settings -> Domains.

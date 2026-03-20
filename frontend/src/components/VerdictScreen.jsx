@@ -61,6 +61,48 @@ export function VerdictScreen({ scenario, verdictReady, confidence, confidenceSu
         {verdict.explanation ? <p style={{ marginTop: '8px' }}>{verdict.explanation}</p> : null}
       </div>
 
+      {verdict.decisionReasoning ? (
+        <div className="verdict-section">
+          <h4>Why This Result</h4>
+          {verdict.decisionReasoning.summary ? (
+            <p>{verdict.decisionReasoning.summary}</p>
+          ) : null}
+
+          {verdict.decisionReasoning.matchedSignals?.length ? (
+            <>
+              <h4>Matched Signals</h4>
+              <ul className="verdict-step-list">
+                {verdict.decisionReasoning.matchedSignals.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
+          {verdict.decisionReasoning.missingSignals?.length ? (
+            <>
+              <h4>Why Not Something Else</h4>
+              <ul className="verdict-step-list">
+                {verdict.decisionReasoning.missingSignals.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
+          {verdict.decisionReasoning.whatWouldChange?.length ? (
+            <>
+              <h4>What Would Change This</h4>
+              <ul className="verdict-step-list">
+                {verdict.decisionReasoning.whatWouldChange.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="verdict-section">
         <h4>Legal Info</h4>
         <div className="legal-tag-group">

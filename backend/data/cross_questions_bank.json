@@ -1,0 +1,4238 @@
+{
+  "meta": {
+    "title": "Cyber Crime Cross Questions Bank",
+    "description": "Categorised cross-questions for each cyber crime type, used for complaint intake and victim profiling",
+    "total_categories": 24,
+    "version": "2.0",
+    "changes_v2": [
+      "Fixed SIM Swap crime_id from CT019 to CT018",
+      "Cleaned skip-logic info_provided_keywords of single-word/generic tokens that caused false-positive skip triggers"
+    ]
+  },
+  "categories": [
+    {
+      "crime_id": "CT001",
+      "crime_name": "Online Financial Fraud / Payment Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_OFF_01",
+          "priority": "critical",
+          "question": "Paise kaise gaye? Aapne khud kisi ko transfer kiye ya bina aapki jaankari ke gaye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "khud transfer kiya",
+            "force kiya",
+            "daraya",
+            "otp diya",
+            "link pe click kiya",
+            "bina jaankari ke gaye",
+            "unauthorized",
+            "account se seedha gaye",
+            "kisi ne nikal liye"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Transfer method already described by user — determines fraud type and legal sections",
+            "auto_extract_answer": "Method already mentioned by user"
+          },
+          "options": [
+            "Maine khud transfer kiye — kisi ne bol ke karwaya (call/message se)",
+            "OTP share kiya aur phir paise gaye",
+            "Bina meri jaankari ke account se seedha gaye",
+            "Link pe click kiya ya koi app install kiya aur phir gaye"
+          ]
+        },
+        {
+          "question_id": "CQ_OFF_02",
+          "priority": "critical",
+          "question": "Fraud karne wale ne apne aap ko kya bataaya? Matlab kisne call/message kiya aapko?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank wala bola",
+            "rbi officer",
+            "police bola",
+            "customer care",
+            "telecom wala",
+            "insurance company",
+            "lottery",
+            "job offer",
+            "investment",
+            "koi nahi bola",
+            "link aaya bas"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraudster identity already mentioned — helps classify fraud subtype",
+            "auto_extract_answer": "Fraudster identity mentioned by user"
+          },
+          "options": [
+            "Bank / RBI / Government officer bola",
+            "Customer care / helpline number se baat ki",
+            "Job / work from home / task offer aaya",
+            "Lottery / prize / cashback / reward bola",
+            "Koi call nahi — sirf link ya message aaya"
+          ]
+        },
+        {
+          "question_id": "CQ_OFF_03",
+          "priority": "critical",
+          "question": "Kitne paise gaye aur kaunse platform se — bank account, UPI, wallet, ya card se?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "upi se",
+            "bank transfer",
+            "net banking",
+            "debit card",
+            "credit card",
+            "google pay",
+            "phonepe",
+            "wallet se",
+            "amount",
+            "kitne gaye"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Amount and platform already mentioned — critical for bank complaint and recovery",
+            "auto_extract_answer": "Platform and amount mentioned by user"
+          },
+          "options": [
+            "UPI se gaye (Google Pay / PhonePe / Paytm / BHIM)",
+            "Net Banking / NEFT / IMPS se gaye",
+            "Debit ya Credit Card se gaye",
+            "Digital Wallet se gaye",
+            "Pata nahi — bas bank statement mein deduction dikhaa"
+          ]
+        },
+        {
+          "question_id": "CQ_OFF_04",
+          "priority": "high",
+          "question": "Yeh kab hua? Jitna jaldi report karein utna recovery ka chance zyada hota hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "abhi hua",
+            "aaj hua",
+            "kal hua",
+            "just now",
+            "yesterday",
+            "this week",
+            "ek hafte pehle",
+            "1 ghante mein",
+            "kuch der pehle"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Timeline already mentioned by user — determines recovery urgency",
+            "auto_extract_answer": "Timeline mentioned by user"
+          },
+          "options": [
+            "Abhi abhi — 1-2 ghante ke andar",
+            "Aaj din mein hua",
+            "Kal ya 2-3 din pehle",
+            "Ek hafte se zyada pehle"
+          ]
+        },
+        {
+          "question_id": "CQ_OFF_05",
+          "priority": "high",
+          "question": "Kya aapne apne bank ko already contact kiya ya transaction dispute raise kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank ko call kiya",
+            "bank complaint",
+            "dispute raise kiya",
+            "chargeback",
+            "bank gaya",
+            "customer care se baat ki",
+            "branch gaya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Bank contact status already mentioned — determines next action steps",
+            "auto_extract_answer": "Bank contact status mentioned by user"
+          },
+          "options": [
+            "Haan, bank ko call/visit kar liya hai",
+            "Nahi, abhi tak nahi kiya",
+            "Bank se baat ki par koi help nahi mili",
+            "Mujhe pata nahi kaise complaint karein"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT002",
+      "crime_name": "Phishing Attack (Fake Bank / KYC / OTP Scam)",
+      "cross_questions": [
+        {
+          "question_id": "CQ_PH_01",
+          "priority": "critical",
+          "question": "Aapko kaise contact kiya gaya — SMS aaya, email aaya, WhatsApp message aaya, ya kisi ne call kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "sms aaya",
+            "message aaya",
+            "email aaya",
+            "whatsapp aaya",
+            "call aaya",
+            "instagram message",
+            "facebook message",
+            "telegram message",
+            "link aaya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Contact method already mentioned — determines phishing vector (smishing/vishing/email phishing)",
+            "auto_extract_answer": "Contact method mentioned by user"
+          },
+          "options": [
+            "SMS / Text message aaya tha",
+            "Email aaya tha",
+            "WhatsApp / Telegram message aaya tha",
+            "Call aaya tha (Voice phishing / Vishing)",
+            "Social media pe message aaya (Instagram/Facebook)"
+          ]
+        },
+        {
+          "question_id": "CQ_PH_02",
+          "priority": "critical",
+          "question": "Message / link mein kya bataya gaya tha? Kiska naam use kiya gaya tha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank ka naam",
+            "income tax",
+            "pm yojana",
+            "government",
+            "amazon",
+            "flipkart",
+            "reward",
+            "lottery",
+            "account band hoga"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Impersonated entity already mentioned — confirms phishing and helps identify fraud network",
+            "auto_extract_answer": "Impersonated entity mentioned by user"
+          },
+          "options": [
+            "Bank ka naam tha (SBI / HDFC / ICICI / Axis etc.)",
+            "RBI / Government / IT Department ka naam tha",
+            "Payment app ka naam tha (Paytm / Google Pay / PhonePe)",
+            "E-commerce ka naam tha (Amazon / Flipkart) — prize ya cashback",
+            "Telecom company ka naam tha (Jio / Airtel)"
+          ]
+        },
+        {
+          "question_id": "CQ_PH_03",
+          "priority": "critical",
+          "question": "Aapne kya information share ki — OTP, password, card number, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "otp diya",
+            "otp share kiya",
+            "password diya",
+            "card number diya",
+            "cvv diya",
+            "pin diya",
+            "net banking id diya",
+            "aadhaar diya",
+            "pan diya",
+            "kuch nahi diya",
+            "sirf click kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Shared information already mentioned — determines extent of compromise",
+            "auto_extract_answer": "Information shared mentioned by user"
+          },
+          "options": [
+            "OTP share kiya tha",
+            "Net banking ID / Password diya tha",
+            "Debit/Credit card number, CVV, expiry date diya tha",
+            "ATM PIN diya tha",
+            "Kuch nahi diya — sirf link pe click kiya ya form fill kiya",
+            "Aadhaar / PAN details diye the"
+          ]
+        },
+        {
+          "question_id": "CQ_PH_04",
+          "priority": "high",
+          "question": "Kya aapke account se koi unauthorized transaction hua? Agar haan, toh kitna loss hua?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise gaye",
+            "transaction hua",
+            "account se debit",
+            "paise kat gaye",
+            "unauthorized transfer",
+            "loss hua",
+            "amount gaya",
+            "abhi tak kuch nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Financial loss status already mentioned — determines urgency of bank intervention",
+            "auto_extract_answer": "Transaction status mentioned by user"
+          },
+          "options": [
+            "Haan, account se paise kat gaye",
+            "Nahi, abhi tak koi transaction nahi hua par credentials share ho gaye",
+            "Mujhe pata nahi — abhi check karna hai",
+            "Sirf link pe click kiya tha — koi details share nahi ki"
+          ]
+        },
+        {
+          "question_id": "CQ_PH_05",
+          "priority": "high",
+          "question": "Kya aapke paas woh fake link, SMS, ya email abhi bhi hai? Yeh evidence ke kaam aayega.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "link hai",
+            "screenshot liya",
+            "sms saved hai",
+            "email hai",
+            "delete ho gaya",
+            "nahi hai",
+            "save kar liya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence availability already mentioned — determines strength of complaint",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, link / SMS / email abhi bhi hai — screenshot liya hai",
+            "Hai toh sahi par screenshot nahi liya",
+            "Delete ho gaya tha",
+            "Mujhe pata nahi kaise save karein"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT004",
+      "crime_name": "UPI Fraud / QR Code Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_UPI_01",
+          "priority": "critical",
+          "question": "UPI fraud kaise hua — aapne QR scan kiya, collect request approve ki, ya kisi ke kehne pe payment ki?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "qr scan kiya",
+            "collect request",
+            "payment request approve",
+            "pin enter kiya",
+            "kisi ke keh ke bheja",
+            "link pe click kiya",
+            "buyer se"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "UPI fraud method already described — determines specific fraud subtype",
+            "auto_extract_answer": "UPI fraud method mentioned by user"
+          },
+          "options": [
+            "QR code scan kiya — bol ke paise milenge par ulta chale gaye",
+            "Collect / payment request aaya — maine approve kar diya",
+            "Kisi buyer/seller ne bol ke payment ki (OLX / Facebook / Quikr)",
+            "Link pe click karke UPI app khula aur payment ho gayi",
+            "UPI PIN share kar diya ya kisi ne dekhwa liya"
+          ]
+        },
+        {
+          "question_id": "CQ_UPI_02",
+          "priority": "critical",
+          "question": "Fraud hone se pehle kya bola gaya tha — paise bhejne se pehle aapko kya bataya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise aayenge",
+            "refund milega",
+            "cashback milega",
+            "item kharidna tha",
+            "item bechna tha",
+            "advance maanga",
+            "token amount",
+            "verify karna tha",
+            "1 rupee bhejna tha",
+            "test transaction"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraudster's pretext already mentioned — confirms specific UPI fraud pattern",
+            "auto_extract_answer": "Fraud pretext mentioned by user"
+          },
+          "options": [
+            "Bola tha QR scan karo — aapko paise milenge (refund/cashback/prize)",
+            "OLX/Quikr pe item bech/khareed raha/rahi tha — advance maanga",
+            "Token amount / verification ke liye 1 rupee bhejo bola",
+            "Fake payment screenshot bheja — bola maine de diye ab tum do",
+            "Customer care / bank wale bane — bole yeh process karna hoga"
+          ]
+        },
+        {
+          "question_id": "CQ_UPI_03",
+          "priority": "high",
+          "question": "Kitne paise gaye aur kaunsi UPI app se — Google Pay, PhonePe, Paytm, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "google pay",
+            "phonepe",
+            "amazon pay",
+            "amount",
+            "kitne gaye",
+            "rupees"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Amount and app already mentioned — needed for complaint and transaction trace",
+            "auto_extract_answer": "Amount and app mentioned by user"
+          },
+          "options": [
+            "Google Pay (GPay) se",
+            "PhonePe se",
+            "Paytm se",
+            "BHIM UPI / Bank UPI app se",
+            "Ek se zyada apps se ya pata nahi exactly kaunsi"
+          ]
+        },
+        {
+          "question_id": "CQ_UPI_04",
+          "priority": "high",
+          "question": "Kya aapke paas transaction ID ya UPI reference number hai? Yeh recovery ke liye bahut zaroori hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "transaction id hai",
+            "reference number",
+            "utr number",
+            "screenshot hai",
+            "nahi hai",
+            "check karna hai",
+            "bank statement mein hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Transaction ID availability already mentioned — determines traceability of fraud",
+            "auto_extract_answer": "Transaction ID status mentioned by user"
+          },
+          "options": [
+            "Haan, transaction ID / UPI reference number mere paas hai",
+            "Nahi hai par bank statement se nikal sakta hoon",
+            "UPI app ka screenshot hai",
+            "Kuch bhi save nahi hai — kaise nikaalein?"
+          ]
+        },
+        {
+          "question_id": "CQ_UPI_05",
+          "priority": "medium",
+          "question": "Kya aapne jis UPI ID pe paise bheje usska koi detail save hai — jaise UPI ID, phone number, ya QR code?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "upi id hai",
+            "number hai",
+            "qr code screenshot",
+            "saved hai",
+            "nahi hai",
+            "phone number tha"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraudster UPI ID availability already mentioned — helps police trace the fraudster",
+            "auto_extract_answer": "Fraudster UPI ID status mentioned by user"
+          },
+          "options": [
+            "Haan, UPI ID ya phone number saved hai",
+            "QR code ka screenshot hai",
+            "OLX/WhatsApp pe unka profile hai",
+            "Kuch bhi save nahi tha"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT005",
+      "crime_name": "Credit / Debit Card Fraud",
+      "cross_questions": [
+        {
+          "question_id": "CQ_CARD_01",
+          "priority": "critical",
+          "question": "Card fraud kaise hua — aapka card physically chori hua, online details share hue, ya ATM/POS pe kuch ajeeb hua?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "card chori hua",
+            "online use hua",
+            "atm pe kuch tha",
+            "details share kiye",
+            "phishing se",
+            "call pe details diye",
+            "swipe kiya tha",
+            "pos pe fraud"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Card fraud method already described — determines fraud subtype (skimming/CNP/phishing)",
+            "auto_extract_answer": "Card fraud method mentioned by user"
+          },
+          "options": [
+            "Card physically chori ho gaya ya gum ho gaya",
+            "Online shopping ke dauran details use ho gayi (Card Not Present fraud)",
+            "ATM se paise nikal gaye — shayad skimming hua",
+            "Kisi ne call pe card details / OTP maange aur maine de diye",
+            "POS / swipe machine pe kuch ajeeb laga ya double charge hua"
+          ]
+        },
+        {
+          "question_id": "CQ_CARD_02",
+          "priority": "critical",
+          "question": "Kya card aapke paas abhi bhi hai ya physically chori / gum hua hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "card mere paas hai",
+            "card hai",
+            "card nahi hai",
+            "card chori",
+            "card gum",
+            "card kho gaya",
+            "wallet chori"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Card possession status already mentioned — determines if physical card block is needed immediately",
+            "auto_extract_answer": "Card possession status mentioned by user"
+          },
+          "options": [
+            "Card mere paas hai — par usse transaction hue jo maine nahi kiye",
+            "Card gum ho gaya ya chori ho gaya",
+            "Card hai par koi use kar raha hai online (details leak hui hain)"
+          ]
+        },
+        {
+          "question_id": "CQ_CARD_03",
+          "priority": "critical",
+          "question": "Unauthorized transactions kahan hue — online kisi website pe, ATM se withdrawal, ya kisi physical store pe?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "online transaction",
+            "website pe",
+            "atm withdrawal",
+            "store pe",
+            "pos machine",
+            "international transaction",
+            "foreign",
+            "subscription"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Transaction location already mentioned — determines investigation path",
+            "auto_extract_answer": "Transaction location mentioned by user"
+          },
+          "options": [
+            "Online — kisi e-commerce ya website pe purchase hua",
+            "ATM se cash withdrawal hua",
+            "Physical store / POS machine pe swipe hua",
+            "International / foreign website ya country mein transaction hua",
+            "Subscription ya EMI ke naam pe charge hua"
+          ]
+        },
+        {
+          "question_id": "CQ_CARD_04",
+          "priority": "high",
+          "question": "Kya aapko OTP aaya tha in transactions ke liye? Agar haan toh kya aapne approve kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "otp aaya",
+            "otp nahi aaya",
+            "otp approve kiya",
+            "otp kisi ko diya",
+            "3d secure",
+            "transaction bina otp ke"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "OTP involvement already mentioned — determines if 3D Secure was bypassed or victim was tricked",
+            "auto_extract_answer": "OTP status mentioned by user"
+          },
+          "options": [
+            "Haan, OTP aaya tha aur maine approve kiya (kisi ke bol ke)",
+            "OTP aaya tha par maine approve nahi kiya — phir bhi transaction hua",
+            "OTP bilkul nahi aaya — seedha transaction ho gaya",
+            "Mujhe yaad nahi"
+          ]
+        },
+        {
+          "question_id": "CQ_CARD_05",
+          "priority": "high",
+          "question": "Kab pata chala in transactions ka — SMS alert se, bank statement se, ya card decline hone pe?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "sms aaya",
+            "alert aaya",
+            "bank statement mein dekha",
+            "card decline hua",
+            "bank ne bataya",
+            "abhi pata chala",
+            "kuch din baad"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Discovery method already mentioned — helps establish timeline for complaint",
+            "auto_extract_answer": "Discovery method mentioned by user"
+          },
+          "options": [
+            "SMS alert aaya toh pata chala",
+            "Bank statement check karne pe pata chala",
+            "Card decline hua tab pata chala balance nahi",
+            "Bank ne khud call karke bataya",
+            "Kal / kuch din se zyada time ho gaya pata chale"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT006",
+      "crime_name": "Fake Loan App / Instant Loan Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_LOAN_01",
+          "priority": "critical",
+          "question": "Loan app ne aapko kis tarah pareshaan kiya — contacts ko message kiya, photos use kiye, ya zyada paise maang rahe hain?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "contacts ko message",
+            "family ko message",
+            "photos bheje",
+            "morphed photo",
+            "blackmail",
+            "zyada paise maang rahe",
+            "dhamki de rahe",
+            "gaali de rahe",
+            "recovery agent",
+            "harassment"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Harassment type already described — determines applicable legal sections",
+            "auto_extract_answer": "Harassment type mentioned by user"
+          },
+          "options": [
+            "Mere contacts (family/friends) ko loan ke baare mein sharmindagi wale messages bheje",
+            "Meri photos use karke morphed/fake images banake bhejne ki dhamki de rahe hain",
+            "Loan chuka diya par abhi bhi zyada paise maang rahe hain",
+            "Fees bhar di par loan kabhi mila hi nahi",
+            "Abusive calls / gaaliyan de rahe hain recovery ke naam pe"
+          ]
+        },
+        {
+          "question_id": "CQ_LOAN_02",
+          "priority": "critical",
+          "question": "Kya aapne loan ki koi bhi EMI ya fees bhari? Kitna paise already de chuke hain?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "fees bhari",
+            "processing fee di",
+            "emi di",
+            "loan wapas kiya",
+            "kuch nahi diya",
+            "registration fee",
+            "gst diya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Payment status already mentioned — determines financial loss and extortion angle",
+            "auto_extract_answer": "Payment status mentioned by user"
+          },
+          "options": [
+            "Poora loan wapas kar diya — phir bhi maang rahe hain",
+            "Kuch fees / processing charges bhar diye par loan nahi mila",
+            "Emi de raha hoon par interest bahut zyada hai",
+            "Abhi tak kuch nahi diya — pressure mein hoon"
+          ]
+        },
+        {
+          "question_id": "CQ_LOAN_03",
+          "priority": "critical",
+          "question": "App download karne ke baad usne kaunsi permissions li thi — contacts, camera, gallery, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "contacts access",
+            "gallery access",
+            "camera access",
+            "sms access",
+            "location access",
+            "sabhi permissions",
+            "pata nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "App permissions already mentioned — determines extent of data compromise",
+            "auto_extract_answer": "App permissions mentioned by user"
+          },
+          "options": [
+            "Contacts aur call logs access liya",
+            "Gallery / photos aur camera access liya",
+            "SMS aur notifications access liya",
+            "Sabhi permissions maangi the — install ke time allow kar diya",
+            "Mujhe yaad nahi kya allow kiya tha"
+          ]
+        },
+        {
+          "question_id": "CQ_LOAN_04",
+          "priority": "high",
+          "question": "Loan app ka naam kya tha aur kahan se download kiya tha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "app ka naam",
+            "playstore",
+            "google play",
+            "apk file",
+            "whatsapp link",
+            "website se",
+            "kisi ne bheja"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "App name and source already mentioned — helps identify illegal operator and report to authorities",
+            "auto_extract_answer": "App name and source mentioned by user"
+          },
+          "options": [
+            "Google Play Store se download kiya",
+            "Kisi ne WhatsApp / SMS pe link bheja tha — wahan se download kiya (APK)",
+            "Website pe ja ke download kiya",
+            "Naam yaad nahi — par abhi bhi phone mein hai"
+          ]
+        },
+        {
+          "question_id": "CQ_LOAN_05",
+          "priority": "high",
+          "question": "Kya aapne apna Aadhaar, PAN, bank account number, ya selfie app mein submit kiya tha KYC ke liye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "aadhaar diya",
+            "pan diya",
+            "bank details diye",
+            "selfie di",
+            "kyc kiya",
+            "documents upload kiye",
+            "nahi diya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "KYC data submission already mentioned — determines identity theft risk",
+            "auto_extract_answer": "KYC submission status mentioned by user"
+          },
+          "options": [
+            "Haan — Aadhaar, PAN, selfie sab submit kiya tha",
+            "Sirf Aadhaar ya PAN diya tha",
+            "Bank account details aur IFSC code diye the",
+            "Kuch nahi diya — pehle hi pata chal gaya fraud hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT007",
+      "crime_name": "Investment Scam / Crypto Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_INV_01",
+          "priority": "critical",
+          "question": "Aapne kahan invest kiya tha — kisi app pe, website pe, WhatsApp/Telegram group mein, ya kisi ne personally convince kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "app pe",
+            "website pe",
+            "whatsapp group",
+            "telegram group",
+            "kisi ne bulaya",
+            "broker ne bola",
+            "online platform",
+            "crypto exchange",
+            "trading site"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Investment channel already mentioned — determines fraud platform type",
+            "auto_extract_answer": "Investment channel mentioned by user"
+          },
+          "options": [
+            "Kisi app ya website pe account banaya aur invest kiya",
+            "WhatsApp ya Telegram group mein add kiya — wahan tips milti thi",
+            "Kisi ne call ya message karke personally convince kiya",
+            "Social media ad ya celebrity endorsement dekh ke invest kiya",
+            "Kisi dost ya known person ne refer kiya (jo khud fraud mein tha)"
+          ]
+        },
+        {
+          "question_id": "CQ_INV_02",
+          "priority": "critical",
+          "question": "Invest kiya tha par paise wapas nahi aa rahe — platform kya bol raha hai withdrawal ke liye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "withdrawal nahi ho raha",
+            "tax maang rahe",
+            "fees maang rahe",
+            "upgrade karo",
+            "platform band",
+            "account block",
+            "kyc maang rahe",
+            "nahi de rahe",
+            "no response"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Withdrawal blockage reason already mentioned — confirms fraud pattern",
+            "auto_extract_answer": "Withdrawal blockage mentioned by user"
+          },
+          "options": [
+            "Tax / GST / withdrawal fee bhar kar denge bol rahe hain",
+            "KYC ya verification incomplete bol ke rok rakha hai",
+            "Platform / app hi band ho gaya ya accessible nahi",
+            "Customer care respond hi nahi kar raha",
+            "Abhi invest kiya hai — withdrawal try hi nahi kiya aur scam suspect ho raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_INV_03",
+          "priority": "critical",
+          "question": "Aapne kul kitne paise invest kiye — aur kya withdrawal ke naam pe bhi kuch extra diya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "invested amount",
+            "kitna invest kiya",
+            "extra diya",
+            "tax diya",
+            "fee di",
+            "total amount",
+            "zyada de diya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Investment amount already mentioned — determines financial loss severity",
+            "auto_extract_answer": "Investment amount mentioned by user"
+          },
+          "options": [
+            "₹10,000 se kam",
+            "₹10,000 – ₹1 lakh",
+            "₹1 lakh – ₹10 lakh",
+            "₹10 lakh se zyada",
+            "Invest ke alawa withdrawal tax / fees ke naam pe bhi alag paise diye"
+          ]
+        },
+        {
+          "question_id": "CQ_INV_04",
+          "priority": "high",
+          "question": "Kya aapne cryptocurrency mein invest kiya tha — jaise Bitcoin, USDT, Ethereum, ya koi aur coin?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bitcoin",
+            "crypto",
+            "ethereum",
+            "wallet",
+            "binance",
+            "wazirx"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Crypto investment already mentioned — determines traceability and reporting path",
+            "auto_extract_answer": "Crypto involvement mentioned by user"
+          },
+          "options": [
+            "Haan, cryptocurrency mein invest kiya (Bitcoin / USDT / ETH etc.)",
+            "Nahi, regular INR mein invest kiya tha",
+            "Dono — pehle INR phir crypto mein convert karwaya",
+            "Mujhe pata nahi tha crypto mein ja raha tha — app ne direct le liya"
+          ]
+        },
+        {
+          "question_id": "CQ_INV_05",
+          "priority": "high",
+          "question": "Kya platform / broker SEBI ya RBI registered tha? Ya koi official registration number dikhaya gaya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "sebi registered",
+            "rbi approved",
+            "registered number",
+            "certificate dikhaya",
+            "pata nahi tha",
+            "nahi check kiya",
+            "fake certificate"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Regulatory status already mentioned — helps establish unauthorized operation",
+            "auto_extract_answer": "Regulatory status mentioned by user"
+          },
+          "options": [
+            "Unhone SEBI / RBI registered hone ka dawa kiya tha",
+            "Koi registration nahi bataya tha",
+            "Maine check nahi kiya tha",
+            "Check kiya toh fake/forged certificate nikla"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT008",
+      "crime_name": "Account Hacking / Unauthorized Access",
+      "cross_questions": [
+        {
+          "question_id": "CQ_HACK_01",
+          "priority": "critical",
+          "question": "Kaunsa account hack hua hai — social media, email, banking, gaming, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "instagram",
+            "facebook",
+            "whatsapp",
+            "twitter",
+            "youtube",
+            "bank account",
+            "gaming",
+            "snapchat",
+            "telegram",
+            "linkedin"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Account type already mentioned — determines recovery process and applicable laws",
+            "auto_extract_answer": "Account type mentioned by user"
+          },
+          "options": [
+            "Social media — Instagram / Facebook / Twitter / Snapchat",
+            "Email — Gmail / Yahoo / Outlook",
+            "WhatsApp ya Telegram",
+            "Banking / UPI / Payment app",
+            "Gaming account — Free Fire / BGMI / PUBG / other",
+            "YouTube channel ya content creator account"
+          ]
+        },
+        {
+          "question_id": "CQ_HACK_02",
+          "priority": "critical",
+          "question": "Kya aap abhi bhi apne account mein login kar sakte hain ya bilkul access nahi raha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "login nahi ho raha",
+            "access nahi",
+            "locked out",
+            "password change",
+            "haan login ho raha hai",
+            "partial access"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Access status already mentioned — determines recovery urgency and action path",
+            "auto_extract_answer": "Access status mentioned by user"
+          },
+          "options": [
+            "Nahi — bilkul access nahi hai, password bhi change ho gaya",
+            "Haan — login ho raha hai par kuch suspicious activity dikh rahi hai",
+            "Thoda access hai par kuch settings / features lock ho gaye hain",
+            "Abhi abhi pata chala — abhi check nahi kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_HACK_03",
+          "priority": "critical",
+          "question": "Aapko kaise pata chala ki account hack hua — login alert aaya, dosto ne bataya, ya khud change dikhaa?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "alert aaya",
+            "notification aaya",
+            "dost ne bataya",
+            "family ne bataya",
+            "khud change dekha",
+            "password nahi chal raha",
+            "spam gaya",
+            "mere naam se message"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Discovery method already mentioned — helps reconstruct attack timeline",
+            "auto_extract_answer": "Discovery method mentioned by user"
+          },
+          "options": [
+            "Email / SMS alert aaya ki unknown device se login hua",
+            "Dosto ya family ne bataya ki mere account se unhe message aaya",
+            "Khud dekha — profile / posts / settings change ho gaye the",
+            "Login karne ki koshish ki toh password kaam nahi kiya",
+            "Account se spam ya fraud messages gaye dosto ko"
+          ]
+        },
+        {
+          "question_id": "CQ_HACK_04",
+          "priority": "high",
+          "question": "Kya hack hone se pehle aapne koi suspicious link click kiya, koi OTP share kiya, ya koi app install kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "link click kiya",
+            "otp diya",
+            "otp share kiya",
+            "app install kiya",
+            "screen share kiya",
+            "anydesk",
+            "teamviewer",
+            "kuch nahi kiya",
+            "pata nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Attack vector already mentioned — determines how breach occurred",
+            "auto_extract_answer": "Attack vector mentioned by user"
+          },
+          "options": [
+            "Haan, ek link click kiya tha jiske baad yeh hua",
+            "OTP share kiya tha kisi ke bol ke",
+            "Koi app install kiya tha (screen share / helper app)",
+            "Kuch nahi kiya — pata nahi kaise hua",
+            "Apna password kisi ke saath share kiya tha"
+          ]
+        },
+        {
+          "question_id": "CQ_HACK_05",
+          "priority": "high",
+          "question": "Kya hacker ne aapke hacked account ka misuse kiya — jaise dosto se paise maange, private data dekha, ya content delete kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise maange",
+            "friends se paise",
+            "private photos",
+            "data dekha",
+            "content delete",
+            "posts delete",
+            "messages delete",
+            "blackmail",
+            "kuch nahi kiya abhi tak"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Misuse type already mentioned — determines additional charges and urgency",
+            "auto_extract_answer": "Misuse type mentioned by user"
+          },
+          "options": [
+            "Mere contacts / dosto se paise maange mere naam se",
+            "Private photos / messages / data access kiya",
+            "Posts, videos, ya content delete kar diya",
+            "Account se spam ya phishing messages bheje",
+            "Abhi tak koi misuse nahi hua — turant recover karna hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT009",
+      "crime_name": "Identity Theft (Aadhaar / PAN Misuse)",
+      "cross_questions": [
+        {
+          "question_id": "CQ_IDT_01",
+          "priority": "critical",
+          "question": "Aapko kaise pata chala ki aapki identity misuse hui — loan notice aaya, unknown account dikha, ya kisi aur tarah?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "loan notice aaya",
+            "bank notice",
+            "recovery agent aaya",
+            "cibil kharab",
+            "credit score gira",
+            "unknown account",
+            "sim nikala pata chala",
+            "police notice",
+            "court notice",
+            "tax notice",
+            "kisi ne bataya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Discovery method already mentioned — determines type of identity misuse",
+            "auto_extract_answer": "Discovery method mentioned by user"
+          },
+          "options": [
+            "Loan recovery notice / agent aaya — maine loan liya hi nahi tha",
+            "CIBIL / credit report check kiya toh unknown loan ya account dikh raha hai",
+            "Bank ne call kiya ya statement aaya unknown account ka",
+            "Police / court notice aaya mere naam pe kisi case ke liye",
+            "Aadhaar authentication history check ki toh unknown use dikh raha hai",
+            "Kisi ne bataya ki mere naam pe SIM / account / card hai"
+          ]
+        },
+        {
+          "question_id": "CQ_IDT_02",
+          "priority": "critical",
+          "question": "Kaunsa document misuse hua lagta hai — Aadhaar, PAN, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "aadhaar",
+            "pan card",
+            "passport",
+            "voter id",
+            "driving license",
+            "ration card",
+            "bank passbook",
+            "pata nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Document type already mentioned — determines applicable authority to report to",
+            "auto_extract_answer": "Document type mentioned by user"
+          },
+          "options": [
+            "Aadhaar card / Aadhaar number misuse hua",
+            "PAN card misuse hua",
+            "Dono Aadhaar aur PAN misuse hue",
+            "Passport / Voter ID / Driving License misuse hua",
+            "Pata nahi exactly kaunsa — par identity fraud confirm ho raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_IDT_03",
+          "priority": "critical",
+          "question": "Identity ke misuse se kya kya hua — loan liya, bank account khola, SIM nikali, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "loan liya",
+            "bank account khola",
+            "sim liya",
+            "credit card liya",
+            "company banayi",
+            "gst registration",
+            "insurance",
+            "criminal case"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Misuse type already mentioned — determines multiple agencies to report to",
+            "auto_extract_answer": "Misuse type mentioned by user"
+          },
+          "options": [
+            "Mere naam pe loan liya gaya (personal / business loan)",
+            "Mere naam pe bank account ya credit card khola gaya",
+            "Mere naam pe SIM card / mobile connection nikala gaya",
+            "Mere naam pe company / GST registration kiya gaya",
+            "Mere naam pe criminal activity / police case hua"
+          ]
+        },
+        {
+          "question_id": "CQ_IDT_04",
+          "priority": "high",
+          "question": "Aapko lagta hai documents kahan se leak hue — kisi ko photocopy di thi, online form bhara tha, ya data breach?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "photocopy di thi",
+            "xerox di",
+            "online form",
+            "kyc diya tha",
+            "app pe diya",
+            "kisi ko bheja",
+            "pata nahi",
+            "data breach"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data leak source already mentioned — helps investigation trace origin",
+            "auto_extract_answer": "Data leak source mentioned by user"
+          },
+          "options": [
+            "Kisi ko physically photocopy / xerox di thi (hotel, shop, agent etc.)",
+            "Online loan app ya website pe documents upload kiye the",
+            "KYC ke liye kisi ko email / WhatsApp pe documents bheje the",
+            "Kisi data breach ya leak se (news mein suna / email alert aaya)",
+            "Bilkul pata nahi kahan se gaye"
+          ]
+        },
+        {
+          "question_id": "CQ_IDT_05",
+          "priority": "high",
+          "question": "Kya aapne Aadhaar ko lock kiya hai ya UIDAI portal pe usage history check ki?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "aadhaar lock kiya",
+            "uidai check",
+            "history dekhi",
+            "nahi kiya",
+            "kaise karte hain",
+            "maadhaar app"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Aadhaar security status already mentioned — determines immediate protective action needed",
+            "auto_extract_answer": "Aadhaar security status mentioned by user"
+          },
+          "options": [
+            "Haan, Aadhaar lock kar liya hai",
+            "Nahi, abhi tak nahi kiya — karna chahta/chahti hoon",
+            "UIDAI portal pe history check ki — unknown entries dikh rahi hain",
+            "Mujhe pata nahi kaise karte hain"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT010",
+      "crime_name": "Email Spoofing / Fake Identity Creation",
+      "cross_questions": [
+        {
+          "question_id": "CQ_SPOOF_01",
+          "priority": "critical",
+          "question": "Fake email ya identity ka use karke kya kiya gaya — paise transfer karwaye, credentials maange, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise transfer kiye",
+            "credentials diye",
+            "password diya",
+            "document bheja",
+            "kuch sign kiya",
+            "job offer",
+            "invoice pay ki",
+            "kuch nahi kiya",
+            "dhamki di"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraud outcome already described — determines applicable legal sections and urgency",
+            "auto_extract_answer": "Fraud action mentioned by user"
+          },
+          "options": [
+            "Email dekh ke paise transfer kar diye (fake invoice / vendor / boss email)",
+            "Login credentials ya OTP share kar diye",
+            "Koi document sign kiya ya personal info di",
+            "Kuch nahi kiya — fraud pakad liya pehle hi",
+            "Meri identity use karke kisi ko fake email bheja gaya"
+          ]
+        },
+        {
+          "question_id": "CQ_SPOOF_02",
+          "priority": "critical",
+          "question": "Email kiski identity use karke bheja gaya tha — boss / CEO ka, bank ka, ya government ka?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "boss ka",
+            "ceo ka",
+            "manager ka",
+            "bank ka",
+            "income tax",
+            "government",
+            "vendor ka",
+            "client ka",
+            "meri khud ki identity"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Impersonated identity already mentioned — determines BEC vs government spoofing vs personal impersonation",
+            "auto_extract_answer": "Impersonated entity mentioned by user"
+          },
+          "options": [
+            "Company ke boss / CEO / manager ka email spoof hua (Business Email Compromise)",
+            "Bank / RBI / SEBI ka email fake tha",
+            "Government / Income Tax / GST / Court ka fake email tha",
+            "Vendor / supplier / client ka email spoof hua",
+            "Meri khud ki identity use karke doosron ko email bheja gaya"
+          ]
+        },
+        {
+          "question_id": "CQ_SPOOF_03",
+          "priority": "critical",
+          "question": "Kya aapne email ka sender address closely check kiya tha — kya woh exactly genuine tha ya thoda alag tha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "same laga",
+            "bilkul same",
+            "thoda alag tha",
+            "spelling mistake",
+            "different domain",
+            "check nahi kiya",
+            "legit laga"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Email verification behavior already described — helps establish spoof technique used",
+            "auto_extract_answer": "Email check behavior mentioned by user"
+          },
+          "options": [
+            "Bilkul genuine laga — baad mein pata chala fake tha",
+            "Thoda alag tha — spelling ya domain mein fark tha (e.g. rn instead of m)",
+            "Display name same tha par actual email address alag tha",
+            "Maine email address check hi nahi kiya tha",
+            "Gmail / Outlook ne bhi warning nahi di thi"
+          ]
+        },
+        {
+          "question_id": "CQ_SPOOF_04",
+          "priority": "high",
+          "question": "Kya woh original email / message aapke paas abhi bhi hai? Evidence preserve karna bahut zaroori hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "email saved hai",
+            "screenshot liya",
+            "delete ho gaya",
+            "trash mein hai",
+            "forward kar sakte",
+            "nahi hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence availability already mentioned — determines strength of complaint",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, email inbox mein hai — delete nahi kiya",
+            "Haan, screenshot le liya hai",
+            "Delete ho gaya tha — par trash / spam mein check kar sakta hoon",
+            "Kuch bhi save nahi hai"
+          ]
+        },
+        {
+          "question_id": "CQ_SPOOF_05",
+          "priority": "high",
+          "question": "Agar financial loss hua — kahan paise gaye, kaunse account mein transfer hue?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank account mein",
+            "upi mein",
+            "crypto mein",
+            "foreign account",
+            "paise nahi gaye",
+            "account number tha"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Transfer destination already mentioned — critical for fund recovery and police trace",
+            "auto_extract_answer": "Transfer destination mentioned by user"
+          },
+          "options": [
+            "Indian bank account mein transfer hue",
+            "UPI / digital wallet mein gaye",
+            "Foreign / international account mein wire transfer hua",
+            "Cryptocurrency wallet mein bheja",
+            "Abhi tak koi financial loss nahi — fraud pakad liya"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT011",
+      "crime_name": "Impersonation on Social Media",
+      "cross_questions": [
+        {
+          "question_id": "CQ_IMP_01",
+          "priority": "critical",
+          "question": "Kaunse platform pe fake profile / account banaya gaya — Instagram, Facebook, WhatsApp, LinkedIn, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "instagram",
+            "facebook",
+            "whatsapp",
+            "linkedin",
+            "twitter",
+            "telegram",
+            "youtube",
+            "snapchat",
+            "shaadi.com",
+            "matrimonial"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Platform already mentioned — determines platform-specific reporting process",
+            "auto_extract_answer": "Platform mentioned by user"
+          },
+          "options": [
+            "Instagram pe fake account",
+            "Facebook pe fake profile",
+            "WhatsApp pe fake account (mera number clone ya naya number)",
+            "LinkedIn pe fake professional profile",
+            "Twitter / X pe fake account",
+            "Matrimonial / dating site pe fake profile (Shaadi.com / Jeevansaathi)"
+          ]
+        },
+        {
+          "question_id": "CQ_IMP_02",
+          "priority": "critical",
+          "question": "Fake profile ka use karke kya kiya gaya — paise maange, ajeeb content posta, ya romance ke naam pe fraud?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise maange",
+            "contacts ko maanga",
+            "ajeeb content",
+            "obscene posts",
+            "romance",
+            "pyaar ke naam pe",
+            "fraud kiya",
+            "badnam kiya",
+            "abhi kuch nahi kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Misuse type already described — determines applicable IPC + IT Act sections",
+            "auto_extract_answer": "Misuse type mentioned by user"
+          },
+          "options": [
+            "Mere contacts / dosto se paise maange gaye mere naam se",
+            "Meri photos use karke ajeeb / obscene content post kiya",
+            "Romance / pyaar ka natak karke paise nikale (romance scam)",
+            "Meri badnaami ke liye fake post / screenshots share kiye",
+            "Abhi tak kuch nahi kiya — sirf profile exist karti hai"
+          ]
+        },
+        {
+          "question_id": "CQ_IMP_03",
+          "priority": "critical",
+          "question": "Kya aapko pata hai fake account ki profile link ya username kya hai? Reporting ke liye zaruri hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "link hai",
+            "username pata hai",
+            "screenshot liya",
+            "url hai",
+            "nahi pata",
+            "kisi ne bheja",
+            "link share ki"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fake profile link availability already mentioned — determines reporting feasibility",
+            "auto_extract_answer": "Fake profile link status mentioned by user"
+          },
+          "options": [
+            "Haan, profile ka link / URL mere paas hai",
+            "Username / handle pata hai par link nahi",
+            "Screenshot le liya hai fake profile ka",
+            "Kisi ne mujhe screenshot bheja — link nahi pata",
+            "Kuch bhi pata nahi — sirf bataaya gaya fake account hai"
+          ]
+        },
+        {
+          "question_id": "CQ_IMP_04",
+          "priority": "high",
+          "question": "Kya aapke contacts ya family ne actually paise de diye fake profile ko? Ya sirf request aayi?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise de diye",
+            "transfer kar diya",
+            "sirf request aayi",
+            "kisi ne de diye",
+            "kuch nahi diya",
+            "already de chuke hain"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Financial loss status already mentioned — determines urgency of financial recovery",
+            "auto_extract_answer": "Financial loss status mentioned by user"
+          },
+          "options": [
+            "Haan, kisi contact ne paise de diye — loss ho gaya",
+            "Request aayi thi par kisi ne nahi diye — sab samajh gaye",
+            "Mujhe abhi pata nahi kitne logo ne diye",
+            "Sirf mujhe personally target kiya — contacts ko nahi"
+          ]
+        },
+        {
+          "question_id": "CQ_IMP_05",
+          "priority": "high",
+          "question": "Kya aapko andaza hai kisne yeh fake profile banayi — koi known person, ex-partner, ya anjaan?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "known person",
+            "ex ne banaya",
+            "dushman",
+            "competitor",
+            "anjaan",
+            "pata nahi",
+            "suspicion hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Suspect identity already mentioned — helps police narrow investigation",
+            "auto_extract_answer": "Suspect information mentioned by user"
+          },
+          "options": [
+            "Koi known person / ex-partner / dushman lag raha hai",
+            "Koi business competitor ho sakta hai",
+            "Bilkul anjaan — koi idea nahi",
+            "Suspicion hai par confirm nahi"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT012",
+      "crime_name": "Cyber Bullying / Online Harassment",
+      "cross_questions": [
+        {
+          "question_id": "CQ_CB_01",
+          "priority": "critical",
+          "question": "Online harassment kis tarah ho rahi hai — dhamki bhari messages aa rahe hain, ajeeb comments aa rahe hain, private photos share ki ja rahi hain, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "dhamki",
+            "threatening",
+            "comments",
+            "photo share",
+            "photos viral",
+            "morphed",
+            "doxxing",
+            "personal info",
+            "address share",
+            "group mein",
+            "trolling",
+            "message bombing",
+            "call bombing",
+            "pressure",
+            "blackmail"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Harassment type already described by user — determines applicable legal sections and urgency level",
+            "auto_extract_answer": "Harassment type mentioned by user"
+          },
+          "options": [
+            "Dhamki bhari messages aa rahe hain (jaan se maarne ki, nuksan pahunchane ki)",
+            "Gaali, abuse, body shaming, ya sexual comments aa rahe hain",
+            "Meri private / personal photos ya videos share ki ja rahi hain bina permission ke",
+            "Meri personal information (ghar ka address, phone number) online share ki gayi",
+            "Group ya public platform pe mujhe sharminda ya badnaam kiya ja raha hai",
+            "Baar baar messages / calls karke mentally torture kiya ja raha hai",
+            "Morphed ya edited photos share ki ja rahi hain"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_02",
+          "priority": "critical",
+          "question": "Harassment kahan ho rahi hai — kaunse platform ya app pe? Yeh report karne ke liye zaroori hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "instagram",
+            "facebook",
+            "whatsapp",
+            "twitter",
+            "telegram",
+            "youtube",
+            "snapchat",
+            "tiktok",
+            "discord",
+            "gaming",
+            "reddit",
+            "linkedin",
+            "multiple platforms"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Platform already mentioned by user — determines platform-specific reporting mechanism",
+            "auto_extract_answer": "Platform mentioned by user"
+          },
+          "options": [
+            "Instagram pe (comments, DMs, stories, reels)",
+            "Facebook pe (posts, comments, messenger, groups)",
+            "WhatsApp pe (messages, groups, status)",
+            "Twitter / X pe (tweets, replies, DMs)",
+            "Online gaming platform pe (PUBG, Free Fire, Discord, Steam)",
+            "YouTube pe (comments, live chat)",
+            "Multiple platforms pe ek saath ho raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_03",
+          "priority": "critical",
+          "question": "Harasser kaun hai — koi known person (classmate, ex-partner, colleague) hai ya anonymous / unknown account?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "classmate",
+            "school friend",
+            "ex-boyfriend",
+            "ex-girlfriend",
+            "colleague",
+            "office",
+            "neighbour",
+            "known person",
+            "unknown",
+            "anonymous",
+            "fake account",
+            "group of people"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Harasser identity already described — determines investigation approach and FIR sections",
+            "auto_extract_answer": "Harasser identity mentioned by user"
+          },
+          "options": [
+            "Known person hai — classmate, school/college friend, ya neighbor",
+            "Ex-partner / ex-relationship se related hai",
+            "Colleague ya workplace se connected hai",
+            "Bilkul unknown / anonymous account se ho raha hai",
+            "Ek group ya gang milke kar raha hai",
+            "Pehle unknown tha par ab identity pata chal gayi hai"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_04",
+          "priority": "high",
+          "question": "Harassment kitne samay se ho rahi hai aur kitni baar hua hai — ek baar ka incident tha ya baar baar ho raha hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "ek baar",
+            "baar baar",
+            "kuch dino se",
+            "hafte se",
+            "mahine se",
+            "kaafi time se",
+            "continuously",
+            "non stop",
+            "recurring"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Duration already mentioned — repeated harassment strengthens cyberbullying case",
+            "auto_extract_answer": "Duration mentioned by user"
+          },
+          "options": [
+            "Ek baar ka incident tha — par bahut serious hai",
+            "Kuch dino se ho raha hai",
+            "Ek hafte se zyada se ho raha hai",
+            "Ek mahine se zyada se continuously ho raha hai",
+            "Bohot samay se (3 mahine se zyada) chal raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_05",
+          "priority": "high",
+          "question": "Kya aapne ya victim ne platform pe complaint / report kiya? Aur kya platform ne koi action liya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "report kiya",
+            "complaint ki",
+            "platform ne kuch nahi kiya",
+            "ignore kiya",
+            "action nahi liya",
+            "account band nahi kiya",
+            "nahi kiya report",
+            "pata nahi kaise"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Platform complaint status already mentioned — determines whether to escalate to cyber police",
+            "auto_extract_answer": "Platform complaint status mentioned by user"
+          },
+          "options": [
+            "Haan report kiya — platform ne action liya aur account band hua",
+            "Haan report kiya — par platform ne koi action nahi liya",
+            "Nahi, abhi tak report nahi kiya",
+            "Block kar diya par naye account se phir aa gaya",
+            "Mujhe pata nahi kaise report karein platform pe"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_06",
+          "priority": "high",
+          "question": "Kya is harassment ki wajah se aap ya victim ko koi serious psychological, social, ya physical impact hua hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "depression",
+            "anxiety",
+            "school nahi gaya",
+            "ghar se nahi nikla",
+            "self harm",
+            "khud ko hurt",
+            "suicide",
+            "doctor ke paas gaya",
+            "psychological",
+            "panic attacks",
+            "sleep nahi aata",
+            "kha nahi pa raha",
+            "career affected",
+            "job gayi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Impact severity already mentioned — determines urgency and additional support resources needed",
+            "auto_extract_answer": "Impact mentioned by user"
+          },
+          "options": [
+            "Haan, mental health pe bura asar hua hai (depression, anxiety, darr)",
+            "School / college / office jaana band kar diya hai",
+            "Self harm ya suicide ke thoughts aa rahe hain — urgent help chahiye",
+            "Social life / relationships pe asar hua hai",
+            "Abhi tak koi bada impact nahi — par situation serious ho sakti hai",
+            "Career ya reputation pe direct nuksan hua hai"
+          ]
+        },
+        {
+          "question_id": "CQ_CB_07",
+          "priority": "medium",
+          "question": "Kya aapne harassment ke screenshots, recordings, ya koi aur evidence save kiya hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "screenshot liya",
+            "recording hai",
+            "saved hai",
+            "evidence hai",
+            "delete ho gaya",
+            "nahi liya",
+            "kuch nahi hai",
+            "video hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already mentioned — critical for FIR and court proceedings",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, bahut saare screenshots aur recordings saved hain",
+            "Kuch screenshots hain par sab nahi",
+            "Nahi, evidence save nahi kiya tha — kya karna chahiye?",
+            "Kuch content delete ho gaya — kya recover ho sakta hai?",
+            "Video / audio recording bhi hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT013",
+      "crime_name": "Cyber Stalking",
+      "cross_questions": [
+        {
+          "question_id": "CQ_STALK_01",
+          "priority": "critical",
+          "question": "Stalking kis tarah ho rahi hai — online activity track ho rahi hai, location track ho rahi hai, ya baar baar contact kiya ja raha hai rok ne ke baad bhi?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "location track",
+            "online activity monitor",
+            "baar baar message",
+            "block ke baad",
+            "follow kar raha",
+            "har post pe",
+            "phone hack",
+            "spyware",
+            "silently watch",
+            "phone pe app"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Stalking method already described — determines specific IT Act sections and urgency",
+            "auto_extract_answer": "Stalking method mentioned by user"
+          },
+          "options": [
+            "Meri online activity (social media, posts, stories) silently monitor ho rahi hai",
+            "Meri real-time location track ho rahi hai (GPS / app / koi device)",
+            "Block karne ke baad bhi naye accounts se contact kar raha/rahi hai",
+            "Mera phone hack hua hai ya spyware install lag raha hai",
+            "Online se physical stalking shuru ho gayi hai — ghar / office ke paas bhi aata/aati hai",
+            "Meri family, dosto, ya colleagues ko contact karke info collect kar raha/rahi hai"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_02",
+          "priority": "critical",
+          "question": "Stalker kaun hai — koi known person hai ya stranger? Aur kya aap safe mahsoos kar rahe hain abhi?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "known person",
+            "ex-boyfriend",
+            "ex-girlfriend",
+            "husband",
+            "partner",
+            "colleague",
+            "classmate",
+            "stranger",
+            "unknown",
+            "safe hoon",
+            "darr lag raha hai",
+            "unsafe",
+            "physical danger"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Stalker identity and safety status already described — determines urgency of physical safety measures",
+            "auto_extract_answer": "Stalker identity and safety status mentioned by user"
+          },
+          "options": [
+            "Ex-partner / ex-relationship hai — aur main safe hoon abhi",
+            "Ex-partner hai — aur mujhe physical safety ka bhi dar hai",
+            "Current domestic partner hai (husband/wife/live-in) — domestic abuse situation",
+            "Colleague ya known person hai",
+            "Bilkul stranger hai — pata nahi kaun hai",
+            "Pehle online stranger tha ab physical location bhi pata chal gaya unhe"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_03",
+          "priority": "critical",
+          "question": "Kya aapke phone ya devices pe koi tracking app, spyware, ya suspicious application installed lag rahi hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "spyware",
+            "tracking app",
+            "phone slow hai",
+            "battery drain",
+            "data usage zyada",
+            "phone warm rehta",
+            "unknown app",
+            "suspicious app",
+            "partner ne touch kiya phone",
+            "someone had access to my phone",
+            "phone diya tha kisi ko"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Device compromise suspicion already mentioned — determines technical investigation steps",
+            "auto_extract_answer": "Device security status mentioned by user"
+          },
+          "options": [
+            "Haan, phone slow hai / battery zyada drain ho rahi hai / data usage abnormal hai",
+            "Kisi ne mera phone kuch time ke liye access kiya tha recently",
+            "Unknown apps phone mein dikh rahi hain jo maine install nahi ki",
+            "Location share karna ON tha kisi ke saath aur bhool gaya/gayi",
+            "Nahi, phone mein kuch aisa nahi lagta par phir bhi track ho raha hoon",
+            "Mujhe confirm karna hai — kaise check karein spyware ke liye?"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_04",
+          "priority": "high",
+          "question": "Stalking kitne samay se ho rahi hai aur kya threat level badh raha hai — zyada aggressive ho raha/rahi hai time ke saath?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "kaafi samay se",
+            "months se",
+            "years se",
+            "bad ho raha hai",
+            "escalate ho raha hai",
+            "zyada aggressive",
+            "physical aa gaya",
+            "recently shuru hua",
+            "kuch dino se",
+            "hafte se"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Duration and escalation already described — determines severity scoring and urgency of police involvement",
+            "auto_extract_answer": "Duration and escalation mentioned by user"
+          },
+          "options": [
+            "Abhi recently shuru hua hai — kuch dino se",
+            "Kuch hafte se ho raha hai",
+            "3 mahine se zyada se ho raha hai",
+            "6 mahine se zyada ya 1 saal se chal raha hai",
+            "Kaafi samay se hai aur zyada dangerous hota ja raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_05",
+          "priority": "high",
+          "question": "Kya stalker ne koi direct threat diya hai — nuksaan pahunchane ki, photos/info share karne ki, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "dhamki di",
+            "threat diya",
+            "jaan se maarne ki dhamki",
+            "photos share karunga",
+            "expose karunga",
+            "sab ko bataunga",
+            "nuksaan pahunchaunga",
+            "family ko hurt karunga",
+            "koi dhamki nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Threat level already described — direct threats elevate case to criminal intimidation + stalking",
+            "auto_extract_answer": "Threat level mentioned by user"
+          },
+          "options": [
+            "Haan, physical harm ya jaan se maarne ki dhamki di hai",
+            "Private photos / information share/leak karne ki dhamki di hai",
+            "Family ya loved ones ko hurt karne ki dhamki di hai",
+            "Koi direct threat nahi diya — sirf obsessive monitoring ho raha hai",
+            "Dhamki implicit hai — directly nahi bola par actions se dar lag raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_06",
+          "priority": "high",
+          "question": "Kya aapne stalker ko clearly bola hai ki contact mat karo, ya block kiya hai — phir bhi aata/aati hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bol diya",
+            "bola tha",
+            "clearly said no",
+            "block kiya",
+            "restrict kiya",
+            "ignore kiya",
+            "phir bhi aata",
+            "naye number se",
+            "naye account se",
+            "nahi bola abhi tak"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Victim response already described — persistence after being told to stop strengthens Section 354D IPC case",
+            "auto_extract_answer": "Victim's communication of disinterest mentioned by user"
+          },
+          "options": [
+            "Haan clearly bola/boli aur block bhi kiya — phir bhi naye accounts/numbers se aata/aati hai",
+            "Block kiya hai par clearly nahi bola still stop karo",
+            "Ignore kiya hai par directly nahi bola band karo",
+            "Abhi tak kuch nahi bola — darta/darti hoon response se",
+            "Bola tha aur ek baar ruka — phir wapas shuru ho gaya/gayi"
+          ]
+        },
+        {
+          "question_id": "CQ_STALK_07",
+          "priority": "medium",
+          "question": "Kya aapne koi evidence save kiya hai — screenshots, message records, ya location tracking proof?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "screenshots hain",
+            "saved hai",
+            "messages hain",
+            "call logs",
+            "location proof",
+            "recording hai",
+            "kuch nahi hai",
+            "delete ho gaya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already mentioned — determines strength of police complaint",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, messages, screenshots, aur dates ka record hai",
+            "Kuch hai par organized nahi hai",
+            "Nahi, abhi tak kuch save nahi kiya — kya karna chahiye?",
+            "Kuch proof delete ho chuka hai — recover ho sakta hai kya?",
+            "Phone pe spyware evidence bhi hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT014",
+      "crime_name": "Online Defamation",
+      "cross_questions": [
+        {
+          "question_id": "CQ_DEF_01",
+          "priority": "critical",
+          "question": "Kya content share kiya gaya woh BILKUL JHOOT hai ya koi sach maila hua hai us mein bhi? Defamation ke case mein yeh bahut zaroori hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bilkul jhoot",
+            "fabricated",
+            "made up",
+            "kuch sach kuch jhoot",
+            "out of context",
+            "context hataake",
+            "edited",
+            "twisted",
+            "manipulated"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Truth/falsity already described — critical for establishing defamation vs legitimate criticism",
+            "auto_extract_answer": "Content nature mentioned by user"
+          },
+          "options": [
+            "Bilkul jhoot hai — koi baat bhi sach nahi hai jo share ki gayi",
+            "Kuch sach hai par bahut twist ya exaggerate kiya gaya hai",
+            "Sach hai par context se bilkul bahar share kiya gaya maliciously",
+            "Fake / edited screenshot ya image use kiya gaya hai",
+            "Meri photo ya video use ki gayi par galat jhoothi story ke saath"
+          ]
+        },
+        {
+          "question_id": "CQ_DEF_02",
+          "priority": "critical",
+          "question": "Defamatory content kahan publish hua — social media, website, blog, WhatsApp forward, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "instagram",
+            "facebook",
+            "twitter",
+            "youtube",
+            "website",
+            "whatsapp forward",
+            "google review",
+            "news site",
+            "reddit",
+            "multiple platforms"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Platform already mentioned — determines takedown mechanism and jurisdiction",
+            "auto_extract_answer": "Platform mentioned by user"
+          },
+          "options": [
+            "Social media pe (Instagram / Facebook / Twitter / YouTube)",
+            "Website ya blog pe — article ya post likha gaya",
+            "WhatsApp / Telegram forward mein viral ho gaya",
+            "Google Reviews / business rating pe fake review",
+            "Online news portal ya digital media pe false article",
+            "Multiple platforms pe ek saath viral ho gaya"
+          ]
+        },
+        {
+          "question_id": "CQ_DEF_03",
+          "priority": "critical",
+          "question": "Defamer kaun hai — koi known person, competitor, ex-partner, ya anonymous account?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "known person",
+            "competitor",
+            "business rival",
+            "ex-partner",
+            "employee",
+            "dismissed employee",
+            "neighbour",
+            "anonymous",
+            "unknown account",
+            "fake account",
+            "multiple people"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Defamer identity already mentioned — determines investigation path and legal strategy",
+            "auto_extract_answer": "Defamer identity mentioned by user"
+          },
+          "options": [
+            "Known person hai — personal enemy / jilted ex / disgruntled person",
+            "Business competitor ya rival ne kiya",
+            "Ex-employee ya dismissed staff ne kiya",
+            "Anonymous account — identity pata nahi",
+            "Multiple log mila ke organised campaign chal raha hai",
+            "Media ya journalist ne false story publish ki"
+          ]
+        },
+        {
+          "question_id": "CQ_DEF_04",
+          "priority": "high",
+          "question": "Defamation se aapko ya aapke business/career ko kya concrete nuksan hua hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "job gayi",
+            "business loss",
+            "clients gaye",
+            "orders cancel",
+            "reputation gaya",
+            "family affected",
+            "relationships damaged",
+            "mental health",
+            "abhi tak kuch nahi",
+            "viral ho gaya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Damage extent already described — determines compensation claim amount in civil suit",
+            "auto_extract_answer": "Damage extent mentioned by user"
+          },
+          "options": [
+            "Job / employment pe asar hua — dismiss kiya gaya ya interview reject hue",
+            "Business / clients / revenue loss hua",
+            "Personal relationships aur social standing damage hua",
+            "Mental health pe serious impact hua",
+            "Content viral ho gaya — lakhs logo ne dekha hai",
+            "Abhi direct monetary loss nahi par reputation seriously damaged hai"
+          ]
+        },
+        {
+          "question_id": "CQ_DEF_05",
+          "priority": "high",
+          "question": "Kya aapne defamatory content ka screenshot ya archived copy save ki hai? Kya woh content abhi bhi online hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "screenshot hai",
+            "archived",
+            "wayback machine",
+            "saved hai",
+            "still online",
+            "abhi bhi hai",
+            "delete ho gaya",
+            "hataya gaya",
+            "nahi hai abhi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already mentioned — determines urgency of preservation",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, screenshot aur URL dono saved hain — content abhi bhi live hai",
+            "Screenshot hai par content delete ho gaya",
+            "Kisi ne mujhe screenshot bheja — original URL nahi hai",
+            "Content abhi bhi live hai par maine save nahi kiya — ABHI karna chahiye",
+            "Video / article tha — screen recording nahi li"
+          ]
+        },
+        {
+          "question_id": "CQ_DEF_06",
+          "priority": "medium",
+          "question": "Kya aap criminal case chahte hain ya civil damages bhi pursue karna chahte hain? Dono options available hain.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "jail chahiye",
+            "criminal case",
+            "compensation chahiye",
+            "damages",
+            "civil suit",
+            "content hatao bas",
+            "apology chahiye",
+            "pata nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Legal remedy preference already mentioned — guides correct legal pathway",
+            "auto_extract_answer": "Legal remedy preference mentioned by user"
+          },
+          "options": [
+            "Criminal case chahiye — FIR aur prosecution under IPC 499/500",
+            "Civil damages / compensation chahiye court se",
+            "Sirf content hatwa do — platform pe report ya legal notice",
+            "Apology aur retraction chahiye publicly",
+            "Mujhe lawyer se baat karke decide karna hai — options samjhaao"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT015",
+      "crime_name": "Hate Speech / Online Abuse",
+      "cross_questions": [
+        {
+          "question_id": "CQ_HATE_01",
+          "priority": "critical",
+          "question": "Hate speech ya online abuse kiske khilaf hai — kisi specific community ke khilaf, ya aap personally kisi community ke naam se target ho rahe hain?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "religion ke khilaf",
+            "community ke khilaf",
+            "caste ke naam se",
+            "dalit",
+            "muslim",
+            "hindu",
+            "christian",
+            "regional",
+            "bihari",
+            "women ke khilaf",
+            "lgbtq",
+            "personally target",
+            "mujhe personally"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Target identity already described — determines applicable specific law (IPC 153A vs 295A vs SC/ST Act vs IPC 509)",
+            "auto_extract_answer": "Target identity mentioned by user"
+          },
+          "options": [
+            "Religious community ke khilaf hate content hai (Hindu / Muslim / Sikh / Christian etc.)",
+            "Caste ya SC/ST community ke khilaf abuse ya hate hai",
+            "Regional ya linguistic group ke khilaf hate content hai",
+            "Women ya LGBTQ+ community ke khilaf misogynistic / homophobic content hai",
+            "Mujhe personally meri community identity ke naam se target kiya ja raha hai",
+            "Ek specific minority ya vulnerable group ke khilaf coordinated attack hai"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_02",
+          "priority": "critical",
+          "question": "Hate content mein kya hai — sirf offensive language hai, ya violence ya physical harm ke liye call to action bhi hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "violence ke liye bulaya",
+            "maaro isko",
+            "death threat community",
+            "rape threat community",
+            "attack karo",
+            "boycott",
+            "sirf gaali",
+            "insult",
+            "offensive language",
+            "propaganda"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Content severity already described — incitement to violence is most urgent category requiring immediate reporting",
+            "auto_extract_answer": "Content severity mentioned by user"
+          },
+          "options": [
+            "Violence, attack, ya physical harm ke liye directly call to action hai",
+            "Death threats ya rape threats community ke members ko directly bheje ja rahe hain",
+            "Incitement hai — sabko ek community ke khilaf bhad-kaaya ja raha hai",
+            "Offensive slurs aur dehumanizing language hai par direct violence threat nahi",
+            "False disinformation / fake news jo communal tension badha sakti hai",
+            "Propaganda aur ideology hai — open violence nahi par hateful beliefs promote kar raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_03",
+          "priority": "critical",
+          "question": "Yeh content kitna viral ho gaya hai — sirf ek post hai ya bahut saare platforms pe phail gaya hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "viral ho gaya",
+            "lakhs views",
+            "thousands shares",
+            "trending",
+            "multiple platforms",
+            "whatsapp forward",
+            "ek post hai",
+            "chhota group",
+            "sirf ek jagah"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Virality already described — determines urgency of platform takedown and government intervention",
+            "auto_extract_answer": "Virality extent mentioned by user"
+          },
+          "options": [
+            "Ek chhote group ya account pe hai — abhi viral nahi hua",
+            "Kuch shares hue hain — limited spread",
+            "Thousands shares / views ho gaye hain",
+            "Lakhs mein spread ho gaya hai ya trending hai",
+            "Multiple platforms pe simultaneously hai",
+            "WhatsApp aur Telegram pe bhi forward ho raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_04",
+          "priority": "high",
+          "question": "Content publish karne wala kaun hai — individual account, verified account, page/group, ya news platform?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "individual account",
+            "verified account",
+            "celebrity ne",
+            "politician ne",
+            "page hai",
+            "group hai",
+            "channel hai",
+            "news portal",
+            "anonymous account",
+            "bot account"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Publisher type already described — determines accountability and legal remedies available",
+            "auto_extract_answer": "Publisher type mentioned by user"
+          },
+          "options": [
+            "Anonymous ya fake account se hai",
+            "Verified ya notable individual (celebrity / influencer / politician) ka account hai",
+            "Public page ya group / channel se hai",
+            "Online news portal ya digital media outlet ne publish kiya",
+            "Bot accounts ya coordinated inauthentic behavior lag raha hai",
+            "Known person ki personal profile se hai"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_05",
+          "priority": "high",
+          "question": "Kya yeh content real-world communal tension ya violence ka cause ban sakta hai ya already bana hai is area mein?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "tension hai",
+            "darr lag raha",
+            "already tension",
+            "dange ka darr",
+            "communal violence",
+            "police already",
+            "koi incident hua",
+            "abhi tak kuch nahi",
+            "sirf online"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Real-world impact already described — immediate law enforcement escalation required if physical danger exists",
+            "auto_extract_answer": "Real-world impact mentioned by user"
+          },
+          "options": [
+            "Sirf online hai — real world mein abhi koi tension nahi",
+            "Local tension already hai — is content se aur bad ho sakti hai",
+            "Ek specific area / locality mein darr hai is content ki wajah se",
+            "Pehle bhi is type ka content se dange ya incidents hue hain",
+            "Police / administration ko already pata hai situation ka"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_06",
+          "priority": "high",
+          "question": "Kya aapne platform pe report kiya? Kya platform ne action liya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "report kiya",
+            "platform ne kuch nahi kiya",
+            "action nahi liya",
+            "content waise hi hai",
+            "nahi kiya report",
+            "platform ne hataya",
+            "removed hua"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Platform reporting status already mentioned — if platform failed to act, government / court escalation is needed",
+            "auto_extract_answer": "Platform reporting status mentioned by user"
+          },
+          "options": [
+            "Haan report kiya — platform ne HATAYA content ko",
+            "Haan report kiya — platform ne KUCH NAHI KIYA, content abhi bhi hai",
+            "Nahi, abhi tak report nahi kiya — kaise karein?",
+            "Multiple times report kiya — platform ignore kar raha hai",
+            "Report kiya tha par account ka sirf temporary action hua"
+          ]
+        },
+        {
+          "question_id": "CQ_HATE_07",
+          "priority": "medium",
+          "question": "Kya aapke paas content ka screenshot ya archived copy hai jise aap complaint ke saath submit kar sakte hain?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "screenshot hai",
+            "saved hai",
+            "archived",
+            "url hai",
+            "nahi hai",
+            "delete ho gaya",
+            "screen recording"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already mentioned — critical for FIR and platform escalation",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, screenshots aur URL dono hain",
+            "Sirf screenshot hai — URL nahi",
+            "Screen recording hai video content ka",
+            "Kuch nahi hai — ABHI save karna chahiye",
+            "Content already delete ho gaya hai — kya archived copy milegi?"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT018",
+      "crime_name": "SIM Swap Fraud / SIM Cloning Fraud",
+      "cross_questions": [
+        {
+          "question_id": "CQ_SS_01",
+          "priority": "critical",
+          "question": "Kya aapka mobile number suddenly kaam karna band ho gaya ya signal chala gaya — jiske baad aapke account se paise gaye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "no signal",
+            "network chala gaya",
+            "sim band ho gaya",
+            "sim block",
+            "network nahi aa raha",
+            "call nahi aa raha",
+            "incoming band",
+            "outgoing band",
+            "sim stopped working"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already confirmed SIM deactivation or signal loss before fraud — strong SIM Swap indicator",
+            "auto_extract_answer": "Haan, SIM suddenly band ho gaya tha"
+          },
+          "options": [
+            "Haan, SIM suddenly band ho gaya aur phir account se paise gaye",
+            "SIM toh chal raha tha, par OTP aaya hi nahi",
+            "Mujhe pata nahi — seedha bank se deduction ka message aaya",
+            "Sirf paise gaye, SIM ke baare mein kuch nahi pata"
+          ]
+        },
+        {
+          "question_id": "CQ_SS_02",
+          "priority": "critical",
+          "question": "Kya fraud hone se pehle kisi ne aapko call karke personal details maange — jaise Aadhaar number, date of birth, account number, ya koi OTP?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "call aaya",
+            "telecom se call",
+            "airtel call",
+            "jio call",
+            "customer care call",
+            "aadhaar maanga",
+            "details maange",
+            "kyc update",
+            "sim update",
+            "verification ke liye",
+            "otp diya",
+            "otp share kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already mentioned receiving a suspicious call asking for details — confirms social engineering phase of SIM Swap",
+            "auto_extract_answer": "Haan, kisi ne call karke details maange"
+          },
+          "options": [
+            "Haan, kisine telecom/bank ka bola karke call kiya aur details maange",
+            "Haan, ek call aaya tha par maine kuch share nahi kiya",
+            "Nahi, koi call nahi aaya — seedha SIM band hua aur paise gaye",
+            "Mujhe yaad nahi / nahi pata"
+          ]
+        },
+        {
+          "question_id": "CQ_SS_03",
+          "priority": "high",
+          "question": "Kya aapke bank account, WhatsApp, ya kisi doosre account se unauthorized activity hui — jaise paise transfer hue, messages gaye, ya login notifications aaye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise kat gaye",
+            "transaction hua",
+            "bank se debit",
+            "whatsapp hack",
+            "login notification",
+            "doosri jagah login",
+            "unauthorized transfer",
+            "account se paise gaye",
+            "upi fraud",
+            "net banking fraud"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already reported financial loss or account compromise — confirms SIM Swap used to bypass 2FA",
+            "auto_extract_answer": "Haan, account se unauthorized transaction hua"
+          },
+          "options": [
+            "Haan, bank account se paise gaye bina mere kiye",
+            "Haan, WhatsApp / email ka access kho gaya",
+            "Haan, mujhe doosre device se login ka notification aaya",
+            "Abhi tak koi loss nahi, par SIM band hai — aage kya hoga?"
+          ]
+        },
+        {
+          "question_id": "CQ_SS_04",
+          "priority": "high",
+          "question": "Kitne samay pehle yeh hua? Jitna jaldi report karein utna recovery ka chance zyada hota hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "abhi hua",
+            "aaj hua",
+            "kal hua",
+            "1 ghante mein",
+            "thodi der pehle",
+            "just now",
+            "few hours ago",
+            "yesterday",
+            "this week",
+            "ek hafte pehle"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Timeline already mentioned by user — critical for recovery probability assessment",
+            "auto_extract_answer": "Timeline mentioned by user"
+          },
+          "options": [
+            "Abhi abhi hua — 1-2 ghante ke andar",
+            "Aaj din mein hua",
+            "Kal ya 2 din pehle",
+            "Ek hafte se zyada pehle"
+          ]
+        },
+        {
+          "question_id": "CQ_SS_05",
+          "priority": "medium",
+          "question": "Kya aapne apni telecom company ko contact kiya ya SIM block/report karne ki koshish ki?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "airtel ko call kiya",
+            "jio ko call kiya",
+            "telecom complaint",
+            "sim block kiya",
+            "operator ko bataya",
+            "store gaya",
+            "customer care",
+            "ditto sim liya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "User already mentioned contacting telecom — helps assess what steps remain",
+            "auto_extract_answer": "Haan, telecom ko contact kiya"
+          },
+          "options": [
+            "Haan, telecom company ko call/visit kiya hai",
+            "Nahi, abhi tak nahi kiya",
+            "Koshish ki par koi response nahi mila",
+            "Mujhe pata nahi kaise report karna hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT019",
+      "crime_name": "Malware Attack / Virus / Ransomware",
+      "cross_questions": [
+        {
+          "question_id": "CQ_MAL_01",
+          "priority": "critical",
+          "question": "Kya hua exactly — files encrypt ho gayi aur ransom maanga, ya computer slow ho gaya / weird behavior aa raha hai, ya koi screen pe alert aa raha hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "files encrypt",
+            "files lock",
+            "ransom note",
+            "bitcoin maanga",
+            "decrypt",
+            "computer slow",
+            "popup aa raha hai",
+            "weird behavior",
+            "virus alert",
+            "antivirus warning",
+            "screen lock",
+            "data gaya",
+            "files nahi khul rahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Attack type already described — determines malware category and urgency level",
+            "auto_extract_answer": "Attack type mentioned by user"
+          },
+          "options": [
+            "Ransomware — files encrypt ho gayi, ransom note / demand aaya hai",
+            "System infected lag raha hai — bahut slow, ajeeb behave kar raha hai",
+            "Scary popup / alert aa raha hai ki virus hai — number pe call karo",
+            "Mere data / personal info access ho gaya aur leak hua",
+            "System bilkul kaam karna band ho gaya — wiper / destructive attack",
+            "Computer bot ke roop mein use ho raha lagta hai — strange network activity"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_02",
+          "priority": "critical",
+          "question": "Malware / virus kaise aaya lagta hai — koi email attachment khola, koi link pe click kiya, USB lagayi, ya koi software download kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "email attachment",
+            "attachment khola",
+            "link pe click",
+            "usb lagayi",
+            "pendrive",
+            "software download",
+            "crack download",
+            "pirated",
+            "website pe click",
+            "app install ki",
+            "fake update",
+            "pata nahi",
+            "kuch nahi kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Infection vector already described — critical for forensic investigation and prevention",
+            "auto_extract_answer": "Infection vector mentioned by user"
+          },
+          "options": [
+            "Email mein attachment tha — Word/Excel/PDF — khola aur kuch ho gaya",
+            "Email ya message mein link tha — click kiya aur download hua kuch",
+            "USB / external drive / pendrive lagayi thi",
+            "Software download kiya tha — cracked/pirated ya unknown source se",
+            "Koi website pe gaya tha — automatic download ho gaya",
+            "Phone pe koi app install ki thi — third party APK ya suspicious app",
+            "Bilkul kuch nahi kiya — automatically ho gaya (zero-day / network-based)"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_03",
+          "priority": "critical",
+          "question": "Agar ransomware hai — ransom note mein kitna maanga gaya hai aur kya aapne already backup le rakhi thi?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "ransom amount",
+            "bitcoin",
+            "kitna maanga",
+            "backup hai",
+            "backup nahi hai",
+            "cloud backup",
+            "external drive backup",
+            "no backup",
+            "note mein likha hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Ransom details and backup status already described — determines recovery options",
+            "auto_extract_answer": "Ransom and backup status mentioned by user"
+          },
+          "options": [
+            "Ransom note aaya hai — backup nahi hai, data recover karna hai",
+            "Ransom note aaya hai — mujhe backup hai (external drive ya cloud)",
+            "Ransom note nahi aaya par files/data gaya hai",
+            "Ransom pay karne ka soch raha hoon — guidance chahiye",
+            "Ransomware nahi hai — different malware issue hai"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_04",
+          "priority": "critical",
+          "question": "Kaunsa device / system affect hua hai — personal computer, office network, server, ya mobile phone?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "personal computer",
+            "laptop",
+            "desktop",
+            "office",
+            "work computer",
+            "company network",
+            "server",
+            "mobile",
+            "android",
+            "multiple systems",
+            "whole network"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Affected device type already described — determines scope and response strategy",
+            "auto_extract_answer": "Device type mentioned by user"
+          },
+          "options": [
+            "Sirf mera personal computer / laptop",
+            "Mera mobile / smartphone",
+            "Office ya business ka ek computer",
+            "Office ka poora network ya multiple systems affected",
+            "Server ya business-critical infrastructure affected",
+            "Hospital / government / critical service ka system"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_05",
+          "priority": "high",
+          "question": "Kya aapne attack ke baad koi important financial credentials ya passwords use kiye infected device se?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "banking use kiya",
+            "password enter kiya",
+            "credentials use kiye",
+            "kuch nahi kiya",
+            "device disconnect kiya",
+            "internet band kiya",
+            "antivirus chalaya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Post-infection behavior already described — determines whether financial accounts are also compromised",
+            "auto_extract_answer": "Post-infection behavior mentioned by user"
+          },
+          "options": [
+            "Haan, infected device se banking / UPI / passwords use kiye — account bhi compromise ho sakta hai",
+            "Nahi, device immediately disconnect kar diya network se",
+            "Antivirus scan chalaya par baaki kuch nahi kiya",
+            "Mujhe pata nahi tha infected hai — normal use karta raha",
+            "Device abhi bhi infected hai aur use ho raha hai"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_06",
+          "priority": "high",
+          "question": "Kya is attack mein sensitive data bhi steal hua hai — personal documents, business data, financial records, customer data?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "data steal hua",
+            "data exfiltration",
+            "documents gaye",
+            "customer data",
+            "business data",
+            "financial records",
+            "personal photos",
+            "aadhar pan documents",
+            "pata nahi",
+            "sirf encrypt hua"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data theft status already described — determines additional reporting requirements under DPDP Act 2023",
+            "auto_extract_answer": "Data theft status mentioned by user"
+          },
+          "options": [
+            "Haan, sensitive personal / business documents leaked lagta hai",
+            "Customer ya third-party data bhi gaya ho sakta hai — data breach situation",
+            "Financial / banking records access hue hain",
+            "Sirf encryption hua hai — data steal nahi hua lagta",
+            "Pata nahi kya access kiya gaya — investigation chahiye"
+          ]
+        },
+        {
+          "question_id": "CQ_MAL_07",
+          "priority": "medium",
+          "question": "Kya aapke paas malware se related evidence hai — ransom note screenshot, virus name (antivirus ne bataya), ya suspicious file ka naam?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "ransom note hai",
+            "screenshot liya",
+            "antivirus ne bataya",
+            "virus ka naam",
+            "file naam",
+            "log hai",
+            "nahi hai",
+            "kuch save nahi kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already described — determines forensic investigation quality",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Ransom note ka screenshot / text saved hai",
+            "Antivirus ne virus ka naam bataya hai — note kar liya",
+            "Suspicious file name ya email/link saved hai jisse hua",
+            "Kuch bhi save nahi kiya",
+            "System logs available hain"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT020",
+      "crime_name": "Denial of Service (DoS / DDoS Attack)",
+      "cross_questions": [
+        {
+          "question_id": "CQ_DDOS_01",
+          "priority": "critical",
+          "question": "Kya affect hua hai — aapki website/server down hai, ya poora internet/network inaccessible ho gaya hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "website down",
+            "server down",
+            "network down",
+            "internet slow",
+            "service unavailable",
+            "api not working",
+            "game server down",
+            "poora down",
+            "sirf website"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Scope of attack already described — determines severity and response urgency",
+            "auto_extract_answer": "Attack scope mentioned by user"
+          },
+          "options": [
+            "Meri specific website / web application down hai",
+            "Mere server / hosting down hain",
+            "Mera game / gaming server down hai",
+            "Poore office / business ka network affected hai",
+            "Critical service down hai (banking, hospital, government portal)",
+            "Mera ISP / hosting provider ne DDoS alert diya hai"
+          ]
+        },
+        {
+          "question_id": "CQ_DDOS_02",
+          "priority": "critical",
+          "question": "Kya kisi ne DDoS extortion demand kiya hai — paise bharo ya attack band nahi hoga?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "ransom demand",
+            "pay karo",
+            "bitcoin maanga",
+            "paise bharo",
+            "band karo attack",
+            "koi demand nahi",
+            "sirf attack hai",
+            "email aaya hai",
+            "dhamki di"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Extortion component already described — adds IPC 384 extortion charges to IT Act sections",
+            "auto_extract_answer": "Extortion status mentioned by user"
+          },
+          "options": [
+            "Haan, ransom demand aaya hai — payment karo attack rokne ke liye",
+            "Nahi, koi demand nahi — sirf attack ho raha hai",
+            "Pehle warning attack hua — ab demand aa sakti hai",
+            "Mujhe suspect hai competitor ya rival ne kiya hai",
+            "Hacktivist ya political group ne claim kiya hai attack ka"
+          ]
+        },
+        {
+          "question_id": "CQ_DDOS_03",
+          "priority": "critical",
+          "question": "Kya aapko pata hai attack kahan se aa raha hai — logs mein dekha, ISP ne bataya, ya security tools ne alert diya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "log mein dekha",
+            "isp ne bataya",
+            "cloudflare",
+            "firewall alert",
+            "ip addresses",
+            "source ip",
+            "country se aa raha",
+            "pata nahi",
+            "security tool"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Attack source information already described — critical for law enforcement tracing",
+            "auto_extract_answer": "Attack source information mentioned by user"
+          },
+          "options": [
+            "Haan, server/firewall logs mein suspicious IP addresses dikh rahi hain",
+            "ISP / hosting provider ne confirm kiya hai DDoS traffic",
+            "Cloudflare / AWS Shield / CDN provider ne alert diya hai",
+            "Koi specific country ya region se traffic spike dikh raha hai",
+            "Mujhe kuch pata nahi — sirf service down hai"
+          ]
+        },
+        {
+          "question_id": "CQ_DDOS_04",
+          "priority": "high",
+          "question": "Yeh attack kitne samay se chal raha hai aur kitna financial / operational damage hua hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "kitne samay se",
+            "hours se",
+            "days se",
+            "financial loss",
+            "revenue loss",
+            "business loss",
+            "customers affected",
+            "SLA breach",
+            "abhi shuru hua"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Duration and damage already described — determines legal remedy strength and urgency",
+            "auto_extract_answer": "Duration and damage mentioned by user"
+          },
+          "options": [
+            "Abhi abhi shuru hua hai — 1-2 ghante",
+            "Kuch ghanton se chal raha hai",
+            "24 ghante se zyada se chal raha hai",
+            "Kaafi dino se recurring attacks aa rahe hain",
+            "Significant financial loss / customer impact already hua hai"
+          ]
+        },
+        {
+          "question_id": "CQ_DDOS_05",
+          "priority": "high",
+          "question": "Kya attack ke saath ya baad mein aapke systems mein koi data breach ya unauthorized access bhi hua?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "data breach",
+            "data stolen",
+            "unauthorized access",
+            "hack bhi hua",
+            "sirf ddos",
+            "only downtime",
+            "data gaya",
+            "login hua unauthorized"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Combined attack status already described — DDoS often used as cover for simultaneous breach",
+            "auto_extract_answer": "Combined attack status mentioned by user"
+          },
+          "options": [
+            "Nahi, sirf downtime hai — data breach evidence nahi",
+            "Haan, DDoS ke saath saath unauthorized access bhi hua lagta hai",
+            "Customer data ya business data compromised hua hai",
+            "Pata nahi — investigation ke baad pata chalega",
+            "DDoS distraction ke roop mein use hua — asal attack alag tha"
+          ]
+        },
+        {
+          "question_id": "CQ_DDOS_06",
+          "priority": "medium",
+          "question": "Kya aapke paas DDoS mitigation solution hai — Cloudflare, AWS Shield, Akamai, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "cloudflare hai",
+            "aws shield",
+            "akamai",
+            "mitigation hai",
+            "koi nahi",
+            "abhi lagana chahta hoon",
+            "isp se protection"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Mitigation capability already described — determines immediate technical response options",
+            "auto_extract_answer": "Mitigation capability mentioned by user"
+          },
+          "options": [
+            "Haan, Cloudflare / CDN use kar raha hoon — abhi enable karna hai",
+            "ISP / hosting provider ki DDoS protection hai",
+            "Koi dedicated DDoS protection nahi hai",
+            "Kuch basic firewall rules hain par specialized mitigation nahi",
+            "Abhi lagana chahta hoon — guidance chahiye"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT021",
+      "crime_name": "Data Breach / Unauthorized Data Access",
+      "cross_questions": [
+        {
+          "question_id": "CQ_DB_01",
+          "priority": "critical",
+          "question": "Aap victim hain ya data controller? Matlab — aapka data leaked hua hai, ya aapki organization ka breach hua hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "mera data",
+            "mere baare mein data",
+            "meri info",
+            "meri company",
+            "mere organization",
+            "mere customers",
+            "humara database",
+            "humara server",
+            "individual victim",
+            "business breach"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Role in breach already described — determines whether DPDP Act obligations or victim rights apply",
+            "auto_extract_answer": "Role in breach mentioned by user"
+          },
+          "options": [
+            "Main individual victim hoon — mera personal data leaked/breached hua",
+            "Meri organization / company ka data breach hua — ham Data Fiduciary hain",
+            "Mujhe pata chala ki mera data dark web pe ya kisi website pe hai",
+            "Meri company ka employee ne data leak kiya (insider threat)",
+            "Hum ek vendor/processor hain — client ke data ka breach hua"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_02",
+          "priority": "critical",
+          "question": "Kaunsa data breach hua hai — kya personally identifiable information, financial data, health data, ya credentials include hain?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "aadhaar",
+            "pan card",
+            "financial data",
+            "bank account",
+            "credit card",
+            "medical records",
+            "health data",
+            "passwords",
+            "credentials",
+            "biometric",
+            "location data",
+            "employee data",
+            "customer data",
+            "minor data"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data type already described — determines severity, applicable laws, and regulatory notification requirements",
+            "auto_extract_answer": "Data type mentioned by user"
+          },
+          "options": [
+            "Personal identity data — Aadhaar, PAN, passport, driving license",
+            "Financial data — bank accounts, credit cards, UPI, transaction history",
+            "Health / medical records — patient data, prescriptions, diagnoses",
+            "Login credentials — usernames, passwords, OTPs",
+            "Biometric data — fingerprints, face scans",
+            "Multiple categories — large scale breach affecting many data types"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_03",
+          "priority": "critical",
+          "question": "Breach kaise hua pata chala ya kaise hua — hacking, insider leak, misconfigured server, dark web pe mila, ya koi aur tarika?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "hacking",
+            "sql injection",
+            "employee ne kiya",
+            "insider",
+            "misconfigured",
+            "s3 bucket",
+            "open database",
+            "dark web",
+            "telegram",
+            "phishing",
+            "malware",
+            "api abuse",
+            "breach notification"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Breach vector already described — determines forensic approach and preventive measures",
+            "auto_extract_answer": "Breach vector mentioned by user"
+          },
+          "options": [
+            "External hacking — SQL injection, credential stuffing, vulnerability exploit",
+            "Insider threat — employee, contractor, or vendor intentionally leaked data",
+            "Misconfigured cloud/server — database accidentally publicly accessible",
+            "Mujhe data dark web ya forum pe mila — source unclear",
+            "Company ne breach notification bheja — woh bata rahe hain breach hua",
+            "Phishing ya malware ke through credentials steal hue aur data gaya"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_04",
+          "priority": "critical",
+          "question": "Kitne log affect hue hain — sirf aap, ya ek organization ke hazaron/lakhs users?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "sirf main",
+            "few people",
+            "thousands",
+            "millions",
+            "large scale",
+            "mass breach",
+            "enterprise breach",
+            "kuch log",
+            "poori company"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Scale already described — large scale breaches trigger mandatory CERT-In and DPB reporting within 6 hours",
+            "auto_extract_answer": "Breach scale mentioned by user"
+          },
+          "options": [
+            "Sirf main ya kuch logon ka data affected hai",
+            "Ek organization ke employees ka data affected",
+            "Thousands of customers / users affected",
+            "Lakhs ya millions of users ka data breach hua",
+            "Pata nahi exact scale — investigation chal rahi hai"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_05",
+          "priority": "high",
+          "question": "Kya organization ne CERT-In aur affected users ko breach ke baare mein notify kiya hai? DPDP Act ke under yeh mandatory hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "cert-in report kiya",
+            "users ko bataya",
+            "notification bheja",
+            "nahi bataya",
+            "chhupa rahe hain",
+            "hide kar rahe",
+            "abhi tak nahi bataya",
+            "6 ghante"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Notification status already described — failure to notify is a separate DPDP Act violation",
+            "auto_extract_answer": "Notification status mentioned by user"
+          },
+          "options": [
+            "Haan, CERT-In aur affected users ko notify kar diya hai",
+            "Nahi, abhi tak notify nahi kiya — karna chahte hain",
+            "Company breach chhupa rahi hai — users ko pata hi nahi",
+            "CERT-In 6-hour mandatory reporting deadline miss ho gayi",
+            "Main individual victim hoon — company ne mujhe notify nahi kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_06",
+          "priority": "high",
+          "question": "Kya breach ke baad se koi misuse evidence hai — fraudulent transactions, identity theft attempts, ya phishing calls?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "fraudulent transaction",
+            "identity theft",
+            "phishing calls",
+            "spam calls",
+            "account takeover",
+            "loan application",
+            "credit card misuse",
+            "impersonation",
+            "abhi tak kuch nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Post-breach misuse already described — determines additional fraud reporting required",
+            "auto_extract_answer": "Post-breach misuse mentioned by user"
+          },
+          "options": [
+            "Haan, fraudulent financial transactions already hue hain",
+            "Identity theft attempt hua hai — mere naam pe loan/account",
+            "Phishing calls ya targeted spam aa raha hai",
+            "Account takeover attempt hua hai",
+            "Abhi tak koi misuse evidence nahi — par concerned hoon"
+          ]
+        },
+        {
+          "question_id": "CQ_DB_07",
+          "priority": "medium",
+          "question": "Kya affected organization ne breach ke baad koi security fix ya remediation action liya hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "patch kiya",
+            "vulnerability patched",
+            "kuch nahi kiya",
+            "same vulnerability",
+            "still exposed",
+            "incident response",
+            "forensic investigation"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Remediation status already described — ongoing vulnerability is additional violation",
+            "auto_extract_answer": "Remediation status mentioned by user"
+          },
+          "options": [
+            "Haan, vulnerability patch ho gayi aur system secure kar liya",
+            "Nahi, abhi bhi same vulnerability exist karti hai",
+            "Pata nahi — organization transparent nahi hai",
+            "Forensic investigation chal rahi hai",
+            "System offline kar diya hai temporarily"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT022",
+      "crime_name": "Website Defacement / Hacking",
+      "cross_questions": [
+        {
+          "question_id": "CQ_WDEF_01",
+          "priority": "critical",
+          "question": "Exactly kya hua website ke saath — homepage badal gayi, unknown files mili, redirect ho raha hai, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "homepage badal gayi",
+            "deface ho gayi",
+            "hacker message",
+            "unknown files",
+            "redirect",
+            "malware",
+            "phishing page",
+            "data gaya",
+            "admin access gaya",
+            "website down"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Attack type already described — determines specific technical response and legal sections",
+            "auto_extract_answer": "Attack type mentioned by user"
+          },
+          "options": [
+            "Homepage ya content badal gayi hai — hacker ka message ya flag dikh raha hai (Defacement)",
+            "Website users ko kisi aur site pe redirect kar rahi hai",
+            "Unknown malicious files server pe mili hain (webshell, PHP backdoor)",
+            "Customer data / database access / steal hua lagta hai",
+            "Website pe phishing page ya fake content host ho raha hai",
+            "Hosting provider ne malware warning diya aur account suspend kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_02",
+          "priority": "critical",
+          "question": "Kya aapko pata hai hack kaise hua — kaunse vulnerability se? CMS outdated tha, FTP/cPanel credentials chori hue, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "wordpress outdated",
+            "plugin vulnerability",
+            "ftp credentials",
+            "cpanel credentials",
+            "sql injection",
+            "brute force",
+            "file upload",
+            "pata nahi",
+            "developer ne kiya",
+            "hosting issue"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Attack vector already described — determines remediation steps needed",
+            "auto_extract_answer": "Attack vector mentioned by user"
+          },
+          "options": [
+            "CMS (WordPress/Joomla) ya plugin outdated tha — vulnerability exploit hua",
+            "FTP / cPanel / SSH credentials chori ya brute force hua",
+            "SQL injection ya other web vulnerability",
+            "Pata nahi exact vector — logs check karne chahiye",
+            "Kisi developer ya employee ne credentials share kiye ya abuse kiye",
+            "Hosting provider ka khud ka issue / shared hosting contamination"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_03",
+          "priority": "critical",
+          "question": "Kya website pe user data, customer payment data, ya koi sensitive information stored tha jo breach mein gaya ho?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "customer data",
+            "payment data",
+            "credit card",
+            "user accounts",
+            "personal info",
+            "sensitive data",
+            "kuch nahi tha",
+            "static site",
+            "no database"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data compromise status already described — if customer/payment data involved, DPDP Act + CERT-In mandatory reporting triggered",
+            "auto_extract_answer": "Data compromise status mentioned by user"
+          },
+          "options": [
+            "Haan, customer personal data / contact info website pe tha",
+            "Payment / credit card data processed / stored tha",
+            "User accounts / login credentials site pe the",
+            "Sensitive business data ya confidential documents the",
+            "Nahi, static site hai — no user data stored",
+            "Pata nahi exactly kya store tha — investigate karna hoga"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_04",
+          "priority": "high",
+          "question": "Website kaunsi technology pe hai — WordPress, custom developed, ecommerce, ya government hosted?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "wordpress",
+            "joomla",
+            "drupal",
+            "magento",
+            "custom",
+            "government",
+            "gov.in",
+            "ecommerce"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Technology stack already described — determines specific vulnerability remediation steps",
+            "auto_extract_answer": "Technology stack mentioned by user"
+          },
+          "options": [
+            "WordPress website hai",
+            "Joomla / Drupal / other CMS",
+            "Custom developed PHP / other backend",
+            "E-commerce platform (Magento / OpenCart / WooCommerce)",
+            "Government website (NIC hosted / gov.in / nic.in domain)",
+            "Static HTML ya simple website"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_05",
+          "priority": "high",
+          "question": "Kya aapke paas website ka recent clean backup hai jisse restore kar sako?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "backup hai",
+            "backup nahi",
+            "hosting backup",
+            "cloud backup",
+            "last backup",
+            "regular backup",
+            "no backup",
+            "pata nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Backup availability already described — determines recovery timeline and approach",
+            "auto_extract_answer": "Backup availability mentioned by user"
+          },
+          "options": [
+            "Haan, recent clean backup hai — restore kar sakta hoon",
+            "Hosting provider ka automatic backup hai",
+            "Backup hai par kaafi purana hai",
+            "Koi backup nahi hai",
+            "Pata nahi — hosting provider se check karna hoga"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_06",
+          "priority": "high",
+          "question": "Kya yeh ek government website, critical service, ya high-profile target hai? Yeh reporting urgency determine karta hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "government",
+            "gov.in",
+            "hospital",
+            "critical",
+            "high profile",
+            "personal website",
+            "small business",
+            "large organization"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Website type already described — government/critical infrastructure requires immediate CERT-In + NCIIPC reporting",
+            "auto_extract_answer": "Website type mentioned by user"
+          },
+          "options": [
+            "Government website (gov.in / nic.in / government department)",
+            "Banking / financial services website",
+            "Hospital / healthcare portal",
+            "Personal blog / portfolio website",
+            "Small business website",
+            "Large corporate / enterprise website"
+          ]
+        },
+        {
+          "question_id": "CQ_WDEF_07",
+          "priority": "medium",
+          "question": "Kya aapne hosting provider ko already contact kiya? Aur defacement screenshot / server logs save kiye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "hosting ko bataya",
+            "hosting contact",
+            "screenshot liya",
+            "logs saved",
+            "nahi kiya",
+            "hosting suspended",
+            "nahi bataya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Response steps already described — determines what actions still need to be taken",
+            "auto_extract_answer": "Response steps taken mentioned by user"
+          },
+          "options": [
+            "Haan hosting ko bataya aur logs/screenshots save kiye",
+            "Hosting ko bataya par logs nahi liye",
+            "Screenshots le liye par hosting ko nahi bataya",
+            "Kuch nahi kiya abhi tak",
+            "Hosting ne khud notice kiya aur suspend kar diya"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT023",
+      "crime_name": "Personal Data Leak / Privacy Violation",
+      "cross_questions": [
+        {
+          "question_id": "CQ_PDL_01",
+          "priority": "critical",
+          "question": "Kaunsi private information leak ya share hui — private photos/videos, financial data, medical records, personal documents, ya kuch aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "private photos",
+            "intimate images",
+            "videos",
+            "aadhaar",
+            "financial",
+            "medical",
+            "health records",
+            "location",
+            "sexual orientation",
+            "private messages",
+            "personal documents"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data type already described — determines applicable legal sections (66E for images, 43A for financial, DPDP Act for all)",
+            "auto_extract_answer": "Data type mentioned by user"
+          },
+          "options": [
+            "Private photos ya videos (intimate, personal, or compromising) share hue bina izazat",
+            "Financial information (bank, card, Aadhaar, PAN) share/leak hui",
+            "Medical ya health records share hue bina consent",
+            "Private messages, chats, ya personal conversations leak hue",
+            "Location data ya daily routine information share ki gayi",
+            "Sexual orientation, caste, religion, ya other sensitive identity information disclosed"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_02",
+          "priority": "critical",
+          "question": "Kisne data leak ya share kiya — koi jaanna-pahchana (ex-partner, relative, colleague), koi company/app, ya hacker?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "ex ne share kiya",
+            "ex-partner",
+            "colleague",
+            "employer",
+            "company ne share ki",
+            "app ne share ki",
+            "service provider",
+            "hacker",
+            "unknown",
+            "kisi ne bheja",
+            "hospital ne",
+            "bank ne"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Leaker identity already described — determines legal pathway (DPDP Act for companies vs IPC for individuals)",
+            "auto_extract_answer": "Leaker identity mentioned by user"
+          },
+          "options": [
+            "Koi known individual — ex-partner, relative, friend, ya colleague",
+            "Employer ya company HR ne share kiya",
+            "Company / app / service provider ne share kiya (bina meri izazat)",
+            "Hospital / doctor / healthcare provider ne share kiya",
+            "Government department ya official ne disclose kiya",
+            "Hacker ya unauthorized third party ne access kiya aur share kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_03",
+          "priority": "critical",
+          "question": "Leak kahan hua — social media pe viral hua, dark web pe mila, kisi specific person ko share kiya, ya public website pe post hua?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "social media viral",
+            "instagram",
+            "facebook",
+            "whatsapp",
+            "dark web",
+            "telegram",
+            "specific person",
+            "public website",
+            "internet pe",
+            "google pe"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Distribution channel already described — determines takedown strategy and urgency",
+            "auto_extract_answer": "Distribution channel mentioned by user"
+          },
+          "options": [
+            "Social media pe viral hua (Instagram, Facebook, Twitter, WhatsApp groups)",
+            "Telegram channel ya group mein share hua",
+            "Dark web ya hacking forums pe mila",
+            "Kisi specific person ko send kiya gaya (targeted sharing)",
+            "Public website ya porn site pe upload hua",
+            "Company ne third party ko share kiya — mujhe pata chala"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_04",
+          "priority": "high",
+          "question": "Kya is privacy violation se aapko koi concrete harm hua — financial loss, job loss, relationship damage, ya psychological impact?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "financial loss",
+            "job gayi",
+            "relationship khatam",
+            "psychological",
+            "depression",
+            "anxiety",
+            "family ko pata chala",
+            "marriage khatam",
+            "career affected",
+            "extortion",
+            "blackmail"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Harm already described — determines compensation claim amount and urgency",
+            "auto_extract_answer": "Harm mentioned by user"
+          },
+          "options": [
+            "Financial fraud hua — data se paise nikal liye ya loan liya",
+            "Job / career pe serious impact hua",
+            "Personal relationships / family / marriage affected",
+            "Mental health pe serious harm — depression, anxiety, trauma",
+            "Blackmail ya extortion ho raha hai is data se",
+            "Safety risk hai — location data se physical threat ho sakta hai"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_05",
+          "priority": "high",
+          "question": "Kya aapne data share karne wali company ya person se grievance redressal ki koshish ki? DPDP Act ke under yeh pehla qadam hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "complaint ki",
+            "email bheja",
+            "grievance officer",
+            "nahi ki",
+            "ignore kiya",
+            "response nahi aaya",
+            "deletion maanga",
+            "erasure request"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Grievance attempt already described — DPDP Act requires exhausting Data Fiduciary remedy before approaching DPB",
+            "auto_extract_answer": "Grievance attempt status mentioned by user"
+          },
+          "options": [
+            "Haan, company/person se complaint ki — koi response nahi aaya",
+            "Haan, deletion/correction maanga — refuse kar diya",
+            "Nahi, abhi tak nahi kiya — pehle kya karna chahiye?",
+            "Platform pe report kiya — koi action nahi liya",
+            "Legal notice bheja — koi response nahi"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_06",
+          "priority": "high",
+          "question": "Kya aapke paas evidence hai ki data leak hua — screenshot, URL, ya koi aur proof?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "screenshot hai",
+            "url hai",
+            "proof hai",
+            "saved hai",
+            "nahi hai",
+            "delete ho gaya",
+            "link hai",
+            "kisi ne bheja screenshot"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence status already described — determines complaint strength",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan, screenshot aur URL dono hain",
+            "Screenshot hai par URL nahi",
+            "Kisi ne mujhe forward kiya — proof hai",
+            "Content already delete ho gaya — koi proof nahi",
+            "Company ka email/notification hai jo data sharing confirm karta hai"
+          ]
+        },
+        {
+          "question_id": "CQ_PDL_07",
+          "priority": "medium",
+          "question": "Kya yeh data kisi minor (18 saal se kam) ka hai? Minor data ke liye DPDP Act mein special enhanced protections hain.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "baccha",
+            "18 se kam",
+            "student",
+            "school",
+            "teenager",
+            "main adult hoon"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Minor status already described — triggers DPDP Act Section 9 enhanced protections and higher penalties",
+            "auto_extract_answer": "Minor status mentioned by user"
+          },
+          "options": [
+            "Haan, 18 saal se kam umra ka data hai",
+            "Nahi, adult ka data hai",
+            "Mujhe pata nahi — multiple users ka data tha"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT024",
+      "crime_name": "Unauthorized Data Sharing by Company",
+      "cross_questions": [
+        {
+          "question_id": "CQ_UDS_01",
+          "priority": "critical",
+          "question": "Kaunsi company ya organization ne aapka data share kiya — bank, hospital, telecom, app, ya koi aur?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "hospital",
+            "telecom",
+            "airtel",
+            "ecommerce",
+            "amazon",
+            "insurance",
+            "employer",
+            "school",
+            "government"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Company type already described — determines sector-specific regulator and complaint mechanism",
+            "auto_extract_answer": "Company type mentioned by user"
+          },
+          "options": [
+            "Bank ya financial institution ne share kiya",
+            "Hospital ya healthcare provider ne share kiya",
+            "Telecom company (Jio / Airtel / Vi / BSNL) ne share kiya",
+            "Mobile app ya e-commerce platform ne share kiya",
+            "Insurance company ne share kiya",
+            "Employer ya HR department ne share kiya",
+            "Government department ya agency ne share kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_UDS_02",
+          "priority": "critical",
+          "question": "Kya company ne aapko data sharing ke baare mein pehle bataya tha ya consent liya tha? Kaise pata chala ki data share hua?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "consent nahi liya",
+            "nahi bataya",
+            "privacy policy mein chhupa tha",
+            "pata nahi tha",
+            "third party ne contact kiya",
+            "targeted ads aaye",
+            "kisi ne bataya",
+            "dark patterns"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Consent status already described — determines violation severity under DPDP Act",
+            "auto_extract_answer": "Consent status mentioned by user"
+          },
+          "options": [
+            "Bilkul nahi bataya — mujhe pata hi nahi tha data share ho raha hai",
+            "Privacy policy mein buried tha — maine padha nahi tha",
+            "Third party ne mujhe contact kiya tab pata chala",
+            "Targeted ads aane lage kisi service ke — tab shaq hua",
+            "Company ke data breach notification se pata chala",
+            "Consent liya tha par mere scope se zyada data share kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_UDS_03",
+          "priority": "critical",
+          "question": "Kaunsa specific data share kiya gaya — kya woh sensitive personal data tha (financial, health, biometric, sexual orientation)?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "financial data",
+            "bank account",
+            "health data",
+            "medical",
+            "biometric",
+            "sexual orientation",
+            "password",
+            "location",
+            "contact details",
+            "basic info",
+            "sensitive data"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Data sensitivity already described — sensitive personal data attracts higher penalties under both DPDP Act and IT Act 43A",
+            "auto_extract_answer": "Data sensitivity mentioned by user"
+          },
+          "options": [
+            "Financial data (bank account, credit card, income, transactions)",
+            "Health / medical / mental health information",
+            "Biometric data (fingerprint, face, voice)",
+            "Sexual orientation ya very personal identity info",
+            "Location data ya daily routine",
+            "Basic contact info (name, email, phone) — not sensitive but still unauthorized"
+          ]
+        },
+        {
+          "question_id": "CQ_UDS_04",
+          "priority": "high",
+          "question": "Kya company ki privacy policy mein clearly likha tha ki data share kiya jaayega? Ya aapki company ne alag keh ke data use kiya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "privacy policy mein tha",
+            "nahi tha",
+            "different purpose",
+            "as per policy",
+            "policy change ki",
+            "retroactive sharing",
+            "nahi padha policy"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Policy compliance status already described — determines whether this is clear DPDP Act violation or disputed gray area",
+            "auto_extract_answer": "Policy compliance mentioned by user"
+          },
+          "options": [
+            "Privacy policy mein data sharing mention hi nahi tha",
+            "Policy mein tha par jo share kiya woh scope se bahar tha",
+            "Company ne baad mein policy change ki aur retroactively data share kiya",
+            "Same company ke affiliates se share kiya jo meri policy mein nahi tha",
+            "Foreign country ko data bheja jo India mein disclosed nahi tha"
+          ]
+        },
+        {
+          "question_id": "CQ_UDS_05",
+          "priority": "high",
+          "question": "Kya aapne company se data deletion / erasure ya consent withdrawal request ki hai? Unhone kya response diya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "deletion maanga",
+            "erasure request",
+            "consent withdraw kiya",
+            "unsubscribe",
+            "opt out",
+            "ignore kiya",
+            "refuse kiya",
+            "nahi maana",
+            "nahi ki request"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Erasure request status already described — refusal of erasure is separate DPDP Act violation",
+            "auto_extract_answer": "Erasure request status mentioned by user"
+          },
+          "options": [
+            "Deletion/erasure maanga — company ne refuse kar diya",
+            "Consent withdraw kiya — phir bhi data use ho raha hai",
+            "Nahi kiya abhi tak — kaise karna chahiye?",
+            "Request bheja — koi response nahi aaya",
+            "Company kehti hai data delete kar diya — par evidence hai sharing ho rahi hai"
+          ]
+        },
+        {
+          "question_id": "CQ_UDS_06",
+          "priority": "high",
+          "question": "Kya is unauthorized data sharing se aapko koi direct harm hua — fraud calls, targeted scams, financial misuse, ya privacy impact?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "fraud calls",
+            "spam calls",
+            "scam calls",
+            "financial misuse",
+            "targeted scam",
+            "identity theft",
+            "embarrassment",
+            "relationship damage",
+            "job affected",
+            "abhi tak kuch nahi"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Harm already described — determines compensation claim amount",
+            "auto_extract_answer": "Harm mentioned by user"
+          },
+          "options": [
+            "Spam/fraud/scam calls aane lage mere leaked number se",
+            "Financial fraud ya identity theft hua",
+            "Targeted scams aaye mere shared data ke basis pe",
+            "Personal relationships, job, ya reputation pe impact hua",
+            "Abhi tak direct harm nahi — par privacy violation confirm hai"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT025",
+      "crime_name": "Fake E-commerce Website Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_FEC_01",
+          "priority": "critical",
+          "question": "Exactly kya hua — order kiya aur aaya hi nahi, galat/nakli product aaya, ya website hi band ho gayi payment ke baad?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "order nahi aaya",
+            "delivery nahi",
+            "product nahi mila",
+            "galat product",
+            "nakli product",
+            "website band",
+            "site nahi khul rahi",
+            "contact nahi ho raha",
+            "blocked"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraud outcome already described — determines specific fraud type and urgency",
+            "auto_extract_answer": "Fraud outcome mentioned by user"
+          },
+          "options": [
+            "Order kiya — payment hua — product kabhi deliver hi nahi hua",
+            "Delivery aayi par bilkul alag / worthless cheez thi (patthar, kapda, khali box)",
+            "Website payment ke baad band ho gayi / accessible nahi raha",
+            "Seller ne WhatsApp/phone band kar liya payment ke baad",
+            "Counterfeit / nakli branded product deliver kiya",
+            "Order confirm hua — shipping update aata raha — phir contact band"
+          ]
+        },
+        {
+          "question_id": "CQ_FEC_02",
+          "priority": "critical",
+          "question": "Kitne paise gaye aur kaise payment ki — UPI, card, net banking, ya COD ke naam pe kuch?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "net banking",
+            "advance",
+            "bank transfer",
+            "online payment",
+            "amount"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Payment method already described — determines recovery path",
+            "auto_extract_answer": "Payment method mentioned by user"
+          },
+          "options": [
+            "UPI se payment ki (Google Pay / PhonePe / Paytm)",
+            "Debit / Credit card se payment ki",
+            "Net Banking se payment ki",
+            "Bank transfer (NEFT / IMPS) kiya",
+            "COD ka option tha par advance fee maangi gayi — diya"
+          ]
+        },
+        {
+          "question_id": "CQ_FEC_03",
+          "priority": "critical",
+          "question": "Website ka naam / URL kya tha aur kahan se mila — Google search, social media ad, WhatsApp link, ya kisi ne bheja?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "website naam",
+            "google se mila",
+            "facebook ad",
+            "instagram ad",
+            "whatsapp link",
+            "kisi ne bheja",
+            "search mein aaya",
+            "social media"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Website source already described — helps identify fraud origin and report to relevant platform",
+            "auto_extract_answer": "Website source mentioned by user"
+          },
+          "options": [
+            "Google search mein top mein aaya tha",
+            "Facebook / Instagram ad se aaya tha",
+            "WhatsApp group ya message mein link tha",
+            "Kisi friend ne recommend kiya tha",
+            "YouTube ya influencer ne promote kiya tha",
+            "Direct website address pata tha / search kiya tha"
+          ]
+        },
+        {
+          "question_id": "CQ_FEC_04",
+          "priority": "high",
+          "question": "Kya aapke paas order confirmation, payment receipt, ya website ka screenshot hai? Yeh evidence ke liye zaroori hai.",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "order confirmation",
+            "receipt hai",
+            "screenshot hai",
+            "email aaya",
+            "sms aaya",
+            "transaction id",
+            "nahi hai",
+            "saved nahi kiya",
+            "url nahi hai"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Evidence availability already described — determines complaint strength",
+            "auto_extract_answer": "Evidence status mentioned by user"
+          },
+          "options": [
+            "Haan — order confirmation email, payment receipt, aur website screenshot sab hai",
+            "Payment transaction ID hai par order confirmation nahi",
+            "Website ka screenshot hai par receipt nahi",
+            "Kuch bhi save nahi kiya — website bhi nahi khul rahi",
+            "SMS confirmation tha par delete ho gaya"
+          ]
+        },
+        {
+          "question_id": "CQ_FEC_05",
+          "priority": "high",
+          "question": "Kab hua aur kya aapne bank / payment platform ko already dispute kiya hai?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank ko bataya",
+            "dispute kiya",
+            "chargeback",
+            "upi dispute",
+            "nahi bataya",
+            "abhi abhi hua",
+            "kuch din pehle",
+            "mahine pehle"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Timeline and dispute status already described — chargeback/UPI dispute has time limits",
+            "auto_extract_answer": "Timeline and dispute status mentioned by user"
+          },
+          "options": [
+            "Abhi abhi hua — 2-3 din ke andar — bank ko nahi bataya",
+            "Ek hafte se kam — bank dispute raise kiya hai",
+            "Ek hafte se zyada — par nahi bataya bank ko",
+            "30 din se zyada ho gaye — par abhi complaint karni hai",
+            "Pehle complaint ki thi — resolve nahi hua"
+          ]
+        },
+        {
+          "question_id": "CQ_FEC_06",
+          "priority": "medium",
+          "question": "Kya seller ya website ka koi physical address, GST number, ya verifiable contact detail tha? Ya sab fake tha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "address tha",
+            "gst number",
+            "contact number tha",
+            "sab fake",
+            "address fake nikla",
+            "number fake",
+            "no contact",
+            "no address"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Seller legitimacy already assessed — helps confirm fraudulent nature of operation",
+            "auto_extract_answer": "Seller legitimacy assessment mentioned by user"
+          },
+          "options": [
+            "Koi physical address ya GST number nahi tha",
+            "Address tha par fake ya non-existent nikla",
+            "Phone number tha par band ho gaya / wrong number",
+            "GST number tha — valid lagta tha par ab verify nahi ho raha",
+            "Bilkul legitimate lagta tha — sab kuch fake tha despite"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT026",
+      "crime_name": "Online Job Fraud / Work From Home Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_JF_01",
+          "priority": "critical",
+          "question": "Job fraud kis tarah hua — task karke invest karna pada, fee bhari job ke liye, ya fake offer letter diya?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "task scam",
+            "like karo",
+            "youtube task",
+            "telegram task",
+            "invest karna pada",
+            "fee bhari",
+            "registration fee",
+            "offer letter",
+            "appointment letter",
+            "fake hr",
+            "advance fee"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Fraud type already described — determines applicable legal sections and recovery options",
+            "auto_extract_answer": "Fraud type mentioned by user"
+          },
+          "options": [
+            "Task scam — YouTube/Telegram tasks karta tha, pehle paise mile, phir invest karwaya aur block ho gaye",
+            "Job ke liye fee maangi — registration/training/security deposit — phir contact band",
+            "Fake company ka fake offer letter / appointment letter mila",
+            "Freelance kaam diya — kaam kiya paise nahi diye",
+            "Fake government / PSU job selection bola — seat fee maangi",
+            "WFH kaam kiya poora — salary nahi di aur contact band kiya"
+          ]
+        },
+        {
+          "question_id": "CQ_JF_02",
+          "priority": "critical",
+          "question": "Kitna paisa gaya total — aur kaise — UPI, bank transfer, ya cryptocurrency?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "bank transfer",
+            "crypto",
+            "bitcoin",
+            "amount",
+            "multiple transfers",
+            "baar baar"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Amount and payment method already described — determines recovery path urgency",
+            "auto_extract_answer": "Amount and payment method mentioned by user"
+          },
+          "options": [
+            "₹10,000 se kam — UPI/bank se",
+            "₹10,000 – ₹1 lakh — multiple transfers",
+            "₹1 lakh – ₹10 lakh — large investment",
+            "₹10 lakh se zyada",
+            "Cryptocurrency mein (Bitcoin / USDT) bheja",
+            "Multiple small amounts bar bar bheje — total significant hai"
+          ]
+        },
+        {
+          "question_id": "CQ_JF_03",
+          "priority": "critical",
+          "question": "Kahan se contact aaya tha — WhatsApp, Telegram, job portal, ya kisi social media platform se?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "whatsapp",
+            "telegram",
+            "linkedin",
+            "naukri.com",
+            "indeed",
+            "instagram",
+            "facebook",
+            "phone call"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Recruitment channel already described — determines platform to report to",
+            "auto_extract_answer": "Recruitment channel mentioned by user"
+          },
+          "options": [
+            "WhatsApp pe unknown number se message aaya",
+            "Telegram channel / group se aaya",
+            "LinkedIn / Naukri.com / Indeed pe fake recruiter ne contact kiya",
+            "Instagram / Facebook ad ya DM se",
+            "SMS ya email se aaya",
+            "Kisi jaanne wale ne refer kiya (jo khud victim bana tha)"
+          ]
+        },
+        {
+          "question_id": "CQ_JF_04",
+          "priority": "high",
+          "question": "Kaunsi company ya platform ka naam liya gaya — koi real company impersonate ki gayi ya fictional platform?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "amazon",
+            "google",
+            "infosys",
+            "government",
+            "railway",
+            "fake company naam",
+            "unknown company",
+            "unknown platform"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Impersonated company already described — helps identify fraud network and report to impersonated company",
+            "auto_extract_answer": "Impersonated company mentioned by user"
+          },
+          "options": [
+            "Real company impersonate ki — Amazon / Google / TCS / Infosys / Wipro",
+            "Fake government job — Railway / Bank / Police / Army / SSC",
+            "Unknown/fictional company name tha",
+            "Fake freelance platform (fake Fiverr / Upwork)",
+            "Task platform ka naam tha — app/website specific tha"
+          ]
+        },
+        {
+          "question_id": "CQ_JF_05",
+          "priority": "high",
+          "question": "Kya aapne apne personal documents — Aadhaar, PAN, bank details — share kiye job application ke liye?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "aadhaar diya",
+            "pan diya",
+            "bank details diye",
+            "documents share kiye",
+            "selfie di",
+            "id proof diya",
+            "nahi diya",
+            "kuch share nahi kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Document sharing already described — identity theft risk assessment needed",
+            "auto_extract_answer": "Document sharing mentioned by user"
+          },
+          "options": [
+            "Haan, Aadhaar, PAN, bank details, selfie sab share ki",
+            "Sirf Aadhaar ya PAN diya",
+            "Bank account details di thi KYC ke liye",
+            "Resume / professional details share ki",
+            "Kuch bhi share nahi kiya — sirf paise gaye"
+          ]
+        },
+        {
+          "question_id": "CQ_JF_06",
+          "priority": "high",
+          "question": "Kya aapko task platform pe kuch paise mila bhi tha pehle — ya shuruat se hi sab investment tha aur kuch nahi mila?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "kuch mila tha",
+            "pehle mila",
+            "withdraw kiya tha",
+            "trust build hua",
+            "nahi mila kuch",
+            "sirf investment",
+            "beginning se invest"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Trust-building phase already described — confirms task scam pattern with initial withdrawal to build trust",
+            "auto_extract_answer": "Initial payment status mentioned by user"
+          },
+          "options": [
+            "Haan, pehle chhoti withdrawal hui thi — tab trust ban gaya — phir bada invest karwaya",
+            "Kuch kama ke dekha tha — platform pe balance dikhta tha par withdraw nahi hua",
+            "Shuruat se hi investment tha — koi earning nahi hui",
+            "Kuch fee bhari thi — earning ka koi system hi nahi tha"
+          ]
+        }
+      ]
+    },
+    {
+      "crime_id": "CT027",
+      "crime_name": "Courier / Parcel Scam",
+      "cross_questions": [
+        {
+          "question_id": "CQ_CPS_01",
+          "priority": "critical",
+          "question": "Call mein exactly kya bola — parcel mein drugs nikle, ya aapko 'digital arrest' mein rakha, ya parcel deliver karne ke liye paise maange?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "drugs nikle",
+            "narcotics",
+            "parcel mein illegal",
+            "digital arrest",
+            "video call pe",
+            "arrest hoga",
+            "customs duty",
+            "parcel ke liye paise",
+            "prize parcel",
+            "gift parcel"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Scam variant already described — determines specific legal charges applicable",
+            "auto_extract_answer": "Scam variant mentioned by user"
+          },
+          "options": [
+            "Drugs / contraband / illegal items parcel mein nikle — arrest hoga bola",
+            "Digital arrest — video call pe ghanton/dino tak roka — paise maange",
+            "Prize/gift/lottery parcel customs mein ruka hai — duty bharo",
+            "Parcel aapke naam pe bheja tha — customs clearance fee maangi",
+            "Delivery ke liye OTP ya KYC verification bahane paise/details maange",
+            "Undelivered valuable parcel hai — fees bharo toh milega"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_02",
+          "priority": "critical",
+          "question": "Caller ne khud ko kise bataaya — police, CBI, NCB, Customs, ED, ya courier company?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "police",
+            "customs",
+            "enforcement directorate",
+            "courier company",
+            "court officer",
+            "rbi officer"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Impersonated identity already described — Section 419 IPC + Section 66D IT Act apply",
+            "auto_extract_answer": "Impersonated identity mentioned by user"
+          },
+          "options": [
+            "Police officer ya cyber crime police bola",
+            "CBI agent ya officer bola",
+            "NCB (Narcotics Control Bureau) officer bola",
+            "Customs officer ya clearance agent bola",
+            "ED (Enforcement Directorate) officer bola",
+            "FedEx / DHL / courier company representative bola"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_03",
+          "priority": "critical",
+          "question": "Kya aapne paise diye? Agar diye toh kitne aur kaise — UPI, bank transfer, ya cryptocurrency?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "paise diye",
+            "transfer kiya",
+            "bank transfer",
+            "crypto",
+            "bitcoin",
+            "nahi diye",
+            "dene se pehle pata chala",
+            "multiple transfers",
+            "baar baar diya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Payment status already described — determines financial recovery urgency",
+            "auto_extract_answer": "Payment status mentioned by user"
+          },
+          "options": [
+            "Haan, UPI se paise transfer kiye",
+            "Bank account mein transfer kiya (NEFT/IMPS)",
+            "Cryptocurrency / Bitcoin / USDT bheja",
+            "Multiple baar paise diye — baar baar maanga",
+            "Abhi tak paise nahi diye — samajh gaya/gayi fraud hai",
+            "Kuch de chuke the — aur maang raha hai, band karna chahte hain"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_04",
+          "priority": "critical",
+          "question": "Kya 'digital arrest' situation tha — yaani video call pe ghanto ya dinon tak roka gaya aur parivar ya bahar se baat karne se roka?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "video call pe roka",
+            "ghanton tak",
+            "dino tak",
+            "family ko nahi batana",
+            "secret rakhna",
+            "ghar se nahi niklo",
+            "phone mat karo kisi ko",
+            "digital arrest",
+            "kaafi time"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Digital arrest involvement already described — critical for Section 341 wrongful restraint + 384 extortion charges",
+            "auto_extract_answer": "Digital arrest status mentioned by user"
+          },
+          "options": [
+            "Haan — video call pe ghanto tak raka — family ko nahi batane diya",
+            "Haan — dino tak 'digital arrest' mein tha/thi",
+            "Nahi — sirf ek call tha aur paise maange",
+            "Nahi — messages aur calls the par continuous nahi"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_05",
+          "priority": "high",
+          "question": "Caller ka number kya tha — Indian number, international number (+1, +44 etc.), ya WhatsApp video call tha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "indian number",
+            "international number",
+            "whatsapp",
+            "video call",
+            "number save hai",
+            "unknown number"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Call origin already described — helps determine whether international cybercrime network is involved",
+            "auto_extract_answer": "Call origin mentioned by user"
+          },
+          "options": [
+            "Indian mobile number tha",
+            "International number tha (+1 / +44 / other country code)",
+            "WhatsApp video call tha",
+            "Skype / Zoom call tha",
+            "Number blocked ya unknown tha"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_06",
+          "priority": "high",
+          "question": "Kya fraudster ne koi fake document dikhaya — fake FIR, fake warrant, fake customs notice, ya fake badge?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "document dikhaya",
+            "fir dikhaya",
+            "warrant dikhaya",
+            "badge dikhaya",
+            "id card",
+            "customs notice",
+            "kuch nahi dikhaya",
+            "pdf bheja",
+            "screenshot bheja"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Forged document usage already described — adds Section 468 + 471 forgery charges",
+            "auto_extract_answer": "Forged document usage mentioned by user"
+          },
+          "options": [
+            "Haan, fake FIR ya arrest warrant dikhaya video pe ya PDF bheja",
+            "Fake badge ya government ID dikhaya",
+            "Fake customs seizure notice ya court order bheja",
+            "Kuch bhi nahi dikhaya — sirf words se daraya",
+            "Fake 'official' portal pe case number dikhaya"
+          ]
+        },
+        {
+          "question_id": "CQ_CPS_07",
+          "priority": "medium",
+          "question": "Kya aapne kisi ko — family, friend, ya local police — call ke dauran ya turant baad bataya? Ya secretly raha?",
+          "type": "single_choice",
+          "info_provided_keywords": [
+            "family ko bataya",
+            "friend ko bataya",
+            "police ko bataya",
+            "secret rakha",
+            "nahi bataya",
+            "secret rakhne bola tha",
+            "family ne discover kiya"
+          ],
+          "skip_logic": {
+            "skip_if_keywords_present": true,
+            "reason": "Isolation status already described — fraudster-imposed secrecy is key digital arrest indicator",
+            "auto_extract_answer": "Disclosure status mentioned by user"
+          },
+          "options": [
+            "Family ya dost ko bataya — unhone fraud identify kiya",
+            "Secret rakha — fraudster ne kisi ko nahi batane diya",
+            "Local police station pe gaya",
+            "Baad mein pata chala fraud tha — tab bataya sab ko",
+            "Abhi bhi secret hai — kisi ko pata nahi"
+          ]
+        }
+      ]
+    }
+  ]
+}

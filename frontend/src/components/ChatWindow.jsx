@@ -105,11 +105,31 @@ function IncidentBubble({ text }) {
 }
 
 /* ─── Findings summary (compact) ─── */
+function getDecisionEngineText(modelMeta) {
+  if (modelMeta?.source === "hybrid_ml_rules") {
+    return `Decision engine: Hybrid ML + rules${modelMeta.version ? ` (${modelMeta.version})` : ""}.`;
+  }
+
+  if (modelMeta?.source === "rules_fallback") {
+    return "Decision engine: Rules fallback because the ML model was not confident enough.";
+  }
+
+  if (modelMeta?.source === "validation") {
+    return "Decision engine: Domain validation gate before classification.";
+  }
+
+  if (modelMeta?.source === "insufficient") {
+    return "Decision engine: Deferred because the current training coverage is too weak.";
+  }
+
+  return "Decision engine: Guided classification pipeline.";
+}
+
 function FindingsBubble({ scenario, confidence }) {
   return (
     <AiBubble icon="🔍" label="System Analysis">
       <p className="claude-findings-note">
-        Pipeline: Input parsed from JSON rules, ML classification done, now verification questions are running.
+        {getDecisionEngineText(scenario.modelMeta)}
       </p>
       <div className="claude-findings-row">
         {scenario.suspects.slice(0, 2).map((s, i) => (

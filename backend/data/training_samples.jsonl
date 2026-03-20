@@ -1,4 +1,150 @@
-{"text":"My instagram account got hacked and hacker changed password","label":"CT003","source":"seed"}
-{"text":"Someone blackmailing me with private photos and asking money","label":"CT018","source":"seed"}
-{"text":"I clicked fake bank link and money got deducted after OTP","label":"CT001","source":"seed"}
-{"text":"I lost money in dream11 game, no fraud happened","label":"NAC001","source":"seed"}
+{
+    "cases": [
+        {
+            "id": "C001",
+            "type": "crime",
+            "name": "Phishing Fraud",
+            "questions": [
+                "Did you receive a link claiming to be from bank?",
+                "Did you enter OTP or password?",
+                "Was money deducted after this?"
+            ],
+            "logic": "YES-YES-YES",
+            "laws": [
+                "IT Act 66C",
+                "IT Act 66D",
+                "IPC 420"
+            ],
+            "risk": "High"
+        },
+        {
+            "id": "C002",
+            "type": "crime",
+            "name": "UPI Fraud",
+            "questions": [
+                "Did you receive a payment request?",
+                "Did you approve it unknowingly?",
+                "Was money deducted?"
+            ],
+            "logic": "YES-YES-YES",
+            "laws": [
+                "IT Act 66C",
+                "IPC 420"
+            ],
+            "risk": "High"
+        },
+        {
+            "id": "C003",
+            "type": "crime",
+            "name": "Account Hacking",
+            "questions": [
+                "Did your account password change without your action?",
+                "Are you unable to login?",
+                "Was suspicious activity noticed?"
+            ],
+            "logic": "YES-YES-YES",
+            "laws": [
+                "IT Act 66",
+                "IT Act 66C"
+            ],
+            "risk": "Medium"
+        },
+        {
+            "id": "C004",
+            "type": "crime",
+            "name": "Job Scam",
+            "questions": [
+                "Were you asked to pay money for a job?",
+                "Was job not provided after payment?",
+                "Did they stop responding?"
+            ],
+            "logic": "YES-YES-YES",
+            "laws": [
+                "IT Act 66D",
+                "IPC 420"
+            ],
+            "risk": "High"
+        },
+        {
+            "id": "C005",
+            "type": "crime",
+            "name": "OLX Scam",
+            "questions": [
+                "Did someone pretend to be army officer or trusted person?",
+                "Did they ask for advance payment?",
+                "Did you lose money?"
+            ],
+            "logic": "YES-YES-YES",
+            "laws": [
+                "IT Act 66D",
+                "IPC 420"
+            ],
+            "risk": "High"
+        },
+        {
+            "id": "NC001",
+            "type": "non_crime",
+            "name": "Bank Refund Delay",
+            "questions": [
+                "Was your transaction failed?",
+                "Did you not receive refund yet?",
+                "Did bank acknowledge issue?"
+            ],
+            "logic": "YES-YES-YES",
+            "redirect": "RBI Ombudsman",
+            "risk": "Low"
+        },
+        {
+            "id": "NC002",
+            "type": "non_crime",
+            "name": "E-commerce Refund Issue",
+            "questions": [
+                "Did you return a product?",
+                "Did you not receive refund?",
+                "Is seller not responding?"
+            ],
+            "logic": "YES-YES-YES",
+            "redirect": "Consumer Forum",
+            "risk": "Low"
+        },
+        {
+            "id": "NC003",
+            "type": "non_crime",
+            "name": "Social Media Ban",
+            "questions": [
+                "Was your account banned?",
+                "Did platform give reason?",
+                "Is it due to policy violation?"
+            ],
+            "logic": "YES-YES-YES",
+            "redirect": "Platform Support",
+            "risk": "Low"
+        },
+        {
+            "id": "NC004",
+            "type": "non_crime",
+            "name": "Gaming Account Issue",
+            "questions": [
+                "Was your game account suspended?",
+                "Did you violate rules?",
+                "Did you contact support?"
+            ],
+            "logic": "YES-YES-YES",
+            "redirect": "Game Support",
+            "risk": "Low"
+        },
+        {
+            "id": "NC005",
+            "type": "non_crime",
+            "name": "General Confusion",
+            "questions": [
+                "Did you lose money?",
+                "Did you share OTP or password?",
+                "Did you click any suspicious link?"
+            ],
+            "logic": "NO-NO-NO",
+            "redirect": "Ask More Details",
+            "risk": "Unknown"
+        }
+    ]
+}

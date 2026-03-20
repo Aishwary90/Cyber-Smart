@@ -7,6 +7,23 @@ const MODEL_PATH = path.join(__dirname, "../models/current-model.json");
 let cachedModel = null;
 let cachedMtime = 0;
 
+function getQualityThresholds() {
+  return {
+    minAccuracy: Number(process.env.MODEL_MIN_ACCURACY || 0.75),
+    minMacroF1: Number(process.env.MODEL_MIN_MACRO_F1 || 0.7),
+  };
+}
+
+function isQualityAccepted(parsedModel) {
+  const metrics = parsedModel?.metadata?.testMetrics;
+  if (!metrics) return false;
+
+  const { minAccuracy, minMacroF1 } = getQualityThresholds();
+  const accuracy = Number(metrics.accuracy || 0);
+  const macroF1 = Number(metrics.macroF1 || 0);
+  return accuracy >= minAccuracy && macroF1 >= minMacroF1;
+}
+
 function loadModel() {
   try {
     const stat = fs.statSync(MODEL_PATH);
@@ -17,6 +34,9 @@ function loadModel() {
     const raw = fs.readFileSync(MODEL_PATH, "utf8");
     const parsed = JSON.parse(raw);
     if (!parsed || !Array.isArray(parsed.labels) || parsed.labels.length === 0) {
+      return null;
+    }
+    if (!isQualityAccepted(parsed)) {
       return null;
     }
 

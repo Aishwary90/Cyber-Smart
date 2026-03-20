@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.PROD ? "" : "http://localhost:5000");
+const CHAT_ROUTE_ENABLED = import.meta.env.VITE_ENABLE_CHAT_ROUTE === "true";
 const SESSION_STORAGE_KEY = "cybersmart.session";
 
 class ApiError extends Error {
@@ -266,10 +269,126 @@ export function transformVerdict(backendVerdict) {
         ? "This case matches cybercrime patterns under IT Act and IPC."
         : "This case does not meet the legal definition of cybercrime.",
     ],
+    decisionReasoning: verdict.decision_reasoning || null,
     destination: isCrime
       ? "cybercrime.gov.in and 1930 helpline"
       : "Consumer forum or platform support",
     confidenceDrivers: [],
+  };
+}
+
+export async function chatSendMessage(message, userId) {
+  if (CHAT_ROUTE_ENABLED) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message, userId }),
+      });
+
+      if (response.ok) {
+        return response.json();
+      }
+
+      if (response.status !== 404) {
+        throw new ApiError(
+          `Chat request failed: ${response.statusText}`,
+          response.status,
+        );
+      }
+    } catch (error) {
+      if (error instanceof ApiError && error.status !== 404) {
+        throw error;
+      }
+    }
+  }
+
+  const classification = await classifyIncident(message);
+  const primaryCrime = classification?.suspected_crimes?.[0] || null;
+  const isCrime = classification?.classification_type === "CRIME";
+  const isNotCrime = classification?.classification_type === "NOT_CRIME";
+  const firstQuestion = classification?.first_question || null;
+
+  if (isCrime) {
+    return {
+      text: firstQuestion
+        ? `Based on what you've described, this looks like **${primaryCrime?.name || "a cyber incident"}**. To continue, I need one detail: **${firstQuestion.question}**`
+        : `Based on what you've described, this looks like **${primaryCrime?.name || "a cyber incident"}**.`,
+      classification: {
+        type: "CRIME",
+        confidence: Math.round(classification?.confidence || 0),
+        crimeType: primaryCrime?.name || "Cyber incident",
+        risk:
+          primaryCrime?.severity === "critical" || primaryCrime?.severity === "high"
+            ? "high"
+            : primaryCrime?.severity === "medium"
+              ? "medium"
+              : "low",
+      },
+      suggestions:
+        firstQuestion?.options?.length
+          ? firstQuestion.options
+          : [
+              "Tell me more",
+              "What should I do now?",
+              "How serious is this?",
+            ],
+      fallback: true,
+    };
+  }
+
+  if (isNotCrime) {
+    return {
+      text:
+        "This currently looks more like a consumer, civil, or non-cyber issue than a cybercrime. " +
+        "If there was unauthorized access, phishing, impersonation, or money moved without your approval, tell me that and I will reassess it.",
+      classification: {
+        type: "NOT_CRIME",
+        confidence: Math.round(classification?.confidence || 0),
+      },
+      suggestions: [
+        "There was unauthorized access",
+        "I was tricked by a fake caller or link",
+        "Money moved without my approval",
+      ],
+      fallback: true,
+    };
+  }
+
+  if (classification?.classification_type === "OUT_OF_SCOPE") {
+    return {
+      text:
+        "I can help with cybercrime, suspicious links, account compromise, and digital payment incidents. " +
+        "Please describe the digital or cyber part of what happened.",
+      classification: {
+        type: "OUT_OF_SCOPE",
+        confidence: 0,
+      },
+      suggestions: [
+        "Money was stolen from my bank account",
+        "My account was hacked",
+        "I got a suspicious email",
+      ],
+      fallback: true,
+    };
+  }
+
+  return {
+    text:
+      "I need a little more detail before I can classify this properly. " +
+      "Tell me whether this involved money loss, account access, or a suspicious message or link.",
+    classification: {
+      type: "NEEDS_MORE_INFO",
+      confidence: 0,
+    },
+    suggestions: [
+      "Money was stolen from my account",
+      "Someone logged into my account",
+      "I got a suspicious link",
+    ],
+    fallback: true,
   };
 }
 
@@ -296,4 +415,5 @@ export default {
   submitCaseFeedback,
   listCaseFeedback,
   updateCase,
+  chatSendMessage,
 };

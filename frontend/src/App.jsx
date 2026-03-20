@@ -1,12 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { ChatWindow } from "./components/ChatWindow";
+import { useEffect, useRef, useState } from "react";
+import CyberSmartChat from "./components/CyberSmartChat";
 import { LandingPage } from "./components/LandingPage";
 import { PhishingContainer } from "./components/PhishingAnalyzer/PhishingContainer";
+import { InsufficientDataScreen } from "./components/InsufficientDataScreen";
+import { OutOfScopeScreen } from "./components/OutOfScopeScreen";
+import { HelpPage, ProfilePage, SettingsPage } from "./components/WorkspacePages";
 import { demoScenarios } from "./mockData";
+import "./cyber-chat.css";
 import {
   classifyIncident,
   clearStoredSession,
   createCase,
+  deleteCase,
   getCase,
   getCurrentUser,
   getNextQuestion,
@@ -175,7 +180,101 @@ function mapCaseToScenario(caseRecord) {
     questions: templateScenario?.questions || [],
     primaryCrimeId: caseRecord?.primary_crime_id || templateScenario?.primaryCrimeId || null,
     verdict: getFallbackVerdict(caseRecord, templateScenario),
+    modelMeta: {
+      source: caseRecord?.metadata?.modelSource || "rules_fallback",
+      version: caseRecord?.metadata?.modelVersion || null,
+    },
     persistedCaseId: caseRecord?.id,
+  };
+}
+
+function buildChatHistoryEntries({ scenario, submittedIncident, answers, verdictReady }) {
+  const history = [];
+  const cleanedIncident = submittedIncident?.trim();
+  const answeredQuestions = scenario?.questions?.filter((question) => answers?.[question.id]) ?? [];
+
+  if (cleanedIncident) {
+    history.push({
+      role: "user",
+      label: "You",
+      text: cleanedIncident,
+    });
+  }
+
+  if (scenario?.suspects?.length) {
+    const summary = scenario.suspects
+      .slice(0, 2)
+      .map((suspect, index) => `${index === 0 ? "Primary" : "Secondary"}: ${suspect.label}`)
+      .join(" • ");
+
+    history.push({
+      role: "assistant",
+      label: "System Analysis",
+      text: summary || "The system is reviewing your report.",
+    });
+  }
+
+  answeredQuestions.forEach((question) => {
+    history.push({
+      role: "assistant",
+      label: "Verification Question",
+      text: question.prompt,
+    });
+
+    history.push({
+      role: "user",
+      label: "Your Answer",
+      text: answers[question.id],
+    });
+
+    const feedback =
+      question.feedback?.[answers[question.id]] ??
+      `This helps confirm ${scenario?.suspects?.[0]?.label?.toLowerCase() ?? "the incident pattern"}.`;
+
+    if (feedback) {
+      history.push({
+        role: "assistant",
+        label: "System Note",
+        text: feedback,
+      });
+    }
+  });
+
+  if (verdictReady && scenario?.verdict) {
+    history.push({
+      role: "assistant",
+      label: "Final Decision",
+      text: [scenario.verdict.title, scenario.verdict.subtitle, scenario.verdict.explanation]
+        .filter(Boolean)
+        .join(" - "),
+    });
+  }
+
+  return history;
+}
+
+function buildCaseMetadata({
+  scenario,
+  submittedIncident,
+  answers,
+  verdictReady,
+  apiMode,
+  flowState,
+  modelMeta,
+}) {
+  return {
+    source: "frontend",
+    apiMode,
+    timeWindow: scenario?.timeWindow || null,
+    flowState,
+    modelSource: modelMeta?.source || null,
+    modelVersion: modelMeta?.version || null,
+    chatHistory: buildChatHistoryEntries({
+      scenario,
+      submittedIncident,
+      answers,
+      verdictReady,
+    }),
   };
 }
 
@@ -218,7 +317,33 @@ function getUserInitials(user) {
     .join("");
 }
 
-function UserMenu({ theme, setTheme, onLogout, user, compact = false }) {
+const userMenuItems = [
+  {
+    id: "profile",
+    label: "Profile",
+    description: "Account details, recent activity, and saved case overview.",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    description: "Theme, layout, and fast workspace controls.",
+  },
+  {
+    id: "help",
+    label: "Help",
+    description: "Flow guidance, urgent next steps, and product support.",
+  },
+];
+
+function UserMenu({
+  theme,
+  setTheme,
+  onLogout,
+  onOpenPage,
+  activePage,
+  user,
+  compact = false,
+}) {
   const displayName = user?.fullName || "Aishwary";
   const displayEmail = user?.email || "@aishwary_99";
 
@@ -235,9 +360,17 @@ function UserMenu({ theme, setTheme, onLogout, user, compact = false }) {
       <div className="user-menu-divider" />
 
       <div className="user-menu-list">
-        <button type="button">Profile</button>
-        <button type="button">Settings</button>
-        <button type="button">Help</button>
+        {userMenuItems.map((item) => (
+          <button
+            key={item.id}
+            className={activePage === item.id ? "user-menu-link-active" : ""}
+            type="button"
+            onClick={() => onOpenPage(item.id)}
+          >
+            <strong>{item.label}</strong>
+            <span>{item.description}</span>
+          </button>
+        ))}
       </div>
 
       <div className="user-menu-divider" />
@@ -404,8 +537,62 @@ function getRiskTone(verdictKind, risk) {
   return risk?.toLowerCase() === "high" ? "high" : "normal";
 }
 
+function getChatPersistenceCopy(state, savedCount, errorMessage) {
+  switch (state) {
+    case "not_saving":
+      return {
+        tone: "warning",
+        title: "Chat not saving",
+        description: "Sign in first to save your chat history securely to your own account.",
+      };
+    case "saving":
+      return {
+        tone: "info",
+        title: "Chat history saving",
+        description: "Your latest report and answers are being synced now.",
+      };
+    case "saved":
+      return {
+        tone: "success",
+        title: "Chat history saved",
+        description: `${savedCount} saved ${savedCount === 1 ? "chat" : "chats"} available to review or delete.`,
+      };
+    case "error":
+      return {
+        tone: "danger",
+        title: "Chat not saving",
+        description: errorMessage || "The current chat could not be saved. Please try again.",
+      };
+    case "pending":
+      return {
+        tone: "info",
+        title: "Chat not saving yet",
+        description: "Send the first message of the case to start saving chat history.",
+      };
+    default:
+      return {
+        tone: "muted",
+        title: "History ready",
+        description: "Start a case to create saved chat history for this account.",
+      };
+  }
+}
+
+function getRenderableErrorMessage(error) {
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error && typeof error === "object") {
+    return error.message || error.error || "Something went wrong while updating the workspace.";
+  }
+
+  return "Something went wrong while updating the workspace.";
+}
+
 export default function App() {
   const initialScenario = demoScenarios[0];
+  const topProfileRef = useRef(null);
   const [screen, setScreen] = useState("landing");
   const [authMode, setAuthMode] = useState("signin");
   const [theme, setTheme] = useState("light");
@@ -429,6 +616,10 @@ export default function App() {
   const [currentCaseId, setCurrentCaseId] = useState(null);
   const [savedCases, setSavedCases] = useState([]);
   const [isCasesLoading, setIsCasesLoading] = useState(false);
+  const [isSyncingCase, setIsSyncingCase] = useState(false);
+  const [chatSaveError, setChatSaveError] = useState("");
+  const [insufficientData, setInsufficientData] = useState(null);
+  const [outOfScope, setOutOfScope] = useState(null);
   const useLiveApi = true;
 
   const activeScenario =
@@ -445,37 +636,51 @@ export default function App() {
     activeScenario.questions.length,
     verdictReady,
   );
-
-  const tools = useMemo(
-    () => [
-      {
-        label: "Law Explorer",
-        action: () => {
-          setActiveFeature("chat");
-          setTopProfileOpen(false);
-        },
-      },
-      {
-        label: "Guidance Notes",
-        action: () => {
-          setActiveFeature("chat");
-          setTopProfileOpen(false);
-        },
-      },
-      {
-        label: "URL Detector",
-        action: () => {
-          setActiveFeature("phishing");
-          setTopProfileOpen(false);
-        },
-      },
-    ],
-    [],
+  const chatPersistenceState = !currentUser
+    ? "not_saving"
+    : chatSaveError
+      ? "error"
+      : isSyncingCase
+        ? "saving"
+        : currentCaseId
+          ? "saved"
+          : analysisStarted
+            ? "pending"
+            : "idle";
+  const chatPersistenceCopy = getChatPersistenceCopy(
+    chatPersistenceState,
+    savedCases.length,
+    chatSaveError,
   );
 
   function closeMenus() {
     setTopProfileOpen(false);
   }
+
+  function openWorkspaceFeature(nextFeature) {
+    setActiveFeature(nextFeature);
+    closeMenus();
+    setMobileSidebarOpen(false);
+  }
+
+  function openWorkspaceHome() {
+    openWorkspaceFeature("chat");
+  }
+
+  const tools = [
+    {
+      label: "Law Explorer",
+      action: openWorkspaceHome,
+    },
+    {
+      label: "Guidance Notes",
+      action: openWorkspaceHome,
+    },
+    {
+      label: "URL Detector",
+      action: () => openWorkspaceFeature("phishing"),
+    },
+  ];
 
   function handleAuthFormChange(field, value) {
     setAuthForm((current) => ({
@@ -503,6 +708,7 @@ export default function App() {
 
   async function loadSavedCase(caseId) {
     setApiError(null);
+    setChatSaveError("");
     closeMenus();
     setMobileSidebarOpen(false);
 
@@ -524,9 +730,61 @@ export default function App() {
     }
   }
 
+  async function handleDeleteCase(caseId, event) {
+    event?.stopPropagation?.();
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this case? This action cannot be undone."
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await deleteCase(caseId);
+
+      setSavedCases((currentCases) => currentCases.filter((entry) => entry.id !== caseId));
+
+      if (currentCaseId === caseId) {
+        handleNewCase();
+      }
+
+      setApiError(null);
+    } catch (error) {
+      setApiError(error.message || "Unable to delete the case.");
+    }
+  }
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
+
+  useEffect(() => {
+    if (!topProfileOpen) {
+      return undefined;
+    }
+
+    function handlePointerDown(event) {
+      if (!topProfileRef.current?.contains(event.target)) {
+        setTopProfileOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setTopProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [topProfileOpen]);
 
   useEffect(() => {
     async function restoreSession() {
@@ -601,6 +859,7 @@ export default function App() {
       }
 
       try {
+        setIsSyncingCase(true);
         const response = await updateCase(currentCaseId, {
           title: activeScenario.label,
           incidentText: submittedIncident,
@@ -611,13 +870,19 @@ export default function App() {
           confidence,
           answers,
           verdict: verdictReady ? activeScenario.verdict : null,
-          metadata: {
-            source: "frontend",
-            timeWindow: activeScenario.timeWindow || null,
-          },
+          metadata: buildCaseMetadata({
+            scenario: activeScenario,
+            submittedIncident,
+            answers,
+            verdictReady,
+            apiMode: useLiveApi,
+            flowState: verdictReady ? "act" : statusMeta.flowState,
+            modelMeta: activeScenario.modelMeta,
+          }),
         });
 
         if (response.case) {
+          setChatSaveError("");
           setSavedCases((currentCases) => [
             response.case,
             ...currentCases.filter((entry) => entry.id !== response.case.id),
@@ -625,6 +890,9 @@ export default function App() {
         }
       } catch (error) {
         console.warn("Case autosave warning:", error.message);
+        setChatSaveError(error.message || "Chat history could not be saved.");
+      } finally {
+        setIsSyncingCase(false);
       }
     }
 
@@ -649,7 +917,10 @@ export default function App() {
     setActiveFeature("chat");
     setLiveScenario(null);
     setApiError(null);
+    setChatSaveError("");
     setCurrentCaseId(null);
+    setInsufficientData(null);
+    setOutOfScope(null);
     closeMenus();
     setMobileSidebarOpen(false);
   }
@@ -713,7 +984,16 @@ export default function App() {
     setAnswers({});
     setAnalysisStarted(true);
     setApiError(null);
+    setChatSaveError("");
     setCurrentCaseId(null);
+
+    let scenarioForHistory = {
+      timeWindow: "Just now",
+      suspects: [],
+      questions: [],
+      verdict: null,
+      modelMeta: null,
+    };
 
     let casePayload = {
       title: cleaned.slice(0, 60),
@@ -751,6 +1031,10 @@ export default function App() {
               ? [transformQuestion(response.first_question)]
               : [],
             primaryCrimeId: primaryCrime.id,
+            modelMeta: {
+              source: response.model_source || "rules_fallback",
+              version: response.model_version || null,
+            },
             verdict: {
               kind: "confirmed_cybercrime",
               title: "Analysis in progress...",
@@ -771,6 +1055,7 @@ export default function App() {
           };
 
           setLiveScenario(newScenario);
+          scenarioForHistory = newScenario;
           casePayload = {
             ...casePayload,
             title: newScenario.label,
@@ -788,6 +1073,10 @@ export default function App() {
             timeWindow: "Just now",
             suspects: [{ label: "Not a cybercrime", score: 0.75 }],
             questions: [],
+            modelMeta: {
+              source: response.model_source || "rules_fallback",
+              version: response.model_version || null,
+            },
             verdict: {
               kind: "not_a_cybercrime",
               title: "Not a Cyber Crime",
@@ -803,6 +1092,7 @@ export default function App() {
           };
 
           setLiveScenario(newScenario);
+          scenarioForHistory = newScenario;
           casePayload = {
             ...casePayload,
             title: newScenario.label,
@@ -810,6 +1100,40 @@ export default function App() {
             primaryCrimeLabel: newScenario.label,
             confidence: Math.round(response.confidence || 75),
             verdict: newScenario.verdict,
+          };
+        } else if (response.classification_type === "OUT_OF_SCOPE") {
+          // Store out-of-scope info to display
+          setOutOfScope(response.scope_error);
+          setLiveScenario(null);
+          scenarioForHistory = {
+            ...scenarioForHistory,
+            modelMeta: {
+              source: response.model_source || "validation",
+              version: response.model_version || null,
+            },
+            verdict: null,
+          };
+          casePayload = {
+            ...casePayload,
+            classificationType: "OUT_OF_SCOPE",
+            status: "out_of_scope",
+          };
+        } else if (response.classification_type === "INSUFFICIENT_DATA") {
+          // Store insufficient data info to display
+          setInsufficientData(response.training_suggestion);
+          setLiveScenario(null);
+          scenarioForHistory = {
+            ...scenarioForHistory,
+            modelMeta: {
+              source: response.model_source || "insufficient",
+              version: response.model_version || null,
+            },
+            verdict: null,
+          };
+          casePayload = {
+            ...casePayload,
+            classificationType: "INSUFFICIENT_DATA",
+            status: "needs_training",
           };
         } else {
           setLiveScenario(null);
@@ -823,11 +1147,23 @@ export default function App() {
       }
     }
 
+    casePayload.metadata = buildCaseMetadata({
+      scenario: scenarioForHistory,
+      submittedIncident: cleaned,
+      answers: {},
+      verdictReady: Boolean(casePayload.verdict),
+      apiMode: useLiveApi,
+      flowState: casePayload.status,
+      modelMeta: scenarioForHistory.modelMeta,
+    });
+
     if (currentUser) {
       try {
+        setIsSyncingCase(true);
         const response = await createCase(casePayload);
         const nextCase = response.case || null;
         setCurrentCaseId(nextCase?.id || null);
+        setChatSaveError("");
 
         if (nextCase) {
           setSavedCases((currentCases) => [
@@ -837,6 +1173,9 @@ export default function App() {
         }
       } catch (error) {
         console.warn("Case creation warning:", error.message);
+        setChatSaveError(error.message || "Chat history could not be saved.");
+      } finally {
+        setIsSyncingCase(false);
       }
     }
   }
@@ -954,8 +1293,77 @@ export default function App() {
     setCurrentUser(null);
     setCurrentCaseId(null);
     setSavedCases([]);
+    setIsSyncingCase(false);
+    setChatSaveError("");
     closeMenus();
     setScreen("landing");
+  }
+
+  const utilityFeature = activeFeature === "profile" || activeFeature === "settings" || activeFeature === "help";
+
+  let workspaceContent = null;
+
+  if (outOfScope && analysisStarted && activeFeature === "chat") {
+    workspaceContent = <OutOfScopeScreen scopeError={outOfScope} />;
+  } else if (insufficientData && analysisStarted && activeFeature === "chat") {
+    workspaceContent = <InsufficientDataScreen trainingData={insufficientData} />;
+  } else if (activeFeature === "phishing") {
+    workspaceContent = <PhishingContainer />;
+  } else if (activeFeature === "profile") {
+    workspaceContent = (
+      <ProfilePage
+        user={currentUser}
+        savedCases={savedCases}
+        currentCaseId={currentCaseId}
+        currentStatusLabel={statusMeta.statusLabel}
+        chatPersistenceState={chatPersistenceState}
+        theme={theme}
+        onOpenCase={loadSavedCase}
+        onDeleteCase={handleDeleteCase}
+        onOpenSettings={() => openWorkspaceFeature("settings")}
+        onOpenHelp={() => openWorkspaceFeature("help")}
+        onReturnHome={openWorkspaceHome}
+      />
+    );
+  } else if (activeFeature === "settings") {
+    workspaceContent = (
+      <SettingsPage
+        theme={theme}
+        casePanelCollapsed={casePanelCollapsed}
+        user={currentUser}
+        onSetTheme={setTheme}
+        onSetCasePanelCollapsed={setCasePanelCollapsed}
+        onOpenChat={openWorkspaceHome}
+        onOpenPhishing={() => openWorkspaceFeature("phishing")}
+        onOpenHelp={() => openWorkspaceFeature("help")}
+        onLogout={handleLogout}
+      />
+    );
+  } else if (activeFeature === "help") {
+    workspaceContent = (
+      <HelpPage
+        onOpenChat={openWorkspaceHome}
+        onOpenPhishing={() => openWorkspaceFeature("phishing")}
+        onOpenProfile={() => openWorkspaceFeature("profile")}
+        onStartFreshCase={handleNewCase}
+      />
+    );
+  } else {
+    workspaceContent = (
+      <CyberSmartChat
+        currentUser={currentUser}
+        onNewCase={(caseId, incident) => {
+          // Handle new case creation from conversational chat
+          console.log("New case created:", caseId, incident);
+          setAnalysisStarted(true);
+          setSubmittedIncident(incident);
+          setCurrentCaseId(caseId);
+        }}
+        onError={(error) => {
+          setApiError(getRenderableErrorMessage(error));
+        }}
+      />
+    );
   }
 
   if (screen === "landing") {
@@ -1011,7 +1419,7 @@ export default function App() {
             scenario={activeScenario}
           />
 
-          <div className="top-profile-anchor">
+          <div className="top-profile-anchor" ref={topProfileRef}>
             <button
               className="top-profile-button"
               type="button"
@@ -1025,6 +1433,8 @@ export default function App() {
                 theme={theme}
                 setTheme={setTheme}
                 onLogout={handleLogout}
+                onOpenPage={openWorkspaceFeature}
+                activePage={utilityFeature ? activeFeature : ""}
                 user={currentUser}
                 compact
               />
@@ -1076,6 +1486,15 @@ export default function App() {
             ) : null}
 
             <div className="case-file-list">
+              {currentUser && !casePanelCollapsed ? (
+                <div
+                  className={`case-file-empty case-history-status case-history-status-${chatPersistenceCopy.tone}`}
+                >
+                  <strong>{chatPersistenceCopy.title}</strong>
+                  <span>{chatPersistenceCopy.description}</span>
+                </div>
+              ) : null}
+
               {currentUser ? (
                 isCasesLoading ? (
                   <div className="case-file-empty">Loading your saved cases...</div>
@@ -1092,35 +1511,43 @@ export default function App() {
                     const savedStatus = (caseRecord.status || "saved").replace(/_/g, " ");
 
                     return (
-                      <button
-                        key={caseRecord.id}
-                        className={`case-file-item ${isActive ? "case-file-item-active" : ""}`}
-                        type="button"
-                        onClick={() => loadSavedCase(caseRecord.id)}
-                        title={caseRecord.title}
-                      >
-                        <span className={`case-file-dot case-file-dot-${tone}`} />
-                        {!casePanelCollapsed ? (
-                          <div className="case-file-copy">
-                            <strong>{caseRecord.title}</strong>
-                            <div className="case-file-meta">
-                              <span>
-                                {isActive
-                                  ? "Active"
-                                  : formatRelativeTime(caseRecord.updated_at || caseRecord.created_at)}
-                              </span>
-                              <span className="case-file-badge">{savedStatus}</span>
+                      <div key={caseRecord.id} className="case-file-item-wrapper">
+                        <button
+                          className={`case-file-item ${isActive ? "case-file-item-active" : ""}`}
+                          type="button"
+                          onClick={() => loadSavedCase(caseRecord.id)}
+                          title={caseRecord.title}
+                        >
+                          <span className={`case-file-dot case-file-dot-${tone}`} />
+                          {!casePanelCollapsed ? (
+                            <div className="case-file-copy">
+                              <strong>{caseRecord.title}</strong>
+                              <div className="case-file-meta">
+                                <span>
+                                  {isActive
+                                    ? "Active"
+                                    : formatRelativeTime(caseRecord.updated_at || caseRecord.created_at)}
+                                </span>
+                                <span className="case-file-badge">{savedStatus}</span>
+                              </div>
                             </div>
-                          </div>
+                          ) : null}
+                        </button>
+                        {!casePanelCollapsed ? (
+                          <button
+                            className="case-file-delete-btn"
+                            type="button"
+                            onClick={(e) => handleDeleteCase(caseRecord.id, e)}
+                            title="Delete this case"
+                            aria-label="Delete case"
+                          >
+                            🗑️
+                          </button>
                         ) : null}
-                      </button>
+                      </div>
                     );
                   })
-                ) : (
-                  <div className="case-file-empty">
-                    Your account is ready. Start a case to save secure history here.
-                  </div>
-                )
+                ) : null
               ) : (
                 demoScenarios.map((scenario) => {
                   const isActive = scenario.id === scenarioId;
@@ -1177,7 +1604,11 @@ export default function App() {
           </div>
         </aside>
 
-        <main className="main-workspace floating-workspace">
+        <main
+          className={`main-workspace floating-workspace ${
+            utilityFeature ? "main-workspace-utility" : ""
+          }`}
+        >
           {apiError ? <div className="case-file-empty workspace-inline-alert">{apiError}</div> : null}
           {isLoading ? (
             <div className="case-file-empty workspace-inline-alert">
@@ -1185,28 +1616,7 @@ export default function App() {
             </div>
           ) : null}
 
-          {activeFeature === "phishing" ? (
-            <PhishingContainer />
-          ) : (
-            <ChatWindow
-              scenario={activeScenario}
-              submittedIncident={submittedIncident}
-              incidentDraft={incidentDraft}
-              onIncidentDraftChange={setIncidentDraft}
-              onSubmitIncident={handleSubmitIncident}
-              analysisStarted={analysisStarted}
-              answers={answers}
-              activeQuestion={activeQuestion}
-              onAnswer={handleAnswer}
-              onChangeAnswer={handleChangeAnswer}
-              onSkipQuestion={handleSkipQuestion}
-              verdictReady={verdictReady}
-              confidence={confidence}
-              currentStep={statusMeta.currentStep}
-              statusLabel={statusMeta.statusLabel}
-              flowState={statusMeta.flowState}
-            />
-          )}
+          {workspaceContent}
         </main>
       </div>
     </div>

@@ -8,6 +8,38 @@ const {
 
 const router = express.Router();
 
+function toClientCaseError(error, fallbackMessage) {
+  const message = error?.message || fallbackMessage;
+
+  if (/cases_user_id_fkey|foreign key/i.test(message)) {
+    return "Unable to save case because the user profile is not synced yet. Please sign in again and retry.";
+  }
+
+  if (/Profile sync failed/i.test(message)) {
+    return "Unable to sync the user profile for secure case storage. Please sign in again and retry.";
+  }
+
+  return message || fallbackMessage;
+}
+
+async function ensureProfileForUser(client, user) {
+  if (!client || !user?.id) {
+    return;
+  }
+
+  const payload = {
+    id: user.id,
+    email: user.email || "",
+    full_name: user.user_metadata?.full_name || "",
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await client.from("profiles").upsert(payload, { onConflict: "id" });
+  if (error) {
+    throw new Error(`Profile sync failed: ${error.message}`);
+  }
+}
+
 async function getRequestContext(req) {
   const token = getAccessToken(req);
   if (!token || !supabase) {
@@ -19,10 +51,13 @@ async function getRequestContext(req) {
     return { token: null, user: null, client: null };
   }
 
+  const client = createSupabaseClient(token);
+  await ensureProfileForUser(client, data.user);
+
   return {
     token,
     user: data.user,
-    client: createSupabaseClient(token),
+    client,
   };
 }
 
@@ -50,12 +85,12 @@ router.get("/", async (req, res) => {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: toClientCaseError(error, "Unable to list cases.") });
     }
 
     return res.json({ cases: data || [] });
   } catch (error) {
-    return res.status(500).json({ error: error.message || "Unable to list cases." });
+    return res.status(500).json({ error: toClientCaseError(error, "Unable to list cases.") });
   }
 });
 
@@ -100,12 +135,12 @@ router.post("/", async (req, res) => {
       .single();
 
     if (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: toClientCaseError(error, "Unable to create case.") });
     }
 
     return res.status(201).json({ case: data });
   } catch (error) {
-    return res.status(500).json({ error: error.message || "Unable to create case." });
+    return res.status(500).json({ error: toClientCaseError(error, "Unable to create case.") });
   }
 });
 
@@ -124,12 +159,12 @@ router.get("/:id", async (req, res) => {
       .single();
 
     if (error || !data) {
-      return res.status(404).json({ error: error?.message || "Case not found." });
+      return res.status(404).json({ error: toClientCaseError(error, "Case not found.") });
     }
 
     return res.json({ case: data });
   } catch (error) {
-    return res.status(500).json({ error: error.message || "Unable to load case." });
+    return res.status(500).json({ error: toClientCaseError(error, "Unable to load case.") });
   }
 });
 
@@ -175,12 +210,12 @@ router.patch("/:id", async (req, res) => {
       .single();
 
     if (error || !data) {
-      return res.status(404).json({ error: error?.message || "Case not found." });
+      return res.status(404).json({ error: toClientCaseError(error, "Case not found.") });
     }
 
     return res.json({ case: data });
   } catch (error) {
-    return res.status(500).json({ error: error.message || "Unable to update case." });
+    return res.status(500).json({ error: toClientCaseError(error, "Unable to update case.") });
   }
 });
 
@@ -198,12 +233,12 @@ router.delete("/:id", async (req, res) => {
       .eq("user_id", user.id);
 
     if (error) {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: toClientCaseError(error, "Unable to delete case.") });
     }
 
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: error.message || "Unable to delete case." });
+    return res.status(500).json({ error: toClientCaseError(error, "Unable to delete case.") });
   }
 });
 
