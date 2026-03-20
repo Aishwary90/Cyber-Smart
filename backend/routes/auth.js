@@ -23,13 +23,14 @@ function buildDemoUser(email, fullName = "") {
   const displayName = trimmedName || label || "Demo User";
 
   return {
-    id: `demo-${safeLabel.toLowerCase()}`,
+    id: `demo:${safeLabel.toLowerCase()}`,
     email: normalizedEmail,
     fullName: displayName,
   };
 }
 
-function sendDemoAuthResponse(res, { email, fullName = "" } = {}) {
+function sendDemoAuthResponse(res, options = {}) {
+  const { email, fullName = "" } = options;
   return res.json({
     user: buildDemoUser(email, fullName),
     session: null,
@@ -154,7 +155,7 @@ router.post("/refresh", async (req, res) => {
   try {
     if (isDemoMode()) {
       return res
-        .status(501)
+        .status(403)
         .json({ error: "Session refresh is unavailable in demo mode." });
     }
 
