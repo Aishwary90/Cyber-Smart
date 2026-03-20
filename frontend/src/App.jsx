@@ -742,7 +742,9 @@ export default function App() {
     }
 
     if (!getStoredSession()?.access_token) {
-      setApiError("Case deletion requires authentication. Configure Supabase to persist changes.");
+      setApiError(
+        "Case deletion is unavailable in demo mode. Contact your administrator to enable persistence."
+      );
       return;
     }
 
