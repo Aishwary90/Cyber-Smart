@@ -105,6 +105,7 @@ export function VerdictScreen({ scenario, verdictReady, confidence, confidenceSu
 
       <div className="verdict-section">
         <h4>Legal Info</h4>
+        {verdict.legalPosition?.summary ? <p>{verdict.legalPosition.summary}</p> : null}
         <div className="legal-tag-group">
           {verdict.legalSections.map((section) => (
             <span key={section} className="legal-tag">

@@ -42,32 +42,71 @@
       ],
       
       "severity": "high",
-      
+
       "it_act_sections": [
         {
           "section": "66C",
-          "title": "Identity theft / Punishment for identity theft",
-          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 1 lakh"
+          "title": "Punishment for Identity Theft",
+          "penalty": "Imprisonment up to 3 years + fine up to ₹1 lakh — for fraudulently using victim's credentials, OTP, or banking identity to access their account"
         },
         {
           "section": "66D",
-          "title": "Cheating by impersonation using computer resource",
-          "penalty": "Up to 3 years imprisonment + Fine up to Rs. 1 lakh"
+          "title": "Punishment for Cheating by Personation using Computer Resource",
+          "penalty": "Imprisonment up to 3 years + fine up to ₹1 lakh — for impersonating bank officials, RBI officers, or support staff using phone/digital means to extract money"
+        },
+        {
+          "section": "66",
+          "title": "Computer Related Offences",
+          "penalty": "Imprisonment up to 3 years + fine up to ₹5 lakh — for fraudulently accessing victim's bank/payment accounts via digital means"
+        },
+        {
+          "section": "43",
+          "title": "Penalty for Unauthorized Access to Computer System",
+          "penalty": "Civil compensation to victim — for unauthorized access to banking computer systems or payment infrastructure"
+        },
+        {
+          "section": "72A",
+          "title": "Punishment for Disclosure of Information in Breach of Lawful Contract",
+          "penalty": "Imprisonment up to 3 years + fine up to ₹5 lakh — applicable if bank/payment insider leaked victim's financial data to fraudster"
         }
       ],
-      
+
       "ipc_sections": [
         {
           "section": "420",
-          "title": "Cheating and dishonestly inducing delivery of property",
-          "penalty": "Up to 7 years imprisonment + fine"
+          "title": "Cheating and Dishonestly Inducing Delivery of Property",
+          "penalty": "Up to 7 years + fine — generic online payment fraud"
         },
         {
-          "section": "415",
-          "title": "Cheating",
-          "penalty": "Up to 1 year imprisonment + fine"
+          "section": "406",
+          "title": "Criminal Breach of Trust",
+          "penalty": "Up to 3 years + fine — misappropriation of entrusted money"
+        },
+        {
+          "section": "419",
+          "title": "Cheating by Impersonation",
+          "penalty": "Up to 3 years + fine — impersonating bank/official"
         }
       ],
+
+      "immediate_actions": [
+        "TURANT karo: Apne bank ke customer care ko ABHI call karo — transaction freeze ya reversal request karo (number card ke peeche hota hai)",
+        "TURANT karo: Net Banking / UPI app mein jaao — apna UPI PIN aur net banking password ABHI change karo",
+        "Cyber Helpline 1930 pe call karo — India ka official financial cyber fraud helpline, 24x7 available",
+        "National Cyber Crime Portal pe complaint file karo: cybercrime.gov.in",
+        "Apne nearest police station mein FIR file karo with all evidence"
+      ],
+
+      "evidence_to_collect": [
+        "Bank statement showing fraudulent transaction (PDF download karo)",
+        "SMS/Email screenshots of OTP, alerts, or suspicious messages",
+        "Call logs showing fraudster's phone number",
+        "Screenshots of fake apps/websites/links",
+        "UPI transaction IDs and payment confirmation screens",
+        "WhatsApp/Telegram chat screenshots with fraudster"
+      ],
+
+      "legal_summary": "This is a case of Online Financial Fraud punishable under IT Act 2000 (Sections 43, 66, 66C, 66D, 72A) and Indian Penal Code (Sections 419, 420, 406). Maximum combined punishment can extend to 7 years imprisonment with heavy fines.",
       
       "cross_questions": [
         {

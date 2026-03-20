@@ -4,6 +4,8 @@ const { getNextQuestion } = require("../engine/questionEngine");
 const { buildVerdict } = require("../engine/verdictBuilder");
 const { getCategoryById } = require("../engine/incidentCatalog");
 const { buildDecisionReasoning } = require("../engine/explanationBuilder");
+const { answerKnowledgeQuery } = require("../engine/knowledgeRouter");
+const { buildCategoryPayload } = require("../engine/categoryPayload");
 
 const router = express.Router();
 
@@ -14,7 +16,7 @@ const DEFAULT_SUGGESTIONS = [
   "Money was stolen from my account",
   "I think someone hacked my email",
   "I got a suspicious message",
-  "Help me understand if this is a scam",
+  "What is IT Act 66C?",
 ];
 
 function buildClassificationBadge(type, confidence, extra = {}) {
@@ -23,6 +25,10 @@ function buildClassificationBadge(type, confidence, extra = {}) {
     confidence: Math.round(confidence || 0),
     ...extra,
   };
+}
+
+function buildCaseCategoryPayload(categoryId) {
+  return buildCategoryPayload(getCategoryById(categoryId));
 }
 
 function buildReasoningForCase(currentCase, messageOverride = "") {
@@ -116,8 +122,8 @@ function isResetIntent(message = "") {
 function buildOutOfScopeResponse() {
   return {
     text:
-      "I can help with cybercrime, scams, phishing, account compromise, and digital payment incidents. " +
-      "This message does not yet show a clear cyber element. If money, an account, a suspicious link, or unauthorized access was involved, tell me that directly and I will continue.",
+      "I can help with cybercrime incidents, scams, phishing, account compromise, digital payment issues, and cyber-law questions such as IT Act or IPC sections. " +
+      "This message does not yet show a clear cyber element. If money, an account, a suspicious link, unauthorized access, or a cyber-law topic was involved, tell me that directly and I will continue.",
     classification: buildClassificationBadge("OUT_OF_SCOPE", 0),
     suggestions: DEFAULT_SUGGESTIONS,
   };
@@ -155,8 +161,31 @@ function buildNotCrimeResponse(currentCase, verdict) {
   };
 }
 
+function buildKnowledgeResponse(result) {
+  const category = result?.categoryId ? getCategoryById(result.categoryId) : null;
+  const categoryData = result?.crimeData || (category ? buildCategoryPayload(category) : null);
+  const isCrimeCategory = category?.type === "crime";
+  const badgeExtras =
+    result?.classificationType === "CRIME" && categoryData
+      ? {
+          crimeType: categoryData.title || categoryData.name,
+          risk: inferRisk(categoryData.severity),
+        }
+      : {};
+
+  return {
+    text: result?.text || "I could not build a knowledge response for that query.",
+    classification: buildClassificationBadge(result?.classificationType || "INFO", result?.confidence || 0, badgeExtras),
+    reasoning: result?.reasoning || null,
+    suggestions: result?.suggestions || DEFAULT_SUGGESTIONS,
+    crimeData: categoryData && isCrimeCategory ? categoryData : null,
+  };
+}
+
 function buildCrimeQuestionResponse(currentCase, question, introText) {
   const reasoning = buildReasoningForCase(currentCase);
+  const crimeData = buildCaseCategoryPayload(currentCase.crimeId);
+
   return {
     text:
       `${introText} ` +
@@ -169,12 +198,14 @@ function buildCrimeQuestionResponse(currentCase, question, introText) {
     caseCreated: true,
     caseId: currentCase.id,
     suggestions: [...(question.options || []), "How did you decide this?"],
+    crimeData,
   };
 }
 
 function buildCrimeVerdictResponse(currentCase, verdict) {
   const actions = verdict.verdict.immediate_actions || [];
   const reasoning = verdict.verdict.decision_reasoning || buildReasoningForCase(currentCase);
+  const crimeData = buildCaseCategoryPayload(currentCase.crimeId);
 
   return {
     text:
@@ -188,12 +219,14 @@ function buildCrimeVerdictResponse(currentCase, verdict) {
     reasoning,
     caseCreated: true,
     caseId: currentCase.id,
+    verdict: verdict.verdict,
     suggestions: [
       "What should I do right now?",
       "What evidence should I keep?",
       "How did you decide this?",
       "How do I report this?",
     ],
+    crimeData,
   };
 }
 
@@ -295,13 +328,18 @@ function finalizeCrimeCase(currentCase) {
 function handleActiveCaseReply(context, message) {
   const currentCase = context.currentCase;
 
-  if (isExplanationIntent(message)) {
-    return buildExplanationResponse(currentCase);
-  }
-
   if (isResetIntent(message)) {
     context.currentCase = null;
     return null;
+  }
+
+  const knowledgeResponse = answerKnowledgeQuery({ text: message, currentCase });
+  if (knowledgeResponse) {
+    return buildKnowledgeResponse(knowledgeResponse);
+  }
+
+  if (isExplanationIntent(message)) {
+    return buildExplanationResponse(currentCase);
   }
 
   if (!currentCase?.pendingQuestion) {
@@ -374,15 +412,19 @@ function startNewCase(message, classification, context) {
   const currentCase = createCaseState(message, classification);
   context.currentCase = currentCase;
 
-  if (classification.first_question) {
-    return buildCrimeQuestionResponse(
-      currentCase,
-      classification.first_question,
-      `Based on what you've described, this looks like **${currentCase.categoryTitle}** (${currentCase.confidence}% confidence).`,
-    );
+  const baseResponse = classification.first_question
+    ? buildCrimeQuestionResponse(
+        currentCase,
+        classification.first_question,
+        `Based on what you've described, this looks like **${currentCase.categoryTitle}** (${currentCase.confidence}% confidence).`,
+      )
+    : finalizeCrimeCase(currentCase);
+
+  if (!baseResponse.crimeData) {
+    baseResponse.crimeData = buildCaseCategoryPayload(currentCase.crimeId);
   }
 
-  return finalizeCrimeCase(currentCase);
+  return baseResponse;
 }
 
 router.post("/", async (req, res) => {
@@ -400,6 +442,13 @@ router.post("/", async (req, res) => {
 
     if (context.currentCase) {
       response = handleActiveCaseReply(context, message.trim());
+    }
+
+    if (!response) {
+      const knowledgeResponse = answerKnowledgeQuery({ text: message.trim() });
+      if (knowledgeResponse) {
+        response = buildKnowledgeResponse(knowledgeResponse);
+      }
     }
 
     if (!response) {
@@ -442,6 +491,22 @@ router.delete("/history/:userId", (req, res) => {
   conversationContexts.delete(userId);
 
   res.json({ success: true, message: "Conversation history cleared" });
+});
+
+router.get("/crime/:crimeId", (req, res) => {
+  try {
+    const { crimeId } = req.params;
+    const category = getCategoryById(crimeId);
+
+    if (!category) {
+      return res.status(404).json({ error: "Crime type not found" });
+    }
+
+    res.json(buildCategoryPayload(category));
+  } catch (error) {
+    console.error("Crime fetch error:", error);
+    res.status(500).json({ error: "Unable to fetch crime details" });
+  }
 });
 
 module.exports = router;

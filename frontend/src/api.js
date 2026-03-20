@@ -248,6 +248,13 @@ export function transformVerdict(backendVerdict) {
       legalSections.push(label);
     });
   }
+  if (Array.isArray(verdict.other_legal_references)) {
+    verdict.other_legal_references.forEach((reference) => {
+      if (reference && !legalSections.includes(reference)) {
+        legalSections.push(reference);
+      }
+    });
+  }
 
   return {
     kind: isCrime ? "confirmed_cybercrime" : "not_a_cybercrime",
@@ -270,6 +277,7 @@ export function transformVerdict(backendVerdict) {
         : "This case does not meet the legal definition of cybercrime.",
     ],
     decisionReasoning: verdict.decision_reasoning || null,
+    legalPosition: verdict.legal_position || null,
     destination: isCrime
       ? "cybercrime.gov.in and 1930 helpline"
       : "Consumer forum or platform support",
@@ -392,6 +400,10 @@ export async function chatSendMessage(message, userId) {
   };
 }
 
+export async function getCrimeDetails(crimeId) {
+  return fetchApi(`/api/chat/crime/${crimeId}`, { method: "GET" });
+}
+
 export default {
   checkHealth,
   classifyIncident,
@@ -416,4 +428,5 @@ export default {
   listCaseFeedback,
   updateCase,
   chatSendMessage,
+  getCrimeDetails,
 };

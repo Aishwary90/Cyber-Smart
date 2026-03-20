@@ -133,9 +133,22 @@ const DIRECT_NOT_CRIME_PATTERNS = [
   {
     id: "NAC005_bad_customer_service",
     patterns: [
-      /\b(product|item|order|parcel|package)\b.*\b(not delivered|never arrived|not received|missing)\b/i,
       /\b(delayed delivery|late delivery|refund pending|seller not responding|wrong product|damaged product)\b/i,
-      /\b(customer service|platform support|delivery issue|order issue)\b/i,
+      /\b(customer service|platform support|delivery issue|order issue|return issue)\b/i,
+      /\b(order|product|item)\b.{0,30}\b(returned|cancelled|refund|replacement)\b/i,
+    ],
+    exclude_patterns: [
+      /\b(fake|scam|fraud|cheat|cheated|phishing|impersonat|counterfeit|duplicate|unknown seller|instagram store|telegram seller|whatsapp seller)\b/i,
+    ],
+  },
+  {
+    id: "NAC004_blocked_on_social_media",
+    patterns: [
+      /\b(blocked me|blocked on|unfriended me|unfollowed me|removed me|removed from group)\b/i,
+      /\b(social media|instagram|facebook|whatsapp|telegram)\b.{0,25}\b(blocked|unfriended|unfollowed|removed)\b/i,
+    ],
+    exclude_patterns: [
+      /\b(threat|threatened|blackmail|extort|extortion|harass|harassment|abuse|stalk|stalking)\b/i,
     ],
   },
   {
@@ -148,6 +161,9 @@ const DIRECT_NOT_CRIME_PATTERNS = [
     id: "NAC002_account_frozen_by_platform",
     patterns: [
       /\b(account frozen|account suspended|platform blocked my account|tos violation|terms violation)\b/i,
+    ],
+    exclude_patterns: [
+      /\b(hacked|hack|unauthorized|password changed|locked out|compromised)\b/i,
     ],
   },
   {
@@ -178,7 +194,11 @@ function detectPhysicalTheftOnly(text) {
 }
 
 function detectDirectNotCrimePattern(text) {
-  const match = DIRECT_NOT_CRIME_PATTERNS.find((entry) => matchesAnyPattern(text, entry.patterns));
+  const match = DIRECT_NOT_CRIME_PATTERNS.find((entry) => {
+    const matched = matchesAnyPattern(text, entry.patterns);
+    const excluded = entry.exclude_patterns ? matchesAnyPattern(text, entry.exclude_patterns) : false;
+    return matched && !excluded;
+  });
   if (!match) {
     return null;
   }
@@ -367,12 +387,21 @@ function classifyIncident(text) {
   const financialAmbiguity = matchesAnyPattern(inputText, FINANCIAL_HARM_PATTERNS);
   const suspiciousContact = matchesAnyPattern(inputText, SUSPICIOUS_CONTACT_PATTERNS);
   const accountCompromise = matchesAnyPattern(inputText, ACCOUNT_COMPROMISE_PATTERNS);
+  const fakeShoppingFraud =
+    topNotCrime?.id === "NAC005_bad_customer_service" &&
+    /\b(fake website|fake shopping website|scam website|seller scam|seller cheat|disappeared|no company exists|fake company|instagram store|telegram seller|whatsapp seller|counterfeit site)\b/i.test(
+      inputText,
+    ) &&
+    /\b(paid|payment|money|website|order|product|delivery|delivered)\b/i.test(inputText);
 
   let classificationType = "UNCLEAR";
   let selectedCrimeId = null;
   let selectedNotCrimeId = null;
 
-  if (mlReliable && isCrimeId(mlTop.label)) {
+  if (fakeShoppingFraud) {
+    classificationType = "CRIME";
+    selectedCrimeId = topCrime?.id || "CT025";
+  } else if (mlReliable && isCrimeId(mlTop.label)) {
     classificationType = "CRIME";
     selectedCrimeId = mlTop.label;
   } else if (mlReliable && isNotCrimeId(mlTop.label)) {
@@ -410,6 +439,10 @@ function classifyIncident(text) {
 
   if (!mlReliable && classificationType === "CRIME" && selectedCrimeId === "CT008" && accountCompromise) {
     confidence = Math.max(confidence, 72);
+  }
+
+  if (!mlReliable && classificationType === "CRIME" && fakeShoppingFraud) {
+    confidence = Math.max(confidence, 70);
   }
 
   if (classificationType === "CRIME" && !selectedCrimeId) {
