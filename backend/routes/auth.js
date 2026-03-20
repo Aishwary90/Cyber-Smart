@@ -9,9 +9,15 @@ const router = express.Router();
 
 const isDemoMode = () => !isSupabaseConfigured || !supabase;
 
+function sanitizeIdentifier(value, fallback) {
+  const sanitized = (value || "").replace(/[^a-zA-Z0-9-_]/g, "");
+  const normalized = sanitized.replace(/^[^a-zA-Z0-9]+/, "");
+  return normalized.length ? normalized : fallback;
+}
+
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
-  const isValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed);
+  const isValid = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(trimmed);
   return isValid ? trimmed : "demo@cybersmart.ai";
 }
 
@@ -20,17 +26,13 @@ function buildDemoUser(email, fullName = "") {
   const [rawLabel = "demo-user", rawDomain = "cybersmart.ai"] = normalizedEmail.split("@");
   const label = rawLabel || "demo-user";
   const domain = rawDomain || "cybersmart.ai";
-  const sanitizedLabel = label.replace(/[^a-zA-Z0-9-_]/g, "");
-  const normalizedLabel = sanitizedLabel.replace(/^[^a-zA-Z0-9]+/, "");
-  const safeLabel = normalizedLabel.length ? normalizedLabel : "demo-user";
-  const sanitizedDomain = domain.replace(/[^a-zA-Z0-9-_]/g, "");
-  const normalizedDomain = sanitizedDomain.replace(/^[^a-zA-Z0-9]+/, "");
-  const safeDomain = normalizedDomain.length ? normalizedDomain : "cybersmart";
+  const safeLabel = sanitizeIdentifier(label, "demo-user");
+  const safeDomain = sanitizeIdentifier(domain, "cybersmart");
   const trimmedName = (fullName || "").trim();
   const displayName = trimmedName || label || "Demo User";
 
   return {
-    id: `demo:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}`,
+    id: `demo-user:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}`,
     email: normalizedEmail,
     fullName: displayName,
   };
@@ -162,7 +164,7 @@ router.post("/refresh", async (req, res) => {
   try {
     if (isDemoMode()) {
       return res
-        .status(403)
+        .status(401)
         .json({ error: "Session refresh is unavailable in demo mode." });
     }
 
