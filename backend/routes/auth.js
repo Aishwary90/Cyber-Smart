@@ -1,5 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
+const rateLimit = require("express-rate-limit");
 const {
   supabase,
   createSupabaseClient,
@@ -13,36 +14,13 @@ const isDemoMode = () => !isSupabaseConfigured || !supabase;
 const DEMO_USER_HASH_LENGTH = 16;
 const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 const AUTH_RATE_LIMIT_MAX = 10;
-const authRateState = new Map();
-
-function getRateLimitKey(req) {
-  const forwarded = req.headers["x-forwarded-for"];
-  const rawIp = Array.isArray(forwarded)
-    ? forwarded[0]
-    : typeof forwarded === "string"
-      ? forwarded.split(",")[0]
-      : null;
-  return (rawIp || req.ip || "unknown").trim();
-}
-
-function authRateLimiter(req, res, next) {
-  const key = getRateLimitKey(req);
-  const now = Date.now();
-  const current = authRateState.get(key);
-  const entry =
-    current && current.resetAt > now
-      ? current
-      : { count: 0, resetAt: now + AUTH_RATE_LIMIT_WINDOW_MS };
-
-  entry.count += 1;
-  authRateState.set(key, entry);
-
-  if (entry.count > AUTH_RATE_LIMIT_MAX) {
-    return res.status(429).json({ error: "Too many requests. Please try again shortly." });
-  }
-
-  return next();
-}
+const authRateLimiter = rateLimit({
+  windowMs: AUTH_RATE_LIMIT_WINDOW_MS,
+  max: AUTH_RATE_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again shortly." },
+});
 
 function sanitizeIdentifier(value, fallback) {
   const sanitized = (value || "").replace(/[^a-zA-Z0-9]/g, "");
