@@ -11,6 +11,7 @@ const feedbackRoute = require("./routes/feedback");
 const chatRoute = require("./routes/chat");
 
 const app = express();
+app.set("trust proxy", 1);
 
 function buildCorsOrigins() {
   const defaultOrigins = [
