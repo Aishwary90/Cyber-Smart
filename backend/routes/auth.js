@@ -13,9 +13,8 @@ const isDemoMode = () => !isSupabaseConfigured || !supabase;
 const DEMO_USER_HASH_LENGTH = 16;
 
 function sanitizeIdentifier(value, fallback) {
-  const sanitized = (value || "").replace(/[^a-zA-Z0-9-_]/g, "");
-  const normalized = sanitized.replace(/^[^a-zA-Z0-9]+/, "");
-  return normalized.length ? normalized : fallback;
+  const sanitized = (value || "").replace(/[^a-zA-Z0-9]/g, "");
+  return sanitized.length ? sanitized : fallback;
 }
 
 function normalizeDemoEmail(email) {
@@ -26,7 +25,7 @@ function normalizeDemoEmail(email) {
 
 function buildDemoUser(email, fullName = "") {
   const normalizedEmail = normalizeDemoEmail(email);
-  const [rawLabel = "demo-user", rawDomain = "cybersmart.ai"] = normalizedEmail.split("@");
+  const [rawLabel, rawDomain] = normalizedEmail.split("@");
   const label = rawLabel || "demo-user";
   const domain = rawDomain || "cybersmart.ai";
   const safeLabel = sanitizeIdentifier(label, "demo-user");
