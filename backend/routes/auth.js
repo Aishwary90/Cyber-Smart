@@ -1,4 +1,5 @@
 const express = require("express");
+const crypto = require("crypto");
 const {
   supabase,
   createSupabaseClient,
@@ -17,8 +18,9 @@ function sanitizeIdentifier(value, fallback) {
 
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
-  const isValid = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(trimmed);
-  return isValid ? trimmed : "demo@cybersmart.ai";
+  const cleaned = trimmed.replace(/[\r\n]/g, "");
+  const isValid = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(cleaned);
+  return isValid ? cleaned : "demo@cybersmart.ai";
 }
 
 function buildDemoUser(email, fullName = "") {
@@ -30,9 +32,14 @@ function buildDemoUser(email, fullName = "") {
   const safeDomain = sanitizeIdentifier(domain, "cybersmart");
   const trimmedName = (fullName || "").trim();
   const displayName = trimmedName || label || "Demo User";
+  const hash = crypto
+    .createHash("sha256")
+    .update(normalizedEmail)
+    .digest("hex")
+    .slice(0, 8);
 
   return {
-    id: `demo-user:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}`,
+    id: `demo-user:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}-${hash}`,
     email: normalizedEmail,
     fullName: displayName,
   };
