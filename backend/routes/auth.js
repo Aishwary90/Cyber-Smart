@@ -29,11 +29,11 @@ function buildDemoUser(email, fullName = "") {
   };
 }
 
-function sendDemoAuthResponse(res, { email, fullName = "", needsEmailVerification = false } = {}) {
+function sendDemoAuthResponse(res, { email, fullName = "" } = {}) {
   return res.json({
     user: buildDemoUser(email, fullName),
     session: null,
-    needsEmailVerification,
+    needsEmailVerification: false,
     demo: true,
     message:
       "Supabase is not configured. Signed in with a demo profile (session is not persisted).",
@@ -154,7 +154,7 @@ router.post("/refresh", async (req, res) => {
   try {
     if (isDemoMode) {
       return res
-        .status(400)
+        .status(503)
         .json({ error: "Session refresh is unavailable in demo mode." });
     }
 
