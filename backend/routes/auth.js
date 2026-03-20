@@ -7,7 +7,7 @@ const {
 
 const router = express.Router();
 
-const isDemoMode = !isSupabaseConfigured || !supabase;
+const isDemoMode = () => !isSupabaseConfigured || !supabase;
 
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
@@ -17,7 +17,7 @@ function normalizeDemoEmail(email) {
 function buildDemoUser(email, fullName = "") {
   const normalizedEmail = normalizeDemoEmail(email);
   const label = normalizedEmail.split("@")[0] || "demo-user";
-  const sanitizedLabel = label.replace(/[^a-z0-9-_]/gi, "");
+  const sanitizedLabel = label.replace(/[^a-zA-Z0-9-_]/g, "");
   const safeLabel = sanitizedLabel.length ? sanitizedLabel : "demo-user";
   const trimmedName = (fullName || "").trim();
   const displayName = trimmedName || label || "Demo User";
@@ -75,7 +75,7 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
-    if (isDemoMode) {
+    if (isDemoMode()) {
       return sendDemoAuthResponse(res, { email, fullName });
     }
 
@@ -115,7 +115,7 @@ router.post("/signin", async (req, res) => {
       return res.status(400).json({ error: "Email and password are required." });
     }
 
-    if (isDemoMode) {
+    if (isDemoMode()) {
       return sendDemoAuthResponse(res, { email });
     }
 
@@ -143,7 +143,7 @@ router.post("/signin", async (req, res) => {
 });
 
 router.post("/signout", async (_req, res) => {
-  if (isDemoMode) {
+  if (isDemoMode()) {
     return res.json({ success: true, demo: true });
   }
 
@@ -152,9 +152,9 @@ router.post("/signout", async (_req, res) => {
 
 router.post("/refresh", async (req, res) => {
   try {
-    if (isDemoMode) {
+    if (isDemoMode()) {
       return res
-        .status(503)
+        .status(501)
         .json({ error: "Session refresh is unavailable in demo mode." });
     }
 
@@ -188,7 +188,7 @@ router.post("/refresh", async (req, res) => {
 
 router.get("/me", async (req, res) => {
   try {
-    if (isDemoMode) {
+    if (isDemoMode()) {
       return res.status(401).json({ error: "Not authenticated." });
     }
 
