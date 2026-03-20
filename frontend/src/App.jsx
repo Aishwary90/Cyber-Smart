@@ -742,7 +742,7 @@ export default function App() {
     }
 
     if (!getStoredSession()?.access_token) {
-      setApiError("Saved case history is unavailable in demo mode.");
+      setApiError("Cannot delete cases in demo mode.");
       return;
     }
 
