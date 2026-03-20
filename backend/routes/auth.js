@@ -4,13 +4,13 @@ const {
   supabase,
   createSupabaseClient,
   isSupabaseConfigured,
+  getAccessToken,
 } = require("../supabase");
 
 const router = express.Router();
 
 const isDemoMode = () => !isSupabaseConfigured || !supabase;
-const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-const DEMO_USER_HASH_LENGTH = 8;
+const DEMO_USER_HASH_LENGTH = 16;
 
 function sanitizeIdentifier(value, fallback) {
   const sanitized = (value || "").replace(/[^a-zA-Z0-9-_]/g, "");
@@ -21,8 +21,7 @@ function sanitizeIdentifier(value, fallback) {
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
   const cleaned = trimmed.replace(/[\r\n]/g, "");
-  const isValid = EMAIL_REGEX.test(cleaned);
-  return isValid ? cleaned : "demo@cybersmart.ai";
+  return cleaned || "demo@cybersmart.ai";
 }
 
 function buildDemoUser(email, fullName = "") {
@@ -161,9 +160,24 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.post("/signout", async (_req, res) => {
+router.post("/signout", async (req, res) => {
   if (isDemoMode()) {
     return res.json({ success: true, demo: true });
+  }
+
+  const token = getAccessToken(req);
+  if (!token) {
+    return res.json({ success: true });
+  }
+
+  const client = createSupabaseClient(token);
+  if (!client) {
+    return res.status(500).json({ error: "Unable to sign out." });
+  }
+
+  const { error } = await client.auth.signOut();
+  if (error) {
+    return res.status(500).json({ error: error.message || "Unable to sign out." });
   }
 
   return res.json({ success: true });
