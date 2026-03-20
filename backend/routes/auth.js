@@ -11,6 +11,38 @@ const router = express.Router();
 
 const isDemoMode = () => !isSupabaseConfigured || !supabase;
 const DEMO_USER_HASH_LENGTH = 16;
+const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
+const AUTH_RATE_LIMIT_MAX = 10;
+const authRateState = new Map();
+
+function getRateLimitKey(req) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const rawIp = Array.isArray(forwarded)
+    ? forwarded[0]
+    : typeof forwarded === "string"
+      ? forwarded.split(",")[0]
+      : null;
+  return (rawIp || req.ip || "unknown").trim();
+}
+
+function authRateLimiter(req, res, next) {
+  const key = getRateLimitKey(req);
+  const now = Date.now();
+  const current = authRateState.get(key);
+  const entry =
+    current && current.resetAt > now
+      ? current
+      : { count: 0, resetAt: now + AUTH_RATE_LIMIT_WINDOW_MS };
+
+  entry.count += 1;
+  authRateState.set(key, entry);
+
+  if (entry.count > AUTH_RATE_LIMIT_MAX) {
+    return res.status(429).json({ error: "Too many requests. Please try again shortly." });
+  }
+
+  return next();
+}
 
 function sanitizeIdentifier(value, fallback) {
   const sanitized = (value || "").replace(/[^a-zA-Z0-9]/g, "");
@@ -84,7 +116,7 @@ async function ensureProfile(session, user, fallbackFullName = "") {
   }
 }
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", authRateLimiter, async (req, res) => {
   try {
     const { email, password, fullName } = req.body || {};
 
@@ -124,7 +156,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/signin", async (req, res) => {
+router.post("/signin", authRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body || {};
 
@@ -182,7 +214,7 @@ router.post("/signout", async (req, res) => {
   return res.json({ success: true });
 });
 
-router.post("/refresh", async (req, res) => {
+router.post("/refresh", authRateLimiter, async (req, res) => {
   try {
     if (isDemoMode()) {
       return res
