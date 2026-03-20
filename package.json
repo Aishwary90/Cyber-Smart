@@ -1,0 +1,25 @@
+{
+  "name": "cyber-smart",
+  "version": "1.0.0",
+  "description": "CyberSmart AI is a **production-ready cybercrime advisory system** that helps users classify cyber incidents and provides legal guidance through a structured 4-step flow:",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aishwary90/Cyber-Smart.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Aishwary90/Cyber-Smart/issues"
+  },
+  "homepage": "https://github.com/Aishwary90/Cyber-Smart#readme",
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  }
+}
