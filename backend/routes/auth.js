@@ -11,19 +11,26 @@ const isDemoMode = () => !isSupabaseConfigured || !supabase;
 
 function normalizeDemoEmail(email) {
   const trimmed = (email || "").trim();
-  return trimmed || "demo@cybersmart.ai";
+  const isValid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(trimmed);
+  return isValid ? trimmed : "demo@cybersmart.ai";
 }
 
 function buildDemoUser(email, fullName = "") {
   const normalizedEmail = normalizeDemoEmail(email);
-  const label = normalizedEmail.split("@")[0] || "demo-user";
+  const [rawLabel = "demo-user", rawDomain = "cybersmart.ai"] = normalizedEmail.split("@");
+  const label = rawLabel || "demo-user";
+  const domain = rawDomain || "cybersmart.ai";
   const sanitizedLabel = label.replace(/[^a-zA-Z0-9-_]/g, "");
-  const safeLabel = sanitizedLabel.length ? sanitizedLabel : "demo-user";
+  const normalizedLabel = sanitizedLabel.replace(/^[^a-zA-Z0-9]+/, "");
+  const safeLabel = normalizedLabel.length ? normalizedLabel : "demo-user";
+  const sanitizedDomain = domain.replace(/[^a-zA-Z0-9-_]/g, "");
+  const normalizedDomain = sanitizedDomain.replace(/^[^a-zA-Z0-9]+/, "");
+  const safeDomain = normalizedDomain.length ? normalizedDomain : "cybersmart";
   const trimmedName = (fullName || "").trim();
   const displayName = trimmedName || label || "Demo User";
 
   return {
-    id: `demo:${safeLabel.toLowerCase()}`,
+    id: `demo:${safeLabel.toLowerCase()}-${safeDomain.toLowerCase()}`,
     email: normalizedEmail,
     fullName: displayName,
   };
