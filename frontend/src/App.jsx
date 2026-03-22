@@ -7,6 +7,7 @@ import { OutOfScopeScreen } from "./components/OutOfScopeScreen";
 import { DashboardPage, HelpPage, ProfilePage, SettingsPage } from "./components/WorkspacePages";
 import { demoScenarios } from "./mockData";
 import "./cyber-chat.css";
+import { useKeyboardShortcuts, useScreenReaderAnnouncement, SkipToMainContent } from "./hooks/accessibility.jsx";
 import {
   classifyIncident,
   clearStoredSession,
@@ -832,6 +833,31 @@ export default function App() {
     restoreSession();
   }, []);
 
+  // Keyboard shortcuts
+  const inputRef = useRef(null);
+  useKeyboardShortcuts({
+    onNewCase: handleNewCase,
+    onOpenPhishing: () => openWorkspaceFeature("phishing"),
+    onOpenAnalytics: () => openWorkspaceFeature("analytics"),
+    onOpenHelp: () => openWorkspaceFeature("help"),
+    onFocusInput: () => inputRef.current?.focus(),
+    onEscape: () => {
+      setTopProfileOpen(false);
+      setMobileSidebarOpen(false);
+    },
+    enabled: screen === "workspace",
+  });
+
+  // Screen reader announcements
+  const announce = useScreenReaderAnnouncement();
+
+  // Announce status changes
+  useEffect(() => {
+    if (analysisStarted && statusMeta.statusLabel) {
+      announce(`Status: ${statusMeta.statusLabel}`);
+    }
+  }, [statusMeta.statusLabel, analysisStarted]);
+
   useEffect(() => {
     document.body.style.overflow = screen === "workspace" ? "hidden" : "auto";
 
@@ -1404,23 +1430,24 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell premium-shell">
-      <div className="bg-blob blob-a" />
-      <div className="bg-blob blob-b" />
-      <div className="bg-blob blob-c" />
-      <div className="bg-blob blob-d" />
-      <div className="bg-grid" />
+    <div className="app-shell premium-shell" role="application" aria-label="CyberSmart AI Investigation Platform">
+      <SkipToMainContent />
+      <div className="bg-blob blob-a" aria-hidden="true" />
+      <div className="bg-blob blob-b" aria-hidden="true" />
+      <div className="bg-blob blob-c" aria-hidden="true" />
+      <div className="bg-blob blob-d" aria-hidden="true" />
+      <div className="bg-grid" aria-hidden="true" />
 
-      <header className="top-bar floating-top-bar">
+      <header className="top-bar floating-top-bar" role="banner">
         <div className="brand-group">
-          <div className="brand-mark">CS</div>
+          <div className="brand-mark" aria-hidden="true">CS</div>
           <div>
             <p className="brand-eyebrow">Guided cyber diagnosis system</p>
             <h1>CyberSmart AI</h1>
           </div>
         </div>
 
-        <div className="top-bar-actions">
+        <div className="top-bar-actions" role="navigation" aria-label="Main navigation">
           <button
             className="mobile-sidebar-toggle"
             type="button"
@@ -1476,6 +1503,8 @@ export default function App() {
         ) : null}
 
         <aside
+          role="complementary"
+          aria-label="Case panel and tools"
           className={`sidebar floating-sidebar case-panel ${
             casePanelCollapsed ? "case-panel-collapsed" : ""
           } ${mobileSidebarOpen ? "case-panel-mobile-open" : ""}`}
@@ -1488,13 +1517,20 @@ export default function App() {
             <button
               className="case-panel-toggle"
               type="button"
+              aria-label={casePanelCollapsed ? "Expand case panel" : "Collapse case panel"}
+              aria-expanded={!casePanelCollapsed}
               onClick={() => setCasePanelCollapsed((current) => !current)}
             >
               {casePanelCollapsed ? ">" : "<"}
             </button>
           </div>
 
-          <button className="new-case-button skeuo-button" type="button" onClick={handleNewCase}>
+          <button
+            className="new-case-button skeuo-button"
+            type="button"
+            aria-label="Create new case"
+            onClick={handleNewCase}
+          >
             {casePanelCollapsed ? "+" : "+ New Case"}
           </button>
 
@@ -1624,13 +1660,16 @@ export default function App() {
         </aside>
 
         <main
+          id="main-content"
+          role="main"
+          aria-label={`Investigation workspace - ${activeFeature === "analytics" ? "Analytics Dashboard" : activeFeature === "phishing" ? "URL Analyzer" : activeFeature === "help" ? "Help Center" : activeFeature === "profile" ? "Profile" : activeFeature === "settings" ? "Settings" : "Case Investigation"}`}
           className={`main-workspace floating-workspace ${
             utilityFeature ? "main-workspace-utility" : ""
           }`}
         >
-          {apiError ? <div className="case-file-empty workspace-inline-alert">{apiError}</div> : null}
+          {apiError ? <div className="case-file-empty workspace-inline-alert" role="alert">{apiError}</div> : null}
           {isLoading ? (
-            <div className="case-file-empty workspace-inline-alert">
+            <div className="case-file-empty workspace-inline-alert" role="status" aria-live="polite">
               Analyzing your report securely...
             </div>
           ) : null}

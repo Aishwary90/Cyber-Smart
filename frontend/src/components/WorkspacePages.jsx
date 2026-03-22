@@ -689,6 +689,40 @@ export function HelpPage({ onOpenChat, onOpenPhishing, onOpenProfile, onStartFre
             </div>
           </div>
         </article>
+
+        <article className="workspace-panel">
+          <div className="workspace-panel-heading">
+            <span className="workspace-page-eyebrow">Keyboard shortcuts</span>
+            <h3>Navigate faster with keyboard commands</h3>
+          </div>
+
+          <div className="workspace-faq-list">
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+N (Cmd+N on Mac)</strong>
+              <p>Start a new case quickly without navigating to the button.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+P (Cmd+P on Mac)</strong>
+              <p>Open the phishing URL analyzer to scan suspicious links.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+D (Cmd+D on Mac)</strong>
+              <p>Open the analytics dashboard to view case trends and insights.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+H (Cmd+H on Mac)</strong>
+              <p>Open this help page from anywhere in the application.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+K (Cmd+K on Mac)</strong>
+              <p>Focus the command input to quickly start typing your case.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Escape</strong>
+              <p>Close open menus and modals to return to your workspace.</p>
+            </div>
+          </div>
+        </article>
       </section>
 
       <section className="workspace-page-grid workspace-page-grid-two-up">
