@@ -1,4 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AnalyticsDashboard } from "./AnalyticsDashboard";
+import "../analytics-dashboard.css";
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+};
+
 
 function getUserInitials(user) {
   const source = user?.fullName || user?.email || "A";
@@ -47,7 +70,13 @@ function formatRelativeTime(dateValue) {
 
 function WorkspacePageShell({ eyebrow, title, description, accent, actions, children }) {
   return (
-    <section className="workspace-page-shell">
+    <motion.section
+      className="workspace-page-shell"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <div className={`workspace-page-hero workspace-page-hero-${accent}`}>
         <div className="workspace-page-hero-copy">
           <span className="workspace-page-eyebrow">{eyebrow}</span>
@@ -58,7 +87,7 @@ function WorkspacePageShell({ eyebrow, title, description, accent, actions, chil
       </div>
 
       <div className="workspace-page-scroll">{children}</div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -660,6 +689,40 @@ export function HelpPage({ onOpenChat, onOpenPhishing, onOpenProfile, onStartFre
             </div>
           </div>
         </article>
+
+        <article className="workspace-panel">
+          <div className="workspace-panel-heading">
+            <span className="workspace-page-eyebrow">Keyboard shortcuts</span>
+            <h3>Navigate faster with keyboard commands</h3>
+          </div>
+
+          <div className="workspace-faq-list">
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+N (Cmd+N on Mac)</strong>
+              <p>Start a new case quickly without navigating to the button.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+P (Cmd+P on Mac)</strong>
+              <p>Open the phishing URL analyzer to scan suspicious links.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+D (Cmd+D on Mac)</strong>
+              <p>Open the analytics dashboard to view case trends and insights.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+H (Cmd+H on Mac)</strong>
+              <p>Open this help page from anywhere in the application.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Ctrl+K (Cmd+K on Mac)</strong>
+              <p>Focus the command input to quickly start typing your case.</p>
+            </div>
+            <div className="workspace-checklist-item">
+              <strong>Escape</strong>
+              <p>Close open menus and modals to return to your workspace.</p>
+            </div>
+          </div>
+        </article>
       </section>
 
       <section className="workspace-page-grid workspace-page-grid-two-up">
@@ -694,6 +757,24 @@ export function HelpPage({ onOpenChat, onOpenPhishing, onOpenProfile, onStartFre
           </div>
         </article>
       </section>
+    </WorkspacePageShell>
+  );
+}
+
+export function DashboardPage({ cases = [], onOpenChat }) {
+  return (
+    <WorkspacePageShell
+      eyebrow="Analytics"
+      title="Data-driven insights"
+      description="Comprehensive analytics on case trends, risk patterns, and incident metrics"
+      accent="analytics"
+      actions={
+        <button className="workspace-page-button workspace-page-button-primary" type="button" onClick={onOpenChat}>
+          Return to workspace
+        </button>
+      }
+    >
+      <AnalyticsDashboard cases={cases} />
     </WorkspacePageShell>
   );
 }
