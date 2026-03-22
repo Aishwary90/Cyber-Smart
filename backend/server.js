@@ -1,7 +1,17 @@
 const path = require("path");
-const dotenv = require("dotenv");
 
-dotenv.config({ path: path.join(__dirname, ".env") });
+let dotenv;
+try {
+  dotenv = require("dotenv");
+} catch (error) {
+  if (error.code !== "MODULE_NOT_FOUND") {
+    throw error;
+  }
+}
+
+if (dotenv) {
+  dotenv.config({ path: path.join(__dirname, ".env") });
+}
 
 const app = require("./app");
 
