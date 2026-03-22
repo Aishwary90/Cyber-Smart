@@ -10,7 +10,7 @@ try {
   }
 }
 
-if (dotenv?.config) {
+if (dotenv) {
   dotenv.config({ path: path.join(__dirname, ".env") });
 }
 
