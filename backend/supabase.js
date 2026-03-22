@@ -1,8 +1,18 @@
 const path = require("path");
-const dotenv = require("dotenv");
 const { createClient } = require("@supabase/supabase-js");
 
-dotenv.config({ path: path.join(__dirname, ".env") });
+let dotenv;
+try {
+  dotenv = require("dotenv");
+} catch (error) {
+  if (error.code !== "MODULE_NOT_FOUND") {
+    throw error;
+  }
+}
+
+if (dotenv?.config) {
+  dotenv.config({ path: path.join(__dirname, ".env") });
+}
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
