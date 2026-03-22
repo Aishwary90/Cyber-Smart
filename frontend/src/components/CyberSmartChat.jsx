@@ -13,6 +13,7 @@ const MAX_FOLLOW_UP_QUESTIONS = 2;
 // Enhanced question sequence
 const EVIDENCE_QUESTION_ID = "Q_EVIDENCE_COLLECTION";
 const DETAILED_NARRATIVE_QUESTION_ID = "Q_DETAILED_NARRATIVE";
+const MAX_CLARIFYING_QUESTIONS = 6;
 
 function toSafeString(value, fallback = "") {
   if (typeof value === "string") {
@@ -133,6 +134,243 @@ function getSeverityRisk(severity) {
   if (normalized === "critical" || normalized === "high") return "high";
   if (normalized === "medium") return "medium";
   return "low";
+}
+
+function buildClarifyingQuestions(primaryCrime, firstQuestion) {
+  const crimeLabel = toSafeString(primaryCrime?.name || "this incident");
+  const defaults = [
+    `Where did this happen? (app/website/account — e.g., ${crimeLabel})`,
+    "What exactly happened step-by-step? (call, message, link, login change, payment request)",
+    "Did you click any link, install an app, or share an OTP/password/PIN?",
+    "Do you still have access, or did someone change your password/phone/email?",
+    "Was any money or data lost? Mention amount/time if yes.",
+    "What proof do you have right now? (screenshots, alerts, transaction IDs, caller IDs)",
+  ];
+
+  const questions = [
+    toSafeString(firstQuestion?.question).trim(),
+    ...defaults,
+  ].filter(Boolean);
+
+  const unique = Array.from(new Set(questions));
+  if (unique.length < 3) {
+    unique.push(
+      "When did this start and how did the other side contact you?",
+      "Did you share any sensitive info or approve a request?",
+      "Do you have any screenshots or alerts saved?"
+    );
+  }
+
+  return unique.slice(0, MAX_CLARIFYING_QUESTIONS);
+}
+
+function buildPatternInsights(crimeLabel) {
+  const label = toSafeString(crimeLabel).toLowerCase();
+
+  if (/hack|unauthorized|access|account/.test(label)) {
+    return {
+      howItHappens: [
+        "Attackers use stolen or reused passwords, phishing login pages, or OTP interception to enter the account.",
+        "They trigger password resets, change recovery email/phone, and lock the real user out.",
+        "Once inside, they impersonate the victim to message contacts, post content, or demand money.",
+      ],
+      mistakes: [
+        "Sharing OTPs/reset links or tapping suspicious login prompts.",
+        "Ignoring security emails about new devices or password changes.",
+        "Reusing the same password across apps without 2FA enabled.",
+      ],
+      safeguards: [
+        "Reset the password from a trusted device and enable 2FA immediately.",
+        "Remove unknown devices/sessions and revoke third-party app access.",
+        "Update recovery email/phone and monitor login alerts for the next 48 hours.",
+      ],
+    };
+  }
+
+  if (/fraud|scam|upi|payment|bank|transaction|wallet/.test(label)) {
+    return {
+      howItHappens: [
+        "Fraudsters impersonate officials/support or send fake payment links/QRs to make you authorize transfers.",
+        "They rush the victim with urgency (account blocked, prize, job task) to push OTP/PIN approvals.",
+        "Money moves via UPI collect requests, card not present transactions, or net banking once credentials are exposed.",
+      ],
+      mistakes: [
+        "Approving collect requests or sharing OTP/PIN/CVV with callers or on forms.",
+        "Clicking shortened/unknown links and installing screen-sharing apps.",
+        "Delaying bank/blocking steps after the first suspicious debit.",
+      ],
+      safeguards: [
+        "Block cards/UPI immediately, raise a written dispute with the bank, and file on cybercrime.gov.in.",
+        "Never approve UPI collect requests you did not initiate; verify URLs before paying.",
+        "Keep SMS/email alerts on and set low transaction limits.",
+      ],
+    };
+  }
+
+  if (/phish|otp|kyc|link|spoof/i.test(label)) {
+    return {
+      howItHappens: [
+        "Victims receive fake KYC/verification links or spoofed domains that capture passwords and OTPs.",
+        "Attackers mirror official branding and send urgent expiry/verification messages.",
+        "Stolen credentials are reused quickly across email, banking, or social accounts.",
+      ],
+      mistakes: [
+        "Opening links from SMS/WhatsApp/email without checking the domain.",
+        "Typing passwords or OTPs on pages that were not opened manually from the official site/app.",
+        "Skipping 2FA and not reviewing recent login alerts.",
+      ],
+      safeguards: [
+        "Manually type official URLs or use saved bookmarks; avoid links in unsolicited messages.",
+        "Enable 2FA on email and primary accounts so stolen passwords alone fail.",
+        "Report and block the sender; capture headers/URLs for evidence.",
+      ],
+    };
+  }
+
+  if (/data|privacy|leak|breach/.test(label)) {
+    return {
+      howItHappens: [
+        "Personal data is exposed through compromised accounts, misconfigured sharing, or malicious insiders.",
+        "Links/files with sensitive info are forwarded without consent or stored in insecure cloud folders.",
+        "Attackers may use leaked data for impersonation, blackmail, or financial fraud.",
+      ],
+      mistakes: [
+        "Storing IDs/photos in public/shared folders without access controls.",
+        "Reusing passwords and not revoking access for ex-employees/third parties.",
+        "Deleting evidence (logs, emails) before backing it up securely.",
+      ],
+      safeguards: [
+        "Rotate passwords/keys, tighten sharing permissions, and enable download/view limits.",
+        "Notify affected parties, request takedowns, and preserve logs/screenshots for legal action.",
+        "File under the DPDP Act for personal data misuse where applicable.",
+      ],
+    };
+  }
+
+  return {
+    howItHappens: [
+      "Cyber incidents often start with social engineering (calls, messages, fake links) or reused credentials.",
+      "Attackers then gain access to accounts/devices and pivot to steal money or data.",
+      "Delays in responding give attackers time to lock you out or erase traces.",
+    ],
+    mistakes: [
+      "Sharing OTPs/PINs/passwords, especially under pressure or from unknown links.",
+      "Not turning on 2FA or ignoring unusual login/payment alerts.",
+      "Failing to collect screenshots/IDs before deleting chats or emails.",
+    ],
+    safeguards: [
+      "Enable 2FA everywhere and use unique passwords via a password manager.",
+      "Verify callers/links independently and avoid approving unexpected requests.",
+      "Keep evidence safe (screenshots, URLs, caller IDs, transaction IDs) before contacting authorities.",
+    ],
+  };
+}
+
+function buildLegalDetails(verdict, crimeData, crimeLabel) {
+  const itActSections = (verdict?.legal_sections?.it_act || crimeData?.it_act_sections || [])
+    .map((section) =>
+      section?.section
+        ? `IT Act Section ${section.section} - ${section.title}`
+        : null
+    )
+    .filter(Boolean);
+
+  const ipcSections = (verdict?.legal_sections?.ipc || crimeData?.ipc_sections || [])
+    .map((section) =>
+      section?.section
+        ? `IPC Section ${section.section} - ${section.title}`
+        : null
+    )
+    .filter(Boolean);
+
+  const extras = Array.isArray(verdict?.legal_sections?.other_legal_references)
+    ? verdict.legal_sections.other_legal_references.filter(Boolean)
+    : [];
+
+  const lowerLabel = toSafeString(crimeLabel).toLowerCase();
+  if (/data|privacy|leak/.test(lowerLabel)) {
+    extras.push("Digital Personal Data Protection (DPDP) Act, 2023 for personal data misuse.");
+  }
+  if (/health|medical/.test(lowerLabel)) {
+    extras.push("HIPAA/health-data rules may apply if a covered entity handled the data.");
+  }
+
+  const lines = [
+    itActSections.length ? `- ${itActSections.join("; ")}` : null,
+    ipcSections.length ? `- ${ipcSections.join("; ")}` : null,
+    extras.length ? `- ${extras.join("; ")}` : null,
+  ].filter(Boolean);
+
+  return lines.join("\n") || "Applicable sections will be determined by the investigating agency.";
+}
+
+function buildStructuredReportTemplate(crimeLabel) {
+  const label = toSafeString(crimeLabel) || "the incident";
+  return [
+    `Platform/app + username/account ID (e.g., ${label}) and linked phone/email.`,
+    "Timeline: when it started, how contact happened (call/SMS/email/link/app), and key timestamps.",
+    "What exactly happened and what you shared (OTP/password/ID docs/screenshare approvals).",
+    "Impact: money lost, data leaked, impersonation attempts, or account changes observed.",
+    "Evidence: screenshots of chats/emails/links, caller IDs, URLs/domains, transaction/reference IDs, device info.",
+    "Actions taken so far: password reset, 2FA enabled, bank dispute/1930 call, platform support ticket/FIR/DD entry.",
+    "Suspect handles/links/numbers and any witnesses or system alerts received.",
+  ];
+}
+
+function buildSafetySteps(crimeLabel, immediateActions = []) {
+  if (immediateActions.length > 0) {
+    return immediateActions;
+  }
+
+  if (/hack|unauthorized|access|account/i.test(toSafeString(crimeLabel))) {
+    return [
+      "Reset password from a safe device, enable 2FA, and log out all active sessions.",
+      "Revoke unknown app permissions and update recovery email/phone.",
+      "Capture screenshots of alerts/messages and keep them with timestamps.",
+    ];
+  }
+
+  if (/fraud|payment|upi|bank|transaction/i.test(toSafeString(crimeLabel))) {
+    return [
+      "Call your bank/1930 to block cards/UPI immediately and raise a dispute ticket.",
+      "File a complaint on cybercrime.gov.in with transaction IDs and screenshots.",
+      "Do not approve any further requests or share new OTPs/PINs.",
+    ];
+  }
+
+  return [
+    "Preserve evidence (screenshots, URLs, caller IDs) before deleting anything.",
+    "Enable 2FA and rotate passwords for linked accounts.",
+    "Report on cybercrime.gov.in and to the relevant platform/bank with proof.",
+  ];
+}
+
+function buildCrimeEducationText({
+  crimeLabel,
+  riskLabel,
+  crimeDescription,
+  patterns,
+  legalDetails,
+  safetySteps,
+  reportTemplate,
+  evidenceNote,
+}) {
+  const sections = [
+    `# **Incident Brief**\n- Detected as: ${crimeLabel}\n- Risk: ${riskLabel || "medium"}${evidenceNote ? `\n- Evidence noted: ${evidenceNote}` : ""}`,
+    `## **How this typically happens**\n${patterns.howItHappens.map((entry, idx) => `${idx + 1}. ${entry}`).join("\n")}`,
+    `## **Common mistakes to avoid**\n${patterns.mistakes.map((entry, idx) => `${idx + 1}. ${entry}`).join("\n")}`,
+    `## **Safeguard tips**\n${patterns.safeguards.map((entry, idx) => `${idx + 1}. ${entry}`).join("\n")}`,
+    `## **Legal info (IT Act / IPC / applicable laws)**\n${legalDetails}`,
+    `## **Steps to secure yourself now**\n${safetySteps.map((entry, idx) => `${idx + 1}. ${entry}`).join("\n")}`,
+    `## **Structured report format**\n${reportTemplate.map((entry, idx) => `${idx + 1}. ${entry}`).join("\n")}`,
+  ];
+
+  const trimmed = sections.filter(Boolean);
+  if (crimeDescription) {
+    trimmed.splice(1, 0, `**What happened (summary):** ${crimeDescription}`);
+  }
+
+  return trimmed.join("\n\n");
 }
 
 function isExplanationIntent(message) {
@@ -266,27 +504,27 @@ function buildCrimeIntroResponse(classification, incidentText) {
   const firstQuestion = classification?.first_question || null;
   const crimeLabel = primaryCrime?.name || "a cyber incident";
   const confidence = Math.round(classification?.confidence || 0);
-  let text = "";
+  const clarifyingQuestions = buildClarifyingQuestions(primaryCrime, firstQuestion);
+  const introLine =
+    confidence >= 85
+      ? `Based on what you've told me, this appears to be **${crimeLabel}**. I'm quite confident about this (${confidence}% confidence).`
+      : confidence >= 65
+        ? `Based on what you've told me, this appears to be **${crimeLabel}**. I'm fairly confident about this (${confidence}% confidence).`
+        : `Based on what you've told me, this appears to be **${crimeLabel}**. This seems likely from your report (${confidence}% confidence).`;
 
-  if (confidence >= 85) {
-    text = `Based on what you've told me, this appears to be **${crimeLabel}**. I'm quite confident about this assessment (${confidence}% confidence). `;
-  } else if (confidence >= 65) {
-    text = `Based on what you've told me, this appears to be **${crimeLabel}**. I'm fairly confident about this assessment (${confidence}% confidence). `;
-  } else {
-    text = `Based on what you've told me, this appears to be **${crimeLabel}**. This seems likely from your report (${confidence}% confidence). `;
-  }
+  const questionBlock = clarifyingQuestions
+    .map((question, idx) => `${idx + 1}. ${question}`)
+    .join("\n");
 
   return {
-    text: firstQuestion
-      ? `${text}To help you better, I need to understand: **${firstQuestion.question}**`
-      : `${text}I can help you understand what to do next.`,
+    text: `${introLine}\n\nI need a few quick answers to understand the crime clearly (brief bullet replies are fine):\n${questionBlock}`,
     classification: {
       type: "CRIME",
       confidence,
       crimeType: crimeLabel,
       risk: getSeverityRisk(primaryCrime?.severity),
     },
-    suggestions: firstQuestion?.options || ["What should I do now?", "How serious is this?", "How did you decide this?"],
+    suggestions: firstQuestion?.options || ["I'll answer these questions", "What should I do now?", "How serious is this?", "How did you decide this?"],
   };
 }
 
@@ -380,38 +618,30 @@ function buildEnhancedVerdictWithLegalExplanation(verdictResponse, classificatio
   const verdict = verdictResponse?.verdict || {};
   const isCrime = verdict.verdict_type === "CONFIRMED_CYBERCRIME";
   const legalPosition = verdict.legal_position || {};
-
-  // Build comprehensive legal sections explanation
-  const itActSections = (verdict.legal_sections?.it_act || crimeData?.it_act_sections || [])
-    .map((section) =>
-      `**IT Act Section ${section.section}** - ${section.title}\n  ↳ Punishment: ${section.penalty || section.punishment || "As per law"}`
-    ).join("\n\n");
-
-  const ipcSections = (verdict.legal_sections?.ipc || crimeData?.ipc_sections || [])
-    .map((section) =>
-      `**IPC Section ${section.section}** - ${section.title}\n  ↳ Punishment: ${section.penalty || section.punishment || "As per law"}`
-    ).join("\n\n");
-
-  const crimeExplanation = crimeData?.description ||
-    `This involves ${classification?.suspected_crimes?.[0]?.name || "a cyber incident"}.`;
-
-  const topActions = (verdict.immediate_actions || crimeData?.immediate_actions || []).slice(0, 3);
-  const summaryLine = toSafeString(legalPosition.summary) || toSafeString(crimeData?.legal_summary);
+  const crimeLabel = classification?.suspected_crimes?.[0]?.name || "a cyber incident";
+  const riskLabel = toSafeString(verdict.risk).toLowerCase() || getSeverityRisk(classification?.suspected_crimes?.[0]?.severity);
+  const crimeDescription = crimeData?.description || toSafeString(legalPosition.summary) || `This involves ${crimeLabel}.`;
+  const patterns = buildPatternInsights(crimeLabel);
+  const legalDetails = buildLegalDetails(verdict, crimeData, crimeLabel);
+  const safetySteps = buildSafetySteps(crimeLabel, (verdict.immediate_actions || crimeData?.immediate_actions || []).slice(0, 4));
+  const reportTemplate = buildStructuredReportTemplate(crimeLabel);
 
   return {
     text: isCrime
-      ? `# **LEGAL ANALYSIS & VERDICT**\n\n` +
-        `## **What Crime This Is:**\n${crimeExplanation}\n\n` +
-        `## **Legal Classification:**\n${summaryLine || "This is being treated as a cyber incident under applicable cyber-law routes."}\n\n` +
-        `## **Relevant Laws & Punishment:**\n\n**Under Information Technology Act, 2000:**\n${itActSections || "Applicable sections will be determined by investigating agency."}\n\n` +
-        `**Under Indian Penal Code (IPC):**\n${ipcSections || "Applicable sections will be determined by investigating agency."}\n\n` +
-        `## **Evidence Status:**\n${userEvidence || "Evidence collection ongoing"}\n\n` +
-        `## **Immediate Actions Required:**\n${topActions.map((action, idx) => `${idx + 1}. ${action}`).join("\n")}\n\n` +
-        `**⚠️ Without proper evidence, your case may not proceed to court. Collect all proof immediately!**`
+      ? buildCrimeEducationText({
+          crimeLabel,
+          riskLabel,
+          crimeDescription,
+          patterns,
+          legalDetails,
+          safetySteps,
+          reportTemplate,
+          evidenceNote: userEvidence || "Evidence collection ongoing",
+        })
       : `# **ANALYSIS RESULT**\n\n` +
         `Based on your description, this currently looks more like **${verdict.subtitle || "a non-cybercrime issue"}**.\n\n` +
-        `## **Why This Is Not Being Treated as Cybercrime:**\n${summaryLine || "The current facts do not fit the legal pattern of hacking, phishing, impersonation, or unauthorized digital access."}\n\n` +
-        `## **Recommended Route:**\n${topActions.map((action, idx) => `${idx + 1}. ${action}`).join("\n") || "Use consumer, bank, or platform grievance route first."}`,
+        `${toSafeString(legalPosition.summary) || "The current facts do not fit the legal pattern of hacking, phishing, impersonation, or unauthorized digital access."}\n\n` +
+        `Recommended route: ${(verdict.immediate_actions || crimeData?.immediate_actions || []).slice(0, 3).map((action, idx) => `${idx + 1}. ${action}`).join(" | ") || "Use consumer, bank, or platform grievance route first."}`,
     classification: {
       type: isCrime ? "CRIME" : "NOT_CRIME",
       confidence: Math.max(
@@ -420,8 +650,8 @@ function buildEnhancedVerdictWithLegalExplanation(verdictResponse, classificatio
       ),
       ...(isCrime
         ? {
-            crimeType: classification?.suspected_crimes?.[0]?.name || "Cyber incident",
-            risk: toSafeString(verdict.risk).toLowerCase() || getSeverityRisk(classification?.suspected_crimes?.[0]?.severity),
+            crimeType: crimeLabel,
+            risk: riskLabel,
           }
         : {}),
     },
@@ -435,33 +665,28 @@ function buildFinalVerdictResponse(verdictResponse, fallbackClassification) {
   const verdict = verdictResponse?.verdict || {};
   const isCrime = verdict.verdict_type === "CONFIRMED_CYBERCRIME";
   const legalPosition = verdict.legal_position || {};
-  const legalHighlights = [
-    ...((verdict.legal_sections?.it_act || []).map((entry) =>
-      entry?.section ? `IT Act ${entry.section}` : null,
-    )),
-    ...((verdict.legal_sections?.ipc || []).map((entry) =>
-      entry?.section ? `IPC ${entry.section}` : null,
-    )),
-    ...(Array.isArray(verdict.other_legal_references) ? verdict.other_legal_references : []),
-  ]
-    .filter(Boolean)
-    .slice(0, 4);
-  const topActions = (verdict.immediate_actions || verdict.your_options || []).slice(0, 2);
-  const legalLine = legalHighlights.length
-    ? `Relevant legal route: ${legalHighlights.join(" | ")}.`
-    : "";
-  const summaryLine = toSafeString(legalPosition.summary);
+  const crimeLabel = verdict.subtitle || fallbackClassification?.crimeType || "a cyber incident";
+  const riskLabel = toSafeString(verdict.risk).toLowerCase() || getSeverityRisk(fallbackClassification?.risk);
+  const patterns = buildPatternInsights(crimeLabel);
+  const legalDetails = buildLegalDetails(verdict, null, crimeLabel);
+  const safetySteps = buildSafetySteps(crimeLabel, (verdict.immediate_actions || verdict.your_options || []).slice(0, 4));
+  const reportTemplate = buildStructuredReportTemplate(crimeLabel);
+  const crimeDescription = toSafeString(legalPosition.summary) || `This is being treated as ${crimeLabel}.`;
 
   return {
     text: isCrime
-      ? `Based on your answers, this now looks like **${verdict.subtitle || fallbackClassification?.crimeType || "a cybercrime"}**.\n\n` +
-        `${summaryLine || "This is being treated as a cyber incident under the applicable cyber-law route."}\n\n` +
-        `${legalLine}\n\n` +
-        `Start with: ${topActions.join(" | ") || "preserve evidence and report quickly"}.`
+      ? buildCrimeEducationText({
+          crimeLabel,
+          riskLabel,
+          crimeDescription,
+          patterns,
+          legalDetails,
+          safetySteps,
+          reportTemplate,
+        })
       : `Based on your answers, this currently looks more like **${verdict.subtitle || "a non-cyber issue"}** than a cybercrime.\n\n` +
-        `${summaryLine || "On the current facts, this does not yet fit the legal pattern of hacking, phishing, impersonation, or unauthorized digital access."}\n\n` +
-        `${legalLine}\n\n` +
-        `Recommended route: ${topActions.join(" | ") || "use the consumer, bank, or platform grievance route first"}.`,
+        `${toSafeString(legalPosition.summary) || "On the current facts, this does not yet fit the legal pattern of hacking, phishing, impersonation, or unauthorized digital access."}\n\n` +
+        `Recommended route: ${(verdict.immediate_actions || verdict.your_options || []).slice(0, 3).join(" | ") || "use the consumer, bank, or platform grievance route first"}.`,
     classification: {
       type: isCrime ? "CRIME" : "NOT_CRIME",
       confidence: Math.max(
@@ -470,8 +695,8 @@ function buildFinalVerdictResponse(verdictResponse, fallbackClassification) {
       ),
       ...(isCrime
         ? {
-            crimeType: verdict.subtitle || fallbackClassification?.crimeType || "Cyber incident",
-            risk: toSafeString(verdict.risk).toLowerCase() || "medium",
+            crimeType: crimeLabel,
+            risk: riskLabel || "medium",
           }
         : {}),
     },
