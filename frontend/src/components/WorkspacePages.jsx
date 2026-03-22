@@ -1,4 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { AnalyticsDashboard } from "./AnalyticsDashboard";
+import "../analytics-dashboard.css";
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+  exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+};
+
 
 function getUserInitials(user) {
   const source = user?.fullName || user?.email || "A";
@@ -47,7 +70,13 @@ function formatRelativeTime(dateValue) {
 
 function WorkspacePageShell({ eyebrow, title, description, accent, actions, children }) {
   return (
-    <section className="workspace-page-shell">
+    <motion.section
+      className="workspace-page-shell"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <div className={`workspace-page-hero workspace-page-hero-${accent}`}>
         <div className="workspace-page-hero-copy">
           <span className="workspace-page-eyebrow">{eyebrow}</span>
@@ -58,7 +87,7 @@ function WorkspacePageShell({ eyebrow, title, description, accent, actions, chil
       </div>
 
       <div className="workspace-page-scroll">{children}</div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -694,6 +723,24 @@ export function HelpPage({ onOpenChat, onOpenPhishing, onOpenProfile, onStartFre
           </div>
         </article>
       </section>
+    </WorkspacePageShell>
+  );
+}
+
+export function DashboardPage({ cases = [], onOpenChat }) {
+  return (
+    <WorkspacePageShell
+      eyebrow="Analytics"
+      title="Data-driven insights"
+      description="Comprehensive analytics on case trends, risk patterns, and incident metrics"
+      accent="analytics"
+      actions={
+        <button className="workspace-page-button workspace-page-button-primary" type="button" onClick={onOpenChat}>
+          Return to workspace
+        </button>
+      }
+    >
+      <AnalyticsDashboard cases={cases} />
     </WorkspacePageShell>
   );
 }

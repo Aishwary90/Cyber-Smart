@@ -4,7 +4,7 @@ import { LandingPage } from "./components/LandingPage";
 import { PhishingContainer } from "./components/PhishingAnalyzer/PhishingContainer";
 import { InsufficientDataScreen } from "./components/InsufficientDataScreen";
 import { OutOfScopeScreen } from "./components/OutOfScopeScreen";
-import { HelpPage, ProfilePage, SettingsPage } from "./components/WorkspacePages";
+import { DashboardPage, HelpPage, ProfilePage, SettingsPage } from "./components/WorkspacePages";
 import { demoScenarios } from "./mockData";
 import "./cyber-chat.css";
 import {
@@ -680,6 +680,10 @@ export default function App() {
       label: "URL Detector",
       action: () => openWorkspaceFeature("phishing"),
     },
+    {
+      label: "Analytics Dashboard",
+      action: () => openWorkspaceFeature("analytics"),
+    },
   ];
 
   function handleAuthFormChange(field, value) {
@@ -1306,7 +1310,7 @@ export default function App() {
     setScreen("landing");
   }
 
-  const utilityFeature = activeFeature === "profile" || activeFeature === "settings" || activeFeature === "help";
+  const utilityFeature = activeFeature === "profile" || activeFeature === "settings" || activeFeature === "help" || activeFeature === "analytics";
 
   let workspaceContent = null;
 
@@ -1316,6 +1320,13 @@ export default function App() {
     workspaceContent = <InsufficientDataScreen trainingData={insufficientData} />;
   } else if (activeFeature === "phishing") {
     workspaceContent = <PhishingContainer />;
+  } else if (activeFeature === "analytics") {
+    workspaceContent = (
+      <DashboardPage
+        cases={savedCases}
+        onOpenChat={openWorkspaceHome}
+      />
+    );
   } else if (activeFeature === "profile") {
     workspaceContent = (
       <ProfilePage
@@ -1595,7 +1606,8 @@ export default function App() {
                 <button
                   key={tool.label}
                   className={`case-tool-item ${
-                    tool.label === "URL Detector" && activeFeature === "phishing"
+                    (tool.label === "URL Detector" && activeFeature === "phishing") ||
+                    (tool.label === "Analytics Dashboard" && activeFeature === "analytics")
                       ? "case-tool-item-active"
                       : ""
                   }`}
